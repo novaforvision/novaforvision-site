@@ -772,7 +772,10 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   const playV = v => { if (v) { const p = v.play(); if (p && p.catch) p.catch(e => { if (e && e.name === 'NotAllowedError') v._blocked = true; }); } };
 
   /* ---------- Mouvement ---------- */
-  const saved = store.get('nova-motion');
+  // la pause des animations ne vaut que pour la visite en cours (l'ancien réglage gardé d'une visite à l'autre est effacé)
+  try { localStorage.removeItem('nova-motion'); } catch(e){}
+  const sessStore = { get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} } };
+  const saved = sessStore.get('nova-motion');
   let motion = saved ? saved === 'on' : !reduce;
   const motionBtn = $('#motion');
 
@@ -1648,7 +1651,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     if (!motion) { $$('video').forEach(v => { if (v !== player.video) v.pause(); }); }
     else { if (oakVisible && player.ctx !== 'camp') playV(oak); if (baVisible) playV(ba); if (trVisible) playV(tr); if (items[active]) playPreview(items[active]); }
   }
-  motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; store.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
+  motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; sessStore.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
 
   /* ---------- Boucle ---------- */
   const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '', bandSolid = false;
