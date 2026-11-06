@@ -203,7 +203,7 @@ ul,ol{padding:0;list-style:none}
 .ci-act{grid-column:11/13;justify-self:end}
 .wipe{display:grid;gap:12px;padding-top:40px}
 .wipe-box{--x:50%;position:relative;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised);touch-action:pan-y}
-.wipe-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.wipe-box img,.wipe-box video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
 .wipe-top{clip-path:inset(0 0 0 var(--x))}
 .wipe-line{position:absolute;top:0;bottom:0;left:var(--x);width:1px;background:var(--white);mix-blend-mode:difference;pointer-events:none}
 .wipe-tag{position:absolute;bottom:16px;font-size:12px;color:var(--white);mix-blend-mode:difference;pointer-events:none}
@@ -332,44 +332,37 @@ button.name:hover sup{color:var(--fg)}
 .peek.on{opacity:1}
 .peek video,.peek img{width:100%;height:auto;aspect-ratio:var(--par,1.5);object-fit:cover}
 
-/* Contact : le clap */
+/* Contact : la phrase à compléter */
 .contact{display:grid;gap:48px;padding-block:128px 0;border-top:1px solid var(--line)}
-.ct-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px 24px;align-items:start}
-.slate{grid-column:1/8;position:relative;min-width:0;padding-top:30px;margin-top:72px}
-.clapper{position:absolute;left:0;right:0;top:0;height:30px;border-radius:6px 6px 0 0;background:repeating-linear-gradient(115deg,var(--fg) 0 22px,var(--bg) 22px 44px);border:1px solid var(--fg);transform-origin:2px 100%;transform:rotate(-4deg);transition:transform .5s var(--ease)}
-.slate.ready .clapper{transform:rotate(-6.5deg)}
-.slate.snap .clapper{animation:snap .42s cubic-bezier(.6,0,.2,1) forwards}
-@keyframes snap{0%{transform:rotate(-6.5deg)}70%{transform:rotate(.6deg)}100%{transform:rotate(0)}}
-.slate.snap .slate-body{animation:jolt .32s .26s var(--ease)}
-@keyframes jolt{0%{transform:translateY(0)}40%{transform:translateY(3px)}100%{transform:translateY(0)}}
-.slate-body{position:relative;border:1px solid var(--line-2);border-radius:0 0 8px 8px;background:var(--bg-2);display:grid}
-.sl-row{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line);min-height:60px}
-.sl-row:last-child{border-bottom:0}
-.sl-k{font-family:var(--mono);font-size:12px;color:var(--fg-3)}
-.sl-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-family:var(--mono);font-size:12px;color:var(--fg-2)}
-.sl-top b{font-weight:400;color:var(--fg)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:0;padding:0;min-width:0}
-.chips legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.chip{position:relative}
-.chip input{position:absolute;opacity:0;inset:0;margin:0}
-.chip span{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--line-2);font-size:14px;color:var(--fg-2);transition:background-color .16s var(--ease),color .16s var(--ease),border-color .16s var(--ease)}
-.chip:hover span{color:var(--fg);border-color:var(--fg-3)}
-.chip input:checked+span{background:var(--fg);color:var(--ink);border-color:var(--fg)}
-.chip input:focus-visible+span{outline:2px solid var(--fg);outline-offset:3px}
-.chips.err .chip span{border-color:var(--tally)}
-.sl-in{width:100%;min-width:0;border:0;border-bottom:1px solid transparent;background:transparent;color:var(--fg);font:400 18px/1.4 var(--sans);padding:6px 0;resize:none;transition:border-color .16s var(--ease)}
-.sl-in::placeholder{color:var(--fg-3)}
-.sl-in:focus{outline:none;border-bottom-color:var(--fg-3)}
-.sl-send{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:16px 20px}
+.ct-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px 24px;align-items:end}
+.sentence{grid-column:1/10;min-width:0;display:grid;gap:32px}
+.sen{font-size:clamp(26px,3.3vw,50px);line-height:1.36;letter-spacing:-.02em;color:var(--fg-2);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.sentence.gone .sen{opacity:0;transform:translateY(-6px)}
+.sen-in,.sen-sel{font:inherit;letter-spacing:inherit;color:var(--fg);background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;padding:0 .1em;margin:0;max-width:100%;transition:border-color .16s var(--ease)}
+.sen-in::placeholder{color:var(--fg-3)}
+.sen-in:focus,.sen-sel:focus{outline:none;border-bottom-color:var(--fg)}
+.sen-in:focus-visible,.sen-sel:focus-visible{outline:2px solid var(--fg);outline-offset:4px}
+.sen-sel{-webkit-appearance:none;appearance:none;padding-right:.9em;background-image:linear-gradient(45deg,transparent 50%,var(--fg-2) 50%),linear-gradient(135deg,var(--fg-2) 50%,transparent 50%);background-size:.22em .22em,.22em .22em;background-position:calc(100% - .32em) 58%,calc(100% - .1em) 58%;background-repeat:no-repeat;cursor:pointer}
+.sen-sel option{background:var(--bg-2);color:var(--fg);font-size:16px}
+.sen-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
 .sl-msg{font-size:13px;color:var(--fg-2);min-height:20px}
-.ct-side{grid-column:9/13;display:grid;gap:28px;align-content:start;padding-top:102px}
-.ct-side p{font-size:15px;line-height:1.6;color:var(--fg-2);max-width:30ch}
+.ct-side{grid-column:10/13;display:grid;gap:20px;align-content:end}
 .ct-direct{display:grid;gap:4px;border-top:1px solid var(--line);padding-top:16px}
 .ct-direct dt{font-size:12px;color:var(--fg-3)}
 .ct-direct dd{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-bottom:12px}
-.mail-addr{font-size:18px;letter-spacing:-.01em;user-select:all;-webkit-user-select:all}
+.mail-addr{font-size:16px;user-select:all;-webkit-user-select:all}
 .ghost{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--line-2);font-size:13px;color:var(--fg);transition:background-color .16s var(--ease),border-color .16s var(--ease)}
 .ghost:hover{background:var(--raised);border-color:var(--fg-3)}
+.fly{position:fixed;inset:0;width:100%;height:100%;z-index:70;pointer-events:none}
+/* Titres en poussière */
+.dust-t{position:relative}
+.opener{overflow-x:clip}
+.js .dust-t.pending{color:transparent}
+.dust-t .dt-c{position:absolute;pointer-events:none}
+.dust-t.done{transition:color .5s var(--ease)}
+/* Poussière du rideau */
+.hdust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
 /* L'étoile de poussière */
 .dust{position:relative;margin-top:16px;width:100%;aspect-ratio:2527.4/914.6;max-height:62vh;touch-action:pan-y}
 .dust canvas{position:absolute;inset:0;width:100%;height:100%}
@@ -413,11 +406,7 @@ button.name:hover sup{color:var(--fg)}
   .name sup{display:none}
   .contact{padding-top:96px}
   .ct-grid{grid-template-columns:1fr}
-  .slate,.ct-side{grid-column:auto}
-  .ct-side{padding-top:0}
-  .slate{margin-top:40px}
-  .sl-row{grid-template-columns:1fr;gap:8px;padding:14px 16px}
-  .sl-send{padding:16px}
+  .sentence,.ct-side{grid-column:auto}
   .foot{grid-template-columns:1fr 1fr;padding-block:12px}
   .peek{display:none}
 }
@@ -459,6 +448,7 @@ button.name:hover sup{color:var(--fg)}
       <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
       <span class="seam" id="seam" aria-hidden="true"><i class="star-mask"></i></span>
     </div>
+    <canvas class="hdust" id="hdust" aria-hidden="true"></canvas>
     <div class="scrim" aria-hidden="true"></div>
     <h1 class="kicker wrap">Campagnes IA, clips et VFX pour les marques et les artistes · Studio indépendant à Liège</h1>
     <div class="caps" id="caps">
@@ -516,7 +506,7 @@ button.name:hover sup{color:var(--fg)}
 
   <section class="camp" id="campagnes" aria-labelledby="camp-t">
     <div class="opener wrap">
-      <div class="op-row"><p class="op-t split chars" role="heading" aria-level="2">Campagnes</p><span class="op-count mono">1 projet</span></div>
+      <div class="op-row"><p class="op-t dust-t" role="heading" aria-level="2">Campagnes</p><span class="op-count mono">1 projet</span></div>
       <p class="op-note">Pour les marques, du concept au film final&nbsp;: création IA, effets visuels et postproduction dans un seul workflow.</p>
     </div>
     <div class="camp-film" id="camp-film" data-cursor="Lire">
@@ -585,7 +575,7 @@ button.name:hover sup{color:var(--fg)}
   </section>
 
   <div class="opener wrap" id="clips-open">
-    <div class="op-row"><p class="op-t split chars" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
+    <div class="op-row"><p class="op-t dust-t" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
     <p class="op-note">Montage, VFX et IA pour les artistes. Faites défiler pour faire avancer la bobine, cliquez sur un film pour le lancer ici même, avec le son.</p>
   </div>
 
@@ -668,34 +658,15 @@ button.name:hover sup{color:var(--fg)}
     <p class="label">Contact</p>
     <h2 class="h2 rv" id="contact-t"><span>Une idée, une image, un projet</span><span class="dim">Et si on lui donnait forme&nbsp;?</span></h2>
     <div class="ct-grid">
-      <form class="slate" id="slate" novalidate aria-label="Composer votre message">
-        <span class="clapper" aria-hidden="true"></span>
-        <div class="slate-body">
-          <div class="sl-row"><span class="sl-k">PROD.</span><span class="sl-top"><b>NOVA For Vision</b><span>PRISE <span id="sl-take">01</span> · <span id="sl-date"></span></span></span></div>
-          <div class="sl-row"><span class="sl-k" id="lk-type">PROJET</span>
-            <fieldset class="chips" id="ch-type" aria-labelledby="lk-type"><legend>Type de projet</legend>
-              <label class="chip"><input type="radio" name="type" value="Campagne IA" id="t-camp"><span>Campagne IA</span></label>
-              <label class="chip"><input type="radio" name="type" value="Clip" id="t-clip"><span>Clip</span></label>
-              <label class="chip"><input type="radio" name="type" value="VFX / postproduction" id="t-vfx"><span>VFX / postproduction</span></label>
-              <label class="chip"><input type="radio" name="type" value="Autre" id="t-autre"><span>Autre</span></label>
-            </fieldset></div>
-          <div class="sl-row"><span class="sl-k" id="lk-when">DÉLAI</span>
-            <fieldset class="chips" id="ch-when" aria-labelledby="lk-when"><legend>Délai</legend>
-              <label class="chip"><input type="radio" name="when" value="Ce mois-ci" id="w-1"><span>Ce mois-ci</span></label>
-              <label class="chip"><input type="radio" name="when" value="Dans 1 à 3 mois" id="w-2"><span>1 à 3 mois</span></label>
-              <label class="chip"><input type="radio" name="when" value="Pas encore daté" id="w-3"><span>Pas encore daté</span></label>
-            </fieldset></div>
-          <div class="sl-row"><label class="sl-k" for="sl-idea">IDÉE</label><textarea class="sl-in" id="sl-idea" rows="2" placeholder="En une phrase : l'artiste ou la marque, l'envie, la référence"></textarea></div>
-          <div class="sl-row"><label class="sl-k" for="sl-name">NOM</label><input class="sl-in" id="sl-name" type="text" autocomplete="name" placeholder="Votre nom ou celui de l'artiste"></div>
-          <div class="sl-send">
-            <button class="btn" type="submit" id="sl-mail">Clap, envoyer par e-mail</button>
-            <a class="link" id="sl-ig" href="https://ig.me/m/novaforvision" target="_blank" rel="noopener noreferrer">Envoyer en DM Instagram ↗</a>
-            <span class="sl-msg" id="sl-msg" aria-live="polite"></span>
-          </div>
+      <form class="sentence" id="sentence" novalidate aria-label="Écrire au studio">
+        <p class="sen" id="sen">Je m'appelle <input class="sen-in" id="s-name" type="text" autocomplete="name" placeholder="votre nom" size="9" aria-label="Votre nom">, je prépare <select class="sen-sel" id="s-type" aria-label="Type de projet"><option>une campagne IA</option><option>un clip</option><option>des VFX</option><option>de la postproduction</option><option>autre chose</option></select> pour <select class="sen-sel" id="s-when" aria-label="Délai"><option>ce mois-ci</option><option selected>dans 1 à 3 mois</option><option>une date encore libre</option></select>. L'idée&nbsp;: <input class="sen-in" id="s-idea" type="text" placeholder="en une phrase" size="14" aria-label="Votre idée en une phrase"></p>
+        <div class="sen-act">
+          <button class="btn" type="submit" id="s-send">Envoyer ↗</button>
+          <a class="link" id="sl-ig" href="https://ig.me/m/novaforvision" target="_blank" rel="noopener noreferrer">Ou en DM Instagram ↗</a>
+          <span class="sl-msg" id="sl-msg" aria-live="polite"></span>
         </div>
       </form>
       <div class="ct-side">
-        <p>Remplissez le clap en quelques clics&nbsp;: votre messagerie s'ouvre avec le message déjà écrit. Pour Instagram, le message est copié, il ne reste qu'à le coller.</p>
         <dl class="ct-direct">
           <dt>E-mail</dt>
           <dd><span class="mail-addr" id="mail">contact@novaforvision.fr</span><button class="ghost" id="copy" type="button">Copier</button></dd>
@@ -895,6 +866,25 @@ button.name:hover sup{color:var(--fg)}
     openPlayer('hero', SV[cur0], SID[cur0], $('#pslot-hero'), () => { hero.classList.remove('playing'); });
   }
   const easeIO = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
+  // le bord du rideau lâche une fine poussière de lumière pendant le passage
+  const hdc = $('#hdust'), hdx = hdc.getContext('2d'), hp = [];
+  let hdLastX = null, hdIdle = 0;
+  function heroDust(seamX, seamO){
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const W = Math.round(hero.clientWidth*dpr), H = Math.round(hero.clientHeight*dpr);
+    if (hdc.width !== W || hdc.height !== H) { hdc.width = W; hdc.height = H; }
+    const x = seamX/100*W, moved = hdLastX === null ? 0 : Math.abs(x - hdLastX);
+    if (motion && seamO > .05 && moved > .5) {
+      const n = Math.min(26, 4 + moved*.35);
+      for (let i = 0; i < n && hp.length < 700; i++) hp.push({ x: x + (Math.random()-.5)*4*dpr, y: Math.random()*H, vx: (x < (hdLastX ?? x) ? -1 : 1)*(.4 + Math.random()*1.6)*dpr, vy: (Math.random()-.5)*.6*dpr, life: 1, dec: .012 + Math.random()*.02, s: (.8 + Math.random()*1.3)*dpr });
+    }
+    hdLastX = x;
+    if (!hp.length) { if (!hdIdle) { hdx.clearRect(0,0,W,H); hdIdle = 1; } return; }
+    hdIdle = 0;
+    hdx.clearRect(0,0,W,H); hdx.fillStyle = '#ffffff';
+    for (let i = hp.length - 1; i >= 0; i--) { const p = hp[i]; p.x += p.vx; p.y += p.vy; p.vx *= .97; p.life -= p.dec; if (p.life <= 0) { hp.splice(i,1); continue; } hdx.globalAlpha = p.life*.85; hdx.fillRect(p.x, p.y, p.s, p.s); }
+    hdx.globalAlpha = 1;
+  }
   const vfx = new WeakMap();
   function setV(el, key, css){ if (vfx.get(el) === key) return; vfx.set(el, key); el.style.cssText = css; }
   function heroFrame(){
@@ -916,6 +906,7 @@ button.name:hover sup{color:var(--fg)}
     });
     seam.style.transform = `translate3d(${(seamX/100*hero.clientWidth).toFixed(1)}px,0,0)`;
     seam.style.opacity = seamO.toFixed(3);
+    heroDust(seamX, seamO);
     const ci = clamp(Math.round(pos), 0, N-1);
     if (ci !== cur0 && !introOn) setCurrent(ci);
     ticks.forEach((tk,i) => { const f = i === 0 ? 1 : clamp(pos - (i-1), 0, 1); tk.querySelector('i').style.transform = `scaleX(${f.toFixed(3)})`; });
@@ -1249,37 +1240,52 @@ button.name:hover sup{color:var(--fg)}
   }
   $$('#cr-list button.name').forEach(b => b.addEventListener('click', () => { hidePeek(); const i = items.findIndex(el => el.dataset.id === b.dataset.open); if (i < 0) return; scrollToItem(i, () => openWork(i)); }));
 
-  /* ---------- Contact : le clap ---------- */
-  const slate = $('#slate'), slMsg = $('#sl-msg');
-  try { $('#sl-date').textContent = new Date().toLocaleDateString('fr-BE', {day:'2-digit', month:'2-digit', year:'numeric'}); } catch(e) {}
-  let take = 1;
-  const val = n => { const r = slate.querySelector(`input[name="${n}"]:checked`); return r ? r.value : ''; };
+  const fgCol = getComputedStyle(root).getPropertyValue('--fg').trim() || '#eeefed';
+  /* ---------- Contact : la phrase à compléter ---------- */
+  const sentence = $('#sentence'), sen = $('#sen'), slMsg = $('#sl-msg');
+  const fit = el => { el.size = Math.max(el.placeholder.length - 1, Math.min(el.value.length + 1, el.id === 's-idea' ? 40 : 22)); };
+  ['s-name','s-idea'].forEach(id => { const el = $('#' + id); el.addEventListener('input', () => fit(el)); });
   function compose(){
-    const type = val('type'), when = val('when'), idea = $('#sl-idea').value.trim(), name = $('#sl-name').value.trim();
-    const subject = `Projet ${type || 'NOVA'}${name ? ' · ' + name : ''}`;
-    const body = ['Bonjour NOVA,', '', `Type de projet : ${type || 'à préciser'}`, `Délai : ${when || 'à préciser'}`, idea ? `Idée : ${idea}` : '', '', name || ''].filter((l,i,a) => l !== '' || (a[i-1] !== '' && i < a.length-1)).join('\n');
-    return { type, subject, body };
+    const name = $('#s-name').value.trim(), type = $('#s-type').value, when = $('#s-when').value, idea = $('#s-idea').value.trim();
+    const sentenceTxt = `Je m'appelle ${name || '…'}, je prépare ${type} pour ${when}.${idea ? ' L\'idée : ' + idea + '.' : ''}`;
+    return { subject: `Projet : ${type}${name ? ' · ' + name : ''}`, body: `Bonjour NOVA,\n\n${sentenceTxt}\n\n${name}`.trim() };
   }
-  function check(){
-    if (val('type')) { $('#ch-type').classList.remove('err'); return true; }
-    $('#ch-type').classList.add('err'); slMsg.textContent = 'Choisissez un type de projet'; $('#t-camp').focus(); return false;
+  // l'envoi : la phrase se défait en poussière qui rejoint l'étoile du bas
+  function dissolve(done){
+    if (!motion || !dustBuilt || !parts.length) { done(); return; }
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cv = document.createElement('canvas'); cv.className = 'fly'; cv.width = Math.round(innerWidth*dpr); cv.height = Math.round(innerHeight*dpr);
+    document.body.appendChild(cv); const cx = cv.getContext('2d');
+    const rects = [];
+    sen.childNodes.forEach(n => { if (n.nodeType === 3) { const rg = document.createRange(); rg.selectNodeContents(n); [...rg.getClientRects()].forEach(r => rects.push(r)); } else rects.push(n.getBoundingClientRect()); });
+    const area = rects.reduce((a,r) => a + r.width*r.height, 0) || 1;
+    const dr = dc.getBoundingClientRect(), k = dr.width / dc.width;
+    const fl = [];
+    const COUNT = 900;
+    rects.forEach(r => { const n = Math.round(COUNT * r.width*r.height/area); for (let i = 0; i < n; i++) { const t = parts[(Math.random()*parts.length)|0]; fl.push({ x0:(r.left + Math.random()*r.width)*dpr, y0:(r.top + r.height*.25 + Math.random()*r.height*.6)*dpr, x1:(dr.left + t.hx*k)*dpr, y1:(dr.top + t.hy*k)*dpr, d:Math.random()*350, du:900 + Math.random()*500, bx:(Math.random()-.5)*260*dpr, by:-(80 + Math.random()*160)*dpr, s:(.8 + Math.random()*1.2)*dpr }); } });
+    sentence.classList.add('gone');
+    const t0 = performance.now(); let fired = false;
+    (function step(now){
+      const t = now - t0; cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle = fgCol; let alive = 0;
+      for (const f of fl) {
+        const e = clamp((t - f.d)/f.du, 0, 1); if (e < 1) alive++;
+        const q = 1 - Math.pow(1-e, 3), mx = (f.x0 + f.x1)/2 + f.bx, my = (f.y0 + f.y1)/2 + f.by;
+        const x = (1-q)*(1-q)*f.x0 + 2*(1-q)*q*mx + q*q*f.x1, y = (1-q)*(1-q)*f.y0 + 2*(1-q)*q*my + q*q*f.y1;
+        cx.globalAlpha = e < 1 ? .9 : 0; cx.fillRect(x, y, f.s, f.s);
+      }
+      if (!fired && t > 1150) { fired = true; parts.forEach(pp => { pp.vx += (Math.random()-.5)*6; pp.vy += (Math.random()-.5)*6; }); dustAwake = 240; done(); }
+      if (alive || t < 1200) requestAnimationFrame(step); else { cv.remove(); setTimeout(() => sentence.classList.remove('gone'), 600); }
+    })(t0);
   }
-  function clap(){ slate.classList.remove('snap'); void slate.offsetWidth; slate.classList.add('snap'); take++; setTimeout(() => { $('#sl-take').textContent = pad(take); }, 400); }
-  slate.addEventListener('change', () => { if (val('type')) { $('#ch-type').classList.remove('err'); if (slMsg.textContent === 'Choisissez un type de projet') slMsg.textContent = ''; } slate.classList.toggle('ready', !!val('type')); });
-  slate.addEventListener('submit', e => {
+  sentence.addEventListener('submit', e => {
     e.preventDefault();
-    if (!check()) return;
     const m = compose();
-    clap();
-    slMsg.textContent = 'Votre messagerie s\'ouvre avec le message prêt';
-    setTimeout(() => { window.location.href = `mailto:contact@novaforvision.fr?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`; }, motion ? 520 : 0);
+    slMsg.textContent = '';
+    dissolve(() => { slMsg.textContent = 'Votre messagerie s\'ouvre avec le message prêt'; window.location.href = `mailto:contact@novaforvision.fr?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`; });
   });
-  $('#sl-ig').addEventListener('click', e => {
-    if (!check()) { e.preventDefault(); return; }
+  $('#sl-ig').addEventListener('click', () => {
     const m = compose();
-    clap();
-    const done = () => { slMsg.textContent = 'Message copié : collez-le dans la conversation Instagram'; };
-    try { navigator.clipboard.writeText(m.body).then(done, () => { slMsg.textContent = 'Instagram s\'ouvre : écrivez votre message dans la conversation'; }); } catch(_) { slMsg.textContent = 'Instagram s\'ouvre : écrivez votre message dans la conversation'; }
+    try { navigator.clipboard.writeText(m.body).then(() => { slMsg.textContent = 'Message copié : collez-le dans la conversation Instagram'; }, () => { slMsg.textContent = 'Instagram s\'ouvre : écrivez votre message dans la conversation'; }); } catch(_) { slMsg.textContent = 'Instagram s\'ouvre : écrivez votre message dans la conversation'; }
   });
   const copyBtn = $('#copy');
   copyBtn.addEventListener('click', () => {
@@ -1287,6 +1293,41 @@ button.name:hover sup{color:var(--fg)}
     const fallback = () => { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($('#mail')); s.removeAllRanges(); s.addRange(rg); copyBtn.textContent = 'Sélectionnée'; reset(); };
     try { navigator.clipboard.writeText('contact@novaforvision.fr').then(() => { copyBtn.textContent = 'Copiée'; reset(); }, fallback); } catch(e){ fallback(); }
   });
+
+  /* ---------- Grands titres qui se forment en poussière ---------- */
+  const dustTitles = $$('.dust-t');
+  if (motion && !reduce) dustTitles.forEach(el => el.classList.add('pending'));
+  function formTitle(el){
+    if (!el.classList.contains('pending')) return;
+    const cs = getComputedStyle(el), r = el.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), padX = Math.min(120, innerWidth*.08), padY = 60;
+    const W = Math.ceil(r.width + padX*2), H = Math.ceil(r.height + padY*2);
+    const cv = document.createElement('canvas'); cv.className = 'dt-c'; cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+    Object.assign(cv.style, { left: -padX + 'px', top: -padY + 'px', width: W + 'px', height: H + 'px' });
+    el.appendChild(cv);
+    const cx = cv.getContext('2d');
+    const oc = document.createElement('canvas'); oc.width = cv.width; oc.height = cv.height; const ox = oc.getContext('2d');
+    const fs = parseFloat(cs.fontSize);
+    ox.font = `${cs.fontWeight} ${fs*dpr}px ${cs.fontFamily}`;
+    try { ox.letterSpacing = (parseFloat(cs.letterSpacing) || 0)*dpr + 'px'; } catch(_) {}
+    ox.textBaseline = 'alphabetic'; ox.fillStyle = '#fff';
+    const mt = ox.measureText(el.textContent.trim());
+    const asc = mt.fontBoundingBoxAscent || fs*dpr*.8, desc = mt.fontBoundingBoxDescent || fs*dpr*.2;
+    const lh = r.height*dpr, base = padY*dpr + (lh - (asc + desc))/2 + asc;
+    ox.fillText(el.textContent.trim(), padX*dpr, base);
+    let data; try { data = ox.getImageData(0,0,oc.width,oc.height).data; } catch(_) { el.classList.remove('pending'); cv.remove(); return; }
+    const step = Math.max(2, Math.round(2.6*dpr)), pts = [];
+    for (let y = 0; y < oc.height; y += step) for (let x = 0; x < oc.width; x += step) if (data[(y*oc.width + x)*4 + 3] > 120) pts.push({ hx:x, hy:y, x:x + (Math.random()-.5)*cv.width*.9, y:y + (Math.random()-.5)*cv.height*1.6, d:Math.random()*380, s:(.7 + Math.random()*.9)*dpr, a:.5 + Math.random()*.5 });
+    const t0 = performance.now(); let shown = false;
+    (function step2(now){
+      const t = now - t0; cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle = fgCol;
+      for (const p of pts) { const e = clamp((t - p.d)/900, 0, 1), q = 1 - Math.pow(1-e, 3); cx.globalAlpha = p.a*(t > 1250 ? clamp(1 - (t-1250)/450, 0, 1) : 1); cx.fillRect(p.x + (p.hx - p.x)*q, p.y + (p.hy - p.y)*q, p.s, p.s); }
+      if (!shown && t > 1150) { shown = true; el.classList.add('done'); el.classList.remove('pending'); }
+      if (t < 1750) requestAnimationFrame(step2); else cv.remove();
+    })(t0);
+  }
+  const dtIO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { dtIO.unobserve(en.target); const go2 = () => formTitle(en.target); (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(go2); } }), {threshold:.4});
+  dustTitles.forEach(el => dtIO.observe(el));
 
   /* ---------- L'étoile de poussière ---------- */
   const dust = $('#dust'), dc = $('#dust-c'), dctx = dc.getContext('2d');
@@ -1318,7 +1359,6 @@ button.name:hover sup{color:var(--fg)}
   dust.addEventListener('pointermove', e => { const r = dc.getBoundingClientRect(); const k = dc.width / r.width; dm.x = (e.clientX - r.left)*k; dm.y = (e.clientY - r.top)*k; dm.on = true; dustAwake = 240; });
   dust.addEventListener('pointerleave', () => { dm.on = false; dm.x = dm.y = -9999; dustAwake = 240; });
   new IntersectionObserver(es => es.forEach(en => { dustVis = en.isIntersecting; if (dustVis) { if (!dustBuilt) buildDust(); else if (!dustIn) dustAwake = 240; } }), {threshold:.15}).observe(dust);
-  const fgCol = getComputedStyle(root).getPropertyValue('--fg').trim() || '#eeefed';
   function drawDust(){
     if (!dustVis || !dustBuilt) return;
     if (!dustIn) { dustIn = true; dustAwake = 260; }
