@@ -96,8 +96,11 @@ ul,ol{padding:0;list-style:none}
 .gl{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s var(--ease);pointer-events:none}
 .hero.gl-on .gl{opacity:1}
 .hero.gl-on .slide video{opacity:0}
-.hero.playing .gl{opacity:0}
-.hero.playing .slide video{opacity:1}
+.hero:not(.gl-on) .slide video{-webkit-mask:url("assets/nova-star.svg") 50% 42%/130% auto no-repeat;mask:url("assets/nova-star.svg") 50% 42%/130% auto no-repeat}
+.hero:not(.gl-on).playing .slide video{-webkit-mask:none;mask:none}
+.hnav{min-height:44px;display:inline-flex;align-items:center;color:var(--fg-2);transition:color .16s var(--ease)}
+.hnav:hover{color:var(--fg)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(11,12,14,.9) 0%,rgba(11,12,14,.45) 32%,rgba(11,12,14,0) 60%),linear-gradient(to bottom,rgba(11,12,14,.5),rgba(11,12,14,0) 18%);transition:opacity .4s var(--ease)}
 .kicker{position:absolute;top:20px;left:0;right:0;font-size:13px;font-weight:400;color:var(--fg-2);pointer-events:none;transition:opacity .3s var(--ease)}
 .caps{position:absolute;left:0;right:0;bottom:72px;pointer-events:none}
@@ -245,43 +248,26 @@ ul,ol{padding:0;list-style:none}
 .ba-legend i{display:inline-block;width:16px;height:2px;margin-right:8px;vertical-align:middle;background:var(--fg-3)}
 .ba-legend i.a{background:var(--fg);margin-left:16px}
 
-/* Clips : la bobine */
-.works{position:relative;background:var(--bg)}
-.works-pin{display:grid;gap:32px;padding-block:96px 64px}
-.works-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
-.works-hint{font-size:13px;color:var(--fg-3)}
-.track{display:grid;gap:48px}
-.work{min-width:0;transition:opacity .35s var(--ease)}
-.work-media{position:relative;display:block;width:100%;aspect-ratio:var(--ar);max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised);text-align:left;transition:transform .6s var(--ease)}
+/* Clips : grille simple */
+.works{position:relative;padding-bottom:128px}
+.cgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:56px 24px}
+.cgrid .work:nth-child(1){grid-column:span 7}
+.cgrid .work:nth-child(2){grid-column:span 5}
+.cgrid .work:nth-child(3){grid-column:span 5}
+.cgrid .work:nth-child(4){grid-column:span 7}
+.cgrid .work:nth-child(n+5){grid-column:span 4}
+.work{display:grid;gap:12px;min-width:0}
+.work-media{position:relative;display:block;width:100%;height:clamp(240px,30vw,500px);max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised);text-align:left}
+.cgrid .work:nth-child(n+5) .work-media{height:clamp(220px,24vw,400px)}
 .work-media img,.work-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.work-media video{opacity:0;transition:opacity .35s var(--ease)}
+.work-media video{opacity:0;transition:opacity .4s var(--ease)}
 .work.playing .work-media video,.work.open .work-media video{opacity:1}
-.work-cap{display:flex;justify-content:space-between;gap:16px;padding-top:12px}
-.work-cap h3{font-size:16px;font-weight:500}
-.work-cap p{font-size:13px;color:var(--fg-2);text-align:right}
-.work.v .work-media{width:min(100%,calc(66svh * .5625))}
-.works-cap{display:none}
-.js .works.h{height:var(--h-total)}
-.js .works.h .works-pin{grid-template-columns:minmax(0,1fr);position:sticky;top:var(--band);height:calc(100vh - var(--band));height:calc(100svh - var(--band));grid-template-rows:auto 1fr auto;padding-block:32px 24px;overflow:hidden}
-.js .works.h .track{align-self:center;display:flex;align-items:center;gap:clamp(32px,4vw,72px);width:max-content;padding:0;will-change:transform;touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.js .works.h .work{height:var(--ih);width:calc(var(--ih) * var(--ar))}
-.js .works.h .work-media{height:100%;width:100%;max-width:none;aspect-ratio:auto}
-.js .works.h .work-cap{display:none}
-.js .works.h .work-media img{pointer-events:none;-webkit-user-drag:none}
-.js .works.h .works-cap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.6fr) auto;align-items:end;gap:24px 40px;border-top:1px solid var(--line);padding-top:20px}
-.cap-main{display:grid;gap:6px;min-width:0}
-.cap-idx{font-size:12px;color:var(--fg-3)}
-.cap-title{font-size:clamp(28px,3vw,44px);line-height:1.05;font-weight:400;letter-spacing:-.025em}
-.cap-meta{display:grid;grid-template-columns:repeat(3,minmax(0,auto));gap:8px 40px;justify-content:start}
-.cap-meta dt{font-size:12px;color:var(--fg-3)}
-.cap-meta dd{font-size:14px;color:var(--fg)}
-.cap-actions{display:flex;align-items:center;gap:20px;justify-self:end}
-.works-cap .fade{transition:opacity .18s var(--ease)}
-.works-cap.swap .fade{opacity:0}
-.works.h.open .works-cap{display:none}
-.works.h.open .work:not(.open){opacity:.06!important}
-#pslot-works{display:none}
-.works.h.open #pslot-works{display:block;border-top:1px solid var(--line)}
+.work.open .work-media video{object-fit:contain;background:var(--black)}
+.work-cap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline}
+.work-cap h3{font-size:clamp(18px,1.6vw,24px);font-weight:400;letter-spacing:-.01em}
+.work-cap p{grid-column:1/2;font-size:13px;color:var(--fg-2)}
+.work-cap .mono{grid-column:2/3;grid-row:1/3;font-size:12px;color:var(--fg-3);align-self:start}
+.work .pslot{margin-top:-4px}
 
 /* Studio */
 .studio{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:128px}
@@ -368,6 +354,9 @@ button.name:hover sup{color:var(--fg)}
   .opener{padding-block:96px 32px}
   .op-note{font-size:16px}
   .rail-in{font-size:clamp(36px,12vw,56px)}
+  .cgrid{grid-template-columns:1fr;gap:40px}
+  .cgrid .work:nth-child(n){grid-column:auto}
+  .work-media,.cgrid .work:nth-child(n+5) .work-media{height:auto;aspect-ratio:4/3}
   .ba{grid-template-columns:1fr;padding-block:96px}
   .ba-side,.ba-stage{grid-column:auto}
   .studio{grid-template-columns:1fr;padding-block:96px}
@@ -379,6 +368,7 @@ button.name:hover sup{color:var(--fg)}
   .foot{grid-template-columns:1fr 1fr;padding-block:12px}
   .peek{display:none}
 }
+@media (max-width:760px){.hcount{white-space:nowrap}.hbar .motion{display:none}.ticks{gap:4px}.tick{width:18px}.hbar{gap:12px}}
 @media (max-width:420px){.ci-meta{grid-template-columns:1fr}.band-cta{font-size:0}.band-cta::after{content:"Contact ↗";font-size:13px}}
 .motion-off .ch,.motion-off .cap-row,.motion-off .cap-k{transition:none}
 @media (prefers-reduced-motion:reduce){.js .ch,.cap-row,.cap-k,.js .rv .li,.js .clip-in,.js .svc li{transition:none!important}.cur-star.play i{animation:none;transform:scale(2.6,1.9)}}
@@ -455,7 +445,7 @@ button.name:hover sup{color:var(--fg)}
         <button class="tick" type="button" aria-label="JAMAÏQUAINE IS DEAD"><i></i></button>
         <button class="tick" type="button" aria-label="BACK"><i></i></button>
       </div>
-      <div class="hright"><span class="hint" id="hhint">Molette ou trackpad pour changer de projet</span><button class="motion" id="motion" type="button" aria-pressed="true"><i aria-hidden="true"></i><span>Mouvement activé</span></button></div>
+      <div class="hright"><span class="hint" id="hhint">Glissez sur le trackpad ou utilisez les flèches</span><button class="hnav" id="hprev" type="button">Précédent</button><button class="hnav" id="hnext" type="button">Suivant</button><button class="motion" id="motion" type="button" aria-pressed="true"><i aria-hidden="true"></i><span>Mouvement activé</span></button></div>
     </div>
     <div class="pslot wrap" id="pslot-hero"></div>
   </section>
@@ -555,56 +545,48 @@ button.name:hover sup{color:var(--fg)}
 
   <div class="opener wrap" id="clips-open">
     <div class="op-row"><p class="op-t split chars" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
-    <p class="op-note">Montage, VFX et IA pour les artistes. Défilez pour faire avancer la bobine, survolez le film au centre pour le parcourir.</p>
+    <p class="op-note">Montage, VFX et IA pour les artistes. Cliquez sur un film pour le lancer ici même, avec le son.</p>
   </div>
 
-  <section class="works" id="projets" aria-labelledby="works-t">
-    <div class="works-pin">
-      <div class="works-head wrap">
-        <h2 class="label" id="works-t">Clips <span class="mono">7</span></h2>
-        <p class="works-hint" id="works-hint">Défilez ou glissez ; survolez le film au centre pour le parcourir</p>
-      </div>
-      <div class="track wrap" id="track">
-        <article class="work" data-id="ndrangetha" style="--ar:1.5722">
-          <button class="work-media" type="button" aria-label="Lire NDRANGETHA, Thabiti"><img src="media/poster/ndrangetha.jpg" alt="" width="1132" height="720"><video muted loop playsinline preload="none" data-src="media/prev/ndrangetha.mp4"></video></button>
-          <div class="work-cap"><h3>NDRANGETHA</h3><p>Thabiti · Montage · VFX · IA · SFX</p></div>
-        </article>
-        <article class="work" data-id="killcam" style="--ar:1.3333">
-          <button class="work-media" type="button" aria-label="Lire KILLCAM, King Kifla"><img src="media/poster/killcam.jpg" alt="" width="960" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/killcam.mp4"></video></button>
-          <div class="work-cap"><h3>KILLCAM</h3><p>King Kifla · Montage · VFX</p></div>
-        </article>
-        <article class="work" data-id="crame" style="--ar:1.4778">
-          <button class="work-media" type="button" aria-label="Lire CRAMÉ, RR"><img src="media/poster/crame.jpg" alt="" width="1064" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/crame.mp4"></video></button>
-          <div class="work-cap"><h3>CRAMÉ</h3><p>RR · Montage · VFX · IA · SFX</p></div>
-        </article>
-        <article class="work" data-id="back" style="--ar:1.3333">
-          <button class="work-media" type="button" aria-label="Lire BACK, LP2.0"><img src="media/poster/back.jpg" alt="" width="960" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/back.mp4"></video></button>
-          <div class="work-cap"><h3>BACK</h3><p>LP2.0 · Montage · VFX</p></div>
-        </article>
-        <article class="work v" data-id="demandeashh" style="--ar:.5625">
-          <button class="work-media" type="button" aria-label="Lire DEMANDEASHH, Sheu"><img src="media/poster/demandeashh.jpg" alt="" width="720" height="1280" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/demandeashh.mp4"></video></button>
-          <div class="work-cap"><h3>DEMANDEASHH</h3><p>Sheu · Teaser IA</p></div>
-        </article>
-        <article class="work" data-id="jamaiquaine" style="--ar:1.3333">
-          <button class="work-media" type="button" aria-label="Lire JAMAÏQUAINE IS DEAD, LP Killer"><img src="media/poster/jamaiquaine.jpg" alt="" width="960" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/jamaiquaine.mp4"></video></button>
-          <div class="work-cap"><h3>JAMAÏQUAINE IS DEAD</h3><p>LP Killer · VFX</p></div>
-        </article>
-        <article class="work" data-id="bellodallas" style="--ar:1.4778">
-          <button class="work-media" type="button" aria-label="Lire REEL VFX, Bello &amp; Dallas"><img src="media/poster/bellodallas.jpg" alt="" width="1064" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/bellodallas.mp4"></video></button>
-          <div class="work-cap"><h3>REEL VFX</h3><p>Bello &amp; Dallas · VFX</p></div>
-        </article>
-      </div>
-      <div class="works-cap wrap" id="works-cap" aria-live="polite">
-        <div class="cap-main fade"><span class="cap-idx mono" id="wc-idx">01 / 07</span><h3 class="cap-title" id="wc-title">NDRANGETHA</h3></div>
-        <dl class="cap-meta fade">
-          <div><dt>Artiste</dt><dd id="wc-artist">Thabiti</dd></div>
-          <div><dt>Rôle</dt><dd id="wc-roles">Montage · VFX · IA · SFX</dd></div>
-          <div><dt>Durée</dt><dd class="mono" id="wc-dur">00:00:35:00</dd></div>
-        </dl>
-        <div class="cap-actions"><button class="btn" id="wc-play" type="button">Lire le film</button><a class="link" id="wc-ig" href="https://www.instagram.com/reel/Dcyn_7qtQiD/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
-      </div>
-      <div class="pslot wrap" id="pslot-works"></div>
-    </div>
+  <section class="works wrap" id="projets" aria-labelledby="works-t">
+    <h2 class="sr-only" id="works-t">Clips</h2>
+    <ul class="cgrid" id="cgrid">
+      <li class="work" data-id="ndrangetha">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire NDRANGETHA, Thabiti"><img src="media/poster/ndrangetha.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/ndrangetha.mp4"></video></button>
+        <div class="work-cap"><h3>NDRANGETHA</h3><p>Thabiti · Montage · VFX · IA · SFX</p><span class="mono">00:00:35:00</span></div>
+        <div class="pslot"></div>
+      </li>
+      <li class="work" data-id="killcam">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire KILLCAM, King Kifla"><img src="media/poster/killcam.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/killcam.mp4"></video></button>
+        <div class="work-cap"><h3>KILLCAM</h3><p>King Kifla · Montage · VFX</p><span class="mono">00:00:29:20</span></div>
+        <div class="pslot"></div>
+      </li>
+      <li class="work" data-id="crame">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire CRAMÉ, RR"><img src="media/poster/crame.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/crame.mp4"></video></button>
+        <div class="work-cap"><h3>CRAMÉ</h3><p>RR · Montage · VFX · IA · SFX</p><span class="mono">00:00:38:02</span></div>
+        <div class="pslot"></div>
+      </li>
+      <li class="work" data-id="back">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire BACK, LP2.0"><img src="media/poster/back.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/back.mp4"></video></button>
+        <div class="work-cap"><h3>BACK</h3><p>LP2.0 · Montage · VFX</p><span class="mono">00:00:22:23</span></div>
+        <div class="pslot"></div>
+      </li>
+      <li class="work" data-id="demandeashh">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire DEMANDEASHH, Sheu"><img src="media/poster/demandeashh.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/demandeashh.mp4"></video></button>
+        <div class="work-cap"><h3>DEMANDEASHH</h3><p>Sheu · Teaser IA</p><span class="mono">00:00:33:07</span></div>
+        <div class="pslot"></div>
+      </li>
+      <li class="work" data-id="jamaiquaine">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire JAMAÏQUAINE IS DEAD, LP Killer"><img src="media/poster/jamaiquaine.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/jamaiquaine.mp4"></video></button>
+        <div class="work-cap"><h3>JAMAÏQUAINE IS DEAD</h3><p>LP Killer · VFX</p><span class="mono">00:00:33:17</span></div>
+        <div class="pslot"></div>
+      </li>
+      <li class="work" data-id="bellodallas">
+        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire REEL VFX, Bello &amp; Dallas"><img src="media/poster/bellodallas.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/bellodallas.mp4"></video></button>
+        <div class="work-cap"><h3>REEL VFX</h3><p>Bello &amp; Dallas · VFX</p><span class="mono">00:00:13:11</span></div>
+        <div class="pslot"></div>
+      </li>
+    </ul>
   </section>
 
 
@@ -773,23 +755,23 @@ button.name:hover sup{color:var(--fg)}
     curL.style.transform = `translate3d(${cur.lx.toFixed(1)}px,${cur.ly.toFixed(1)}px,0)`;
   }
 
-  /* ---------- Slider d'accueil ---------- */
+  /* ---------- Accueil : fenêtre étoile ---------- */
   const hero = $('#top'), strip = $('#strip'), canvas = $('#gl');
   const slides = $$('#strip .slide'), SV = slides.map(s => s.querySelector('video')), SID = slides.map(s => s.dataset.id);
   const caps = $$('#caps .cap'), ticks = $$('#ticks .tick');
   const N = slides.length;
   const posters = SV.map(v => { const im = new Image(); im.src = v.poster; return im; });
-  let pos = 0, target = 0, prevPos = 0, vel = 0, cur0 = 0, heroVisible = true;
+  let cur0 = 0, heroVisible = true, anim = null, starS = 0, openK = 0, glReady = false;
   const par = { x:0, y:0, tx:0, ty:0 };
-  // titres découpés en mots
+  // titres découpés lettre par lettre
   $$('.split').forEach(h => {
     h.setAttribute('aria-label', h.textContent.trim());
     const words = h.textContent.trim().split(/\s+/); h.textContent = ''; let k = 0;
     words.forEach((w,i) => {
       const m = document.createElement('span'); m.className = 'wm'; m.setAttribute('aria-hidden','true');
-      const s = document.createElement('span'); s.className = 'w';
-      [...w].forEach(c => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.transitionDelay = (k++*24) + 'ms'; s.appendChild(ch); });
-      m.appendChild(s); h.appendChild(m); if (i < words.length-1) { h.appendChild(document.createTextNode(' ')); k += 2; }
+      const sp = document.createElement('span'); sp.className = 'w';
+      [...w].forEach(c => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.transitionDelay = (k++*24) + 'ms'; sp.appendChild(ch); });
+      m.appendChild(sp); h.appendChild(m); if (i < words.length-1) { h.appendChild(document.createTextNode(' ')); k += 2; }
     });
   });
   function setCurrent(i){
@@ -799,137 +781,145 @@ button.name:hover sup{color:var(--fg)}
     caps.forEach((c,k) => { c.classList.toggle('on', k === i); c.setAttribute('aria-hidden', String(k !== i)); });
     $('#hcount').textContent = `${pad(i+1)} / ${pad(N)}`;
     ticks.forEach((t,k) => { t.classList.toggle('done', k < i); t.setAttribute('aria-current', String(k === i)); if (k !== i) t.querySelector('i').style.transform = k < i ? 'scaleX(1)' : 'scaleX(0)'; });
+    if (!glReady) strip.style.transform = `translate3d(${-i*100}%,0,0)`;
   }
   if (!introOn) setCurrent(0); else setTimeout(() => setCurrent(0), 1500);
-  ticks.forEach((t,k) => t.addEventListener('click', () => { if (!player.ctx) target = k; }));
-  // molette et trackpad : un geste = un projet, avec un aperçu qui suit le doigt
-  let g = { acc:0, base:0, committed:false, last:0 };
-  const GAP = 220;
+  // changer de projet : l'étoile se referme en un point puis se rouvre sur le suivant
+  function go(to){
+    to = ((to % N) + N) % N;
+    if (anim || to === cur0 || player.ctx === 'hero' || introOn) return;
+    if (!motion) { setCurrent(to); return; }
+    anim = { t0: performance.now(), from: cur0, to, switched: false };
+  }
+  ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); go(k); }));
+  $('#hprev').addEventListener('click', e => { e.stopPropagation(); go(cur0 - 1); });
+  $('#hnext').addEventListener('click', e => { e.stopPropagation(); go(cur0 + 1); });
+  // trackpad : seul un balayage horizontal change de projet, le défilement vertical reste libre
+  let gx = { acc:0, last:0, done:false };
   hero.addEventListener('wheel', e => {
-    if (introOn) { e.preventDefault(); return; }
-    if (player.ctx === 'hero') return;
-    const now = performance.now();
-    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    const px = e.deltaMode === 1 ? d*32 : d;
-    if (window.scrollY > 2) { g = { acc:0, base:Math.round(target), committed:true, last:now }; return; }
-    if (now - g.last > GAP) g = { acc:0, base:Math.round(target), committed:false, last:now };
-    g.last = now;
-    if (!g.committed && ((px > 0 && g.base >= N-1) || (px < 0 && g.base <= 0))) return; // laisse défiler la page
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) || player.ctx === 'hero') return;
     e.preventDefault();
-    if (g.committed) return;
-    g.acc += px;
-    if (Math.abs(g.acc) > 60) { target = clamp(g.base + Math.sign(g.acc), 0, N-1); g.committed = true; }
-    else target = g.base + clamp(g.acc/400, -.2, .2);
+    const now = performance.now();
+    if (now - gx.last > 260) gx = { acc:0, last:now, done:false };
+    gx.last = now;
+    if (gx.done) return;
+    gx.acc += e.deltaX;
+    if (Math.abs(gx.acc) > 50) { gx.done = true; go(cur0 + Math.sign(gx.acc)); }
   }, {passive:false});
-  // glisser (doigt ou souris)
+  // glisser au doigt ou à la souris
   let hd = null, heroDragged = false;
-  hero.addEventListener('pointerdown', e => { if (player.ctx === 'hero' || e.button > 0 || e.target.closest('.cap-a,.hbar,.pc')) return; hd = { x:e.clientX, y:e.clientY, base:Math.round(target), t:performance.now(), on:false, id:e.pointerId }; heroDragged = false; });
-  window.addEventListener('pointermove', e => {
-    if (!hd || e.pointerId !== hd.id) return;
-    const dx = e.clientX - hd.x;
-    if (!hd.on && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - hd.y)) hd.on = true;
-    if (hd.on) { heroDragged = true; target = clamp(hd.base - dx/hero.clientWidth, -.15, N-1+.15); }
-  });
-  const heroUp = e => {
-    if (!hd || (e && e.pointerId !== hd.id)) return;
-    if (hd.on) { const dx = (e ? e.clientX : hd.x) - hd.x; const fast = Math.abs(dx)/(performance.now()-hd.t) > .4; target = clamp(hd.base + ((Math.abs(dx) > hero.clientWidth*.12 || fast) && dx !== 0 ? -Math.sign(dx) : 0), 0, N-1); }
-    hd = null;
-  };
-  window.addEventListener('pointerup', heroUp); window.addEventListener('pointercancel', heroUp);
-  hero.addEventListener('click', e => { if (heroDragged) { heroDragged = false; return; } if (player.ctx || e.target.closest('a,.hbar,.pc,.cap-a .link')) return; openHero(); });
+  hero.addEventListener('pointerdown', e => { if (player.ctx === 'hero' || e.button > 0 || e.target.closest('.cap-a,.hbar,.pc')) return; hd = { x:e.clientX, y:e.clientY, id:e.pointerId }; heroDragged = false; });
+  window.addEventListener('pointermove', e => { if (!hd || e.pointerId !== hd.id) return; const dx = e.clientX - hd.x; if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(e.clientY - hd.y)) heroDragged = true; });
+  const heroUp = e => { if (!hd || e.pointerId !== hd.id) return; const dx = e.clientX - hd.x; if (heroDragged && Math.abs(dx) > 50) go(cur0 - Math.sign(dx)); hd = null; };
+  window.addEventListener('pointerup', heroUp); window.addEventListener('pointercancel', () => { hd = null; });
+  hero.addEventListener('click', e => { if (heroDragged) { heroDragged = false; return; } if (player.ctx || e.target.closest('a,.hbar,.pc,.cap-a')) return; openHero(); });
   $$('#caps [data-play]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openHero(); }));
   document.addEventListener('keydown', e => {
     if (player.ctx || introOn || e.altKey || e.metaKey || e.ctrlKey) return;
-    const r = hero.getBoundingClientRect(); if (r.bottom < innerHeight*.5) return;
+    if (hero.getBoundingClientRect().bottom < innerHeight*.5) return;
     if (e.target.closest && e.target.closest('input,textarea')) return;
-    if (e.key === 'ArrowRight') { target = clamp(Math.round(target)+1, 0, N-1); }
-    if (e.key === 'ArrowLeft') { target = clamp(Math.round(target)-1, 0, N-1); }
+    if (e.key === 'ArrowRight') go(cur0 + 1);
+    if (e.key === 'ArrowLeft') go(cur0 - 1);
   });
   hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); par.tx = ((e.clientX - r.left)/r.width - .5)*2; par.ty = ((e.clientY - r.top)/r.height - .5)*2; });
   hero.addEventListener('pointerleave', () => { par.tx = 0; par.ty = 0; });
   hero.setAttribute('data-cursor', 'Lire');
   if (!fine.matches) $('#hhint').textContent = 'Glissez pour changer de projet';
+  function openHero(){
+    if (anim || player.ctx) return;
+    hero.classList.add('playing');
+    openPlayer('hero', SV[cur0], SID[cur0], $('#pslot-hero'), () => { hero.classList.remove('playing'); });
+  }
 
-  // WebGL : bande de deux films avec distorsion selon la vitesse et parallaxe
-  let gl = null, glReady = false, U = {}, texA, texB;
+  // WebGL : le film du projet, sombre partout sauf dans l'étoile
+  let gl = null, U = {}, texV, texS, starOk = false;
   const VS = 'attribute vec2 p;varying vec2 vUv;void main(){vUv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
   const FS = `precision mediump float;
-varying vec2 vUv;uniform sampler2D tA,tB;uniform vec2 uRes,rA,rB,uPar;uniform float uFrac,uVel,uSeam;
-vec2 cover(vec2 uv,vec2 tr,float st){float rs=uRes.x/uRes.y;float rt=tr.x/tr.y;vec2 s=rs>rt?vec2(1.,rt/rs):vec2(rs/rt,1.);uv.x=(uv.x-.5)*(1.-st)+.5;return (uv-.5)*s/1.06+.5+uPar;}
-vec3 samp(sampler2D t,vec2 tr,vec2 uv,float ca,float st){vec2 c=cover(uv,tr,st);float r=texture2D(t,clamp(c+vec2(ca,0.),.001,.999)).r;vec2 gb=texture2D(t,clamp(c,.001,.999)).gb;float b=texture2D(t,clamp(c-vec2(ca,0.),.001,.999)).b;return vec3(r,gb.x,b);}
-void main(){vec2 uv=vUv;float s=uv.x+uFrac;float ca=0.;float st=0.;
-vec3 a=samp(tA,rA,vec2(s,uv.y),ca,st);vec3 b=samp(tB,rB,vec2(s-1.,uv.y),ca,st);vec3 col=mix(a,b,step(1.,s));
-col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(col,1.);}`;
+varying vec2 vUv;uniform sampler2D tV,tS;uniform vec2 uRes,rV,uC,uStar,uPar;uniform float uAng,uS,uOpen,uDim;
+vec2 cover(vec2 uv){float rs=uRes.x/uRes.y;float rt=rV.x/rV.y;vec2 s=rs>rt?vec2(1.,rt/rs):vec2(rs/rt,1.);return (uv-.5)*s/1.04+.5+uPar;}
+void main(){vec3 col=texture2D(tV,clamp(cover(vUv),.001,.999)).rgb;
+vec2 p=gl_FragCoord.xy-uC;float c=cos(uAng);float s=sin(uAng);p=vec2(c*p.x+s*p.y,-s*p.x+c*p.y);
+vec2 q=p/(uStar*max(uS,.0001))+.5;float m=0.;
+if(q.x>0.&&q.x<1.&&q.y>0.&&q.y<1.)m=texture2D(tS,q).a;m*=step(.001,uS);
+float g=dot(col,vec3(.299,.587,.114));vec3 bg=mix(vec3(g),col,.3)*uDim;
+gl_FragColor=vec4(mix(mix(bg,col,m),col,uOpen),1.);}`;
   function initGL(){
     try {
       gl = canvas.getContext('webgl',{antialias:false,alpha:false,premultipliedAlpha:false});
       if (!gl) return;
-      const sh = (t,src) => { const s = gl.createShader(t); gl.shaderSource(s,src); gl.compileShader(s); if (!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+      const sh = (t,src) => { const x = gl.createShader(t); gl.shaderSource(x,src); gl.compileShader(x); if (!gl.getShaderParameter(x,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; };
       const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER,VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER,FS)); gl.linkProgram(pr);
       if (!gl.getProgramParameter(pr,gl.LINK_STATUS)) throw new Error('link');
       gl.useProgram(pr);
       const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
       const loc = gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
-      const mk = unit => { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D,t); [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE)); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,1,1,0,gl.RGB,gl.UNSIGNED_BYTE,new Uint8Array([0,0,0])); return t; };
-      texA = mk(0); texB = mk(1);
-      ['tA','tB','uRes','rA','rB','uPar','uFrac','uVel','uSeam'].forEach(n => U[n] = gl.getUniformLocation(pr,n));
-      gl.uniform1i(U.tA,0); gl.uniform1i(U.tB,1);
-      canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); gl = null; glReady = false; hero.classList.remove('gl-on'); });
+      const mk = unit => { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D,t); [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE)); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([0,0,0,0])); return t; };
+      texV = mk(0); texS = mk(1);
+      ['tV','tS','uRes','rV','uC','uStar','uPar','uAng','uS','uOpen','uDim'].forEach(n => U[n] = gl.getUniformLocation(pr,n));
+      gl.uniform1i(U.tV,0); gl.uniform1i(U.tS,1); gl.uniform1f(U.uDim,.13);
+      // texture de l'étoile
+      const img = new Image();
+      img.onload = () => { try { const c = document.createElement('canvas'); c.width = 2048; c.height = 742; const x = c.getContext('2d'); x.drawImage(img, 0, 0, 2048, 742); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texS); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c); starOk = true; } catch(e){ gl = null; } };
+      img.src = 'assets/nova-star.svg';
+      canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); gl = null; glReady = false; hero.classList.remove('gl-on'); setCurrent(cur0); });
       resizeGL();
     } catch (err) { gl = null; }
   }
   function resizeGL(){
     if (!gl) return;
     const sc = Math.min(window.devicePixelRatio || 1, 1.5);
-    const w = Math.min(Math.round(canvas.clientWidth*sc), 2200), h = Math.round(w*canvas.clientHeight/Math.max(1,canvas.clientWidth));
+    const w = Math.min(Math.round(canvas.clientWidth*sc), 2400), h = Math.round(w*canvas.clientHeight/Math.max(1,canvas.clientWidth));
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0,0,w,h); }
-    gl.uniform2f(U.uRes,w,h); gl.uniform1f(U.uSeam, 6/w);
+    gl.uniform2f(U.uRes,w,h);
   }
-  function upload(unit, tex, i, resU){
+  function drawGL(i){
+    if (!gl || !starOk) return;
     const v = SV[i]; let src = null, w = 0, h = 0;
     if (v.readyState >= 2 && v.videoWidth) { src = v; w = v.videoWidth; h = v.videoHeight; }
     else if (posters[i].complete && posters[i].naturalWidth) { src = posters[i]; w = src.naturalWidth; h = src.naturalHeight; }
-    if (!src) return false;
-    gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D, tex);
-    try { gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,src); } catch(e){ return false; }
-    gl.uniform2f(resU, w, h); return true;
-  }
-  function drawGL(){
-    if (!gl) return;
-    const p = clamp(pos, 0, N-1), iA = Math.floor(p), iB = Math.min(iA+1, N-1), frac = p - iA;
-    const okA = upload(0, texA, iA, U.rA);
-    if (frac > .0005) upload(1, texB, iB, U.rB);
-    if (!okA) return;
-    gl.uniform1f(U.uFrac, frac);
-    gl.uniform2f(U.uPar, motion ? par.x*.012 : 0, motion ? -par.y*.012 : 0);
+    if (!src) return;
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texV);
+    try { gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,src); } catch(e){ return; }
+    gl.uniform2f(U.rV, w, h);
+    const W = canvas.width, H = canvas.height;
+    const sw = W < H ? W*2.5 : W*1.25;
+    gl.uniform2f(U.uStar, sw, sw/2.763);
+    gl.uniform2f(U.uC, W*(.5 + par.x*.025), H*(.56 - par.y*.03));
+    const spin = anim ? (1 - starS) * .7 : 0;
+    gl.uniform1f(U.uAng, (-4 + par.x*9) * Math.PI/180 + spin);
+    gl.uniform1f(U.uS, starS * (1 + openK*5));
+    gl.uniform1f(U.uOpen, openK);
+    gl.uniform2f(U.uPar, motion ? par.x*.008 : 0, motion ? -par.y*.008 : 0);
     gl.drawArrays(gl.TRIANGLES,0,3);
-    if (!glReady) { glReady = true; hero.classList.add('gl-on'); }
+    if (!glReady) { glReady = true; hero.classList.add('gl-on'); strip.style.transform = ''; }
   }
-  function manageHeroVideos(){
-    const p = clamp(pos,0,N-1), iA = Math.floor(p), iB = Math.min(iA+1, N-1);
-    SV.forEach((v,i) => {
-      const want = heroVisible && motion && (i === iA || i === iB || (player.ctx === 'hero' && i === cur0));
-      if (player.ctx === 'hero' && i === cur0) return;
-      if (want && v.paused) playV(v); else if (!want && !v.paused) v.pause();
-      if (!want && Math.abs(i - p) <= 1.5 && v.preload !== 'auto') { v.preload = 'auto'; }
-    });
-  }
-  function heroFrame(){
-    prevPos = pos;
-    pos = lerp(pos, target, motion ? .09 : 1);
-    if (Math.abs(pos - target) < .0004) pos = target;
-    vel = lerp(vel, pos - prevPos, .5);
+  const easeIn = t => t*t*t, easeOut = t => 1 - Math.pow(1-t, 3);
+  function heroFrame(now){
     par.x = lerp(par.x, par.tx, .06); par.y = lerp(par.y, par.ty, .06);
-    // relâchement d'un geste non validé
-    if (!g.committed && !hd && performance.now() - g.last > GAP && Math.abs(target - g.base) > 0 && Math.abs(target - g.base) < .5) target = g.base;
-    if (!glReady) strip.style.transform = `translate3d(${(-pos*100).toFixed(3)}%,0,0)`;
-    else strip.style.transform = `translate3d(${(-Math.round(pos)*100)}%,0,0)`;
-    const ci = clamp(Math.round(pos), 0, N-1);
-    if (ci !== cur0) setCurrent(ci);
-    const v = SV[cur0]; if (v && v.duration) ticks[cur0].querySelector('i').style.transform = `scaleX(${(v.currentTime/v.duration).toFixed(3)})`;
-    manageHeroVideos();
-    if (player.ctx !== 'hero') drawGL();
+    let shown = cur0;
+    if (anim) {
+      const e = (now - anim.t0) / 1100;
+      if (e < .4) { starS = 1 - easeIn(e/.4); shown = anim.from; }
+      else { if (!anim.switched) { anim.switched = true; setCurrent(anim.to); try { SV[anim.to].currentTime = 0; } catch(_){} } shown = anim.to; starS = easeOut(clamp((e-.4)/.6, 0, 1)); }
+      if (e >= 1) { anim = null; starS = 1; }
+    } else starS = introOn ? 0 : lerp(starS, 1, motion ? .05 : 1);
+    openK = lerp(openK, player.ctx === 'hero' ? 1 : 0, motion ? .08 : 1);
+    if (Math.abs(openK - (player.ctx === 'hero' ? 1 : 0)) < .002) openK = player.ctx === 'hero' ? 1 : 0;
+    // lecture : seul le projet affiché joue ; le suivant se précharge
+    SV.forEach((v,i) => {
+      if (player.ctx === 'hero' && i === cur0) return;
+      const want = heroVisible && motion && i === shown;
+      if (want && v.paused) playV(v); else if (!want && !v.paused) v.pause();
+      if (i === (shown+1) % N && v.preload !== 'auto') v.preload = 'auto';
+    });
+    // à la fin de la boucle, passage automatique au projet suivant
+    const v = SV[cur0];
+    if (v && v.duration) {
+      ticks[cur0].querySelector('i').style.transform = `scaleX(${(v.currentTime/v.duration).toFixed(3)})`;
+      if (!anim && !player.ctx && motion && !introOn && v.currentTime >= v.duration - .15) go(cur0 + 1);
+    }
+    drawGL(shown);
   }
 
   /* ---------- Lecteur intégré ---------- */
@@ -983,13 +973,6 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
     if (e.key === 'Escape') { e.preventDefault(); closePlayer(); }
     else if (e.key === ' ' && pc.contains(e.target) && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') { e.preventDefault(); togglePlay(); }
   });
-  function openHero(){
-    const id = SID[cur0];
-    target = cur0; pos = cur0;
-    hero.classList.add('playing');
-    openPlayer('hero', SV[cur0], id, $('#pslot-hero'), () => { hero.classList.remove('playing'); });
-  }
-
   /* ---------- Campagne ---------- */
   const oak = $('#oak'), oakFilm = $('#camp-film'), oakTc = $('#oak-tc'), oakSound = $('#oak-sound');
   let oakVisible = false, oakTcLast = '';
@@ -1064,151 +1047,31 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
   if (!fine.matches) $('#ba-hint').textContent = "Glissez sur l'image pour parcourir le film";
   new IntersectionObserver(es => es.forEach(en => { baVisible = en.isIntersecting; if (baVisible && motion && !baHover) playV(ba); else if (!baVisible) ba.pause(); }), {threshold:.2}).observe(baBox);
 
-  /* ---------- Clips : la bobine ---------- */
-  const works = $('#projets'), track = $('#track');
-  const items = $$('#track .work');
-  let horiz = false, centers = [], pitch = 1, stepPx = 1, pShown = 0, pPrev = 0, wVel = 0, active = -1, worksVisible = false;
-  const desk = matchMedia('(min-width:761px)');
-  items.forEach(el => el.querySelector('.work-media').setAttribute('data-cursor', 'Lire'));
-  function layoutWorks(){
-    if (player.ctx === 'works') closePlayer(true);
-    horiz = desk.matches;
-    works.classList.toggle('h', horiz);
-    if (horiz) {
-      const vh = window.innerHeight - parseFloat(getComputedStyle(root).getPropertyValue('--band') || 56);
-      works.style.setProperty('--ih', clamp(vh*.56, 240, 640) + 'px');
-      stepPx = Math.round(window.innerHeight*.62);
-      works.style.setProperty('--h-total', (window.innerHeight + stepPx*(items.length-1)) + 'px');
-      track.style.transform = 'none';
-      centers = items.map(el => el.offsetLeft + el.offsetWidth/2);
-      pitch = (centers[centers.length-1] - centers[0]) / (items.length-1);
-    } else {
-      works.style.removeProperty('--h-total'); track.style.transform = '';
-      items.forEach(el => { const m = el.querySelector('.work-media'); m.style.transform = ''; el.style.opacity = ''; });
-    }
-    applyWorks(true);
-  }
-  const bandH = () => parseFloat(getComputedStyle(root).getPropertyValue('--band')) || 56;
-  const targetP = () => clamp(-(works.getBoundingClientRect().top - bandH()) / stepPx, 0, items.length-1);
-  const centerAt = p => { const i = Math.floor(p), j = Math.min(i+1, centers.length-1); return lerp(centers[i], centers[j], p - i); };
-  const fx = new WeakMap();
-  function setFx(el, o, s){ const key = `${o.toFixed(2)}|${s.toFixed(3)}`; if (fx.get(el) === key) return; fx.set(el, key); el.style.opacity = o > .995 ? '' : o.toFixed(2); el.querySelector('.work-media').style.transform = s > .999 ? '' : `scale(${s.toFixed(3)})`; }
-  function applyWorks(snap){
-    if (horiz) {
-      const tp = targetP();
-      pPrev = pShown;
-      pShown = (snap || !motion) ? tp : lerp(pShown, tp, .14);
-      if (Math.abs(pShown - tp) < .0005) pShown = tp;
-      wVel = lerp(wVel, pShown - pPrev, .3);
-      const x = window.innerWidth/2 - centerAt(pShown);
-      track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`;
-      if (player.ctx !== 'works') items.forEach((el,i) => { const d = Math.min(Math.abs(centers[i] - centerAt(pShown)) / pitch, 1); setFx(el, 1 - d*.62, 1 - d*.06); });
-      setActive(Math.round(pShown));
-    } else {
-      const mid = window.innerHeight/2; let best = 0, bd = 1e9;
-      items.forEach((el,i) => { const r = el.querySelector('.work-media').getBoundingClientRect(); const d = Math.abs((r.top + r.height/2) - mid); if (d < bd) { bd = d; best = i; } });
-      setActive(best);
-    }
-  }
-  const wcap = $('#works-cap');
-  function setActive(i){
-    if (i === active) return;
-    if (player.ctx === 'works') closePlayer(true);
-    const prev = items[active];
-    active = i;
-    if (prev) { const v = prev.querySelector('video'); if (v) v.pause(); prev.classList.remove('playing'); }
-    const el = items[i], d = P[el.dataset.id];
-    wcap.classList.add('swap');
-    setTimeout(() => {
-      $('#wc-idx').textContent = `${pad(i+1)} / ${pad(items.length)}`;
-      $('#wc-title').textContent = d.title; $('#wc-artist').textContent = d.artist; $('#wc-roles').textContent = d.roles; $('#wc-dur').textContent = tc(d.dur, d.fps);
-      const ig = $('#wc-ig'); ig.hidden = !d.ig; if (d.ig) ig.href = d.ig;
-      wcap.classList.remove('swap');
-    }, motion ? 140 : 0);
-    playPreview(el);
-  }
+  /* ---------- Clips : grille simple, lecture dans la carte ---------- */
+  const works = $('#projets');
+  const items = $$('#cgrid .work');
+  const cardVis = new WeakMap();
   function playPreview(el){
-    const v = el.querySelector('video'); if (!v || !motion || !worksVisible) return;
+    const v = el.querySelector('video'); if (!v || !motion || el.classList.contains('open')) return;
     if (!v.getAttribute('src')) v.src = v.dataset.src;
     v.onplaying = () => el.classList.add('playing');
     playV(v);
   }
+  const cardIO = new IntersectionObserver(es => es.forEach(en => {
+    const el = en.target; cardVis.set(el, en.isIntersecting);
+    if (en.isIntersecting) playPreview(el);
+    else { if (player.ctx === 'works' && el.classList.contains('open')) closePlayer(true); const v = el.querySelector('video'); if (v) v.pause(); }
+  }), {threshold:.5});
+  items.forEach(el => cardIO.observe(el));
   function openWork(i){
     const el = items[i], v = el.querySelector('video');
     if (!v.getAttribute('src')) v.src = v.dataset.src;
-    let slot = $('#pslot-works');
-    if (horiz) {
-      works.classList.add('open'); el.classList.add('open');
-      const m = el.querySelector('.work-media'), r = el.getBoundingClientRect();
-      const avail = window.innerHeight - bandH() - 230, s = clamp(Math.min(avail / r.height, window.innerWidth*.9 / r.width), 1, 1.6);
-      m.style.transform = `scale(${s.toFixed(3)})`;
-      el.style.opacity = '';
-    } else {
-      el.classList.add('open');
-      slot = el.querySelector('.pslot') || el.appendChild(Object.assign(document.createElement('div'), {className:'pslot'}));
-    }
-    openPlayer('works', v, el.dataset.id, slot, () => {
-      works.classList.remove('open'); el.classList.remove('open');
-      fx.delete(el); el.querySelector('.work-media').style.transform = '';
-      if (el === items[active]) playPreview(el);
-    });
+    el.classList.add('open');
+    openPlayer('works', v, el.dataset.id, el.querySelector('.pslot'), () => { el.classList.remove('open'); if (cardVis.get(el)) playPreview(el); });
   }
-  $('#wc-play').addEventListener('click', () => openWork(active));
-  function scrollToItem(i, then){
-    if (!horiz) { items[i].scrollIntoView({behavior: motion ? 'smooth' : 'auto', block:'center'}); if (then) setTimeout(then, motion ? 900 : 50); return; }
-    const top = works.getBoundingClientRect().top + window.scrollY - bandH() + i*stepPx;
-    window.scrollTo({top, behavior: motion ? 'smooth' : 'auto'});
-    if (then) { let done = false; const fin = () => { if (done) return; done = true; window.removeEventListener('scrollend', fin); setTimeout(then, 120); }; window.addEventListener('scrollend', fin); setTimeout(fin, motion ? 1400 : 80); }
-  }
-  // glisser la bobine
-  let drag = null;
-  track.addEventListener('pointerdown', e => { if (!horiz || e.button !== 0 || player.ctx === 'works') return; drag = { x:e.clientX, y:e.clientY, p:targetP(), moved:false, id:e.pointerId }; });
-  window.addEventListener('pointermove', e => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const dx = e.clientX - drag.x;
-    if (!drag.moved && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(e.clientY - drag.y)) drag.moved = true;
-    if (drag.moved) { const p = clamp(drag.p - dx/pitch, 0, items.length-1); window.scrollTo({top: works.getBoundingClientRect().top + window.scrollY - bandH() + p*stepPx, behavior:'auto'}); }
-  });
-  const endDrag = () => { if (drag && drag.moved) setTimeout(softSnap, 60); setTimeout(() => drag = null, 0); };
-  window.addEventListener('pointerup', endDrag); window.addEventListener('pointercancel', endDrag);
-  items.forEach((el,i) => {
-    const m = el.querySelector('.work-media');
-    m.addEventListener('click', e => { if (drag && drag.moved) { e.preventDefault(); return; } if (player.ctx === 'works' && el.classList.contains('open')) { togglePlay(); return; } if (!horiz || i === active) openWork(i); else scrollToItem(i); });
-    // balayage au survol du film actif
-    m.addEventListener('pointermove', e => {
-      if (e.pointerType !== 'mouse' || i !== active || player.ctx === 'works' || (drag && drag.moved)) return;
-      const v = el.querySelector('video'); if (!v.getAttribute('src')) v.src = v.dataset.src;
-      if (!v.duration) return;
-      if (!v.paused) v.pause();
-      el.classList.add('playing');
-      const t = fromX(e, m) * (v.duration - .05);
-      if (!v.seeking) v.currentTime = t; else v._want = t;
-    });
-    m.addEventListener('pointerleave', () => { if (i === active && player.ctx !== 'works' && motion && worksVisible) playV(el.querySelector('video')); });
-    el.querySelector('video').addEventListener('seeked', ev => { const v = ev.target; if (v._want != null) { const t = v._want; v._want = null; v.currentTime = t; } });
-  });
-  let snapT = 0;
-  function softSnap(){
-    if (!horiz || drag || player.ctx === 'works') return;
-    const top = works.getBoundingClientRect().top - bandH();
-    if (top > 0 || -top > stepPx*(items.length-1)) return;
-    const p = -top/stepPx, r = Math.round(p);
-    if (Math.abs(p - r) > .02) scrollToItem(r);
-  }
-  window.addEventListener('scroll', () => { clearTimeout(snapT); snapT = setTimeout(softSnap, 180); }, {passive:true});
-  works.addEventListener('wheel', e => {
-    if (!horiz || player.ctx === 'works' || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-    const p = -(works.getBoundingClientRect().top - bandH())/stepPx;
-    if ((p <= 0 && e.deltaX < 0) || (p >= items.length-1 && e.deltaX > 0)) return;
-    e.preventDefault(); window.scrollBy({top: e.deltaX * stepPx / pitch, behavior:'auto'});
-  }, {passive:false});
-  document.addEventListener('keydown', e => {
-    if (player.ctx || !horiz || e.altKey || e.metaKey || e.ctrlKey) return;
-    const r = works.getBoundingClientRect(); if (r.top > bandH()+1 || r.bottom < window.innerHeight - 1) return;
-    if (e.key === 'ArrowRight' && active < items.length-1) { e.preventDefault(); scrollToItem(active+1); }
-    if (e.key === 'ArrowLeft' && active > 0) { e.preventDefault(); scrollToItem(active-1); }
-  });
-  if (!fine.matches) $('#works-hint').textContent = 'Défilez ; touchez un film pour le lire';
+  items.forEach((el,i) => el.querySelector('.work-media').addEventListener('click', () => { if (player.ctx === 'works' && el.classList.contains('open')) { togglePlay(); return; } openWork(i); }));
+  function scrollToItem(i, then){ items[i].scrollIntoView({behavior: motion ? 'smooth' : 'auto', block:'center'}); if (then) setTimeout(then, motion ? 900 : 60); }
+  const bandH = () => parseFloat(getComputedStyle(root).getPropertyValue('--band')) || 56;
 
   /* ---------- Aperçu flottant (Studio, Générique) ---------- */
   const peek = $('#peek'), peekV = $('#peek-v'), peekI = $('#peek-i');
@@ -1324,22 +1187,16 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
     motionBtn.setAttribute('aria-pressed', String(motion));
     motionBtn.querySelector('span').textContent = motion ? 'Mouvement activé' : 'Mouvement en pause';
     if (!motion) { $$('video').forEach(v => { if (v !== player.video) v.pause(); }); }
-    else { if (oakVisible && player.ctx !== 'camp') playV(oak); if (baVisible) playV(ba); if (trVisible) playV(tr); if (items[active]) playPreview(items[active]); }
+    else { if (oakVisible && player.ctx !== 'camp') playV(oak); if (baVisible) playV(ba); if (trVisible) playV(tr); items.forEach(el => { if (cardVis.get(el)) playPreview(el); }); }
   }
   motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; store.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
 
   /* ---------- Boucle ---------- */
   const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '';
   new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(hero);
-  new IntersectionObserver(es => es.forEach(en => {
-    worksVisible = en.isIntersecting;
-    const el = items[active]; if (!el) return;
-    if (worksVisible) playPreview(el); else { if (player.ctx === 'works') closePlayer(true); const v = el.querySelector('video'); if (v) v.pause(); }
-  }), {threshold:0}).observe(works);
   function frame(now){
     drawCursor();
-    if (heroVisible) heroFrame();
-    if (worksVisible) applyWorks(false);
+    if (heroVisible) heroFrame(now);
     if (baVisible) baTick();
     if (trVisible) trTick();
     drawLit(); drawCredits(false); drawPeek(now); drawScrollFx();
@@ -1350,7 +1207,6 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
     else if (heroVisible && window.scrollY < hero.offsetHeight*.5) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
     else if (oakVisible) { src = oak; fps = 24; }
     else if (baVisible) src = ba;
-    else if (worksVisible && items[active]) src = items[active].querySelector('video');
     if (src) { const s = tc(src.currentTime, fps); if (s !== tcLast) { tcLast = s; tcEl.textContent = s; } }
     if (oakVisible) { const s2 = tc(oak.currentTime, 24); if (s2 !== oakTcLast) { oakTcLast = s2; oakTc.textContent = s2; } }
     if (player.ctx) {
@@ -1364,13 +1220,11 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
   }
 
   initGL();
-  layoutWorks();
   layoutCredits();
   applyMotion();
   let rz = 0;
-  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { resizeGL(); layoutWorks(); layoutCredits(); }); });
-  desk.addEventListener('change', layoutWorks);
-  if (document.fonts) document.fonts.ready.then(() => { layoutWorks(); layoutCredits(); });
+  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { resizeGL(); layoutCredits(); }); });
+  if (document.fonts) document.fonts.ready.then(() => { layoutCredits(); });
   requestAnimationFrame(frame);
 })();
 </script>
