@@ -1704,7 +1704,9 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   window.addEventListener('load', layoutHero);
   // vidéos différées : on les met en mémoire quand le réseau est libre ou quand on s'en approche
   const warmV = v => { if (v && v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } if (!v || v.preload === 'auto') return; v.preload = 'auto'; if (v.readyState === 0 && v.paused) { try { v.load(); } catch(e){} } };
-  window.addEventListener('load', () => { setTimeout(() => warmV(SV[1]), 4000); setTimeout(() => warmV(SV[2]), 6000); });
+  // préchargement en tâche de fond seulement sur ordinateur avec une bonne connexion ; sur mobile, les vidéos se chargent quand on commence à défiler
+  const fastNet = (() => { const c = navigator.connection; return !(c && (c.saveData || /(^|-)2g|3g/.test(c.effectiveType || ''))); })();
+  window.addEventListener('load', () => { if (!fastNet || window.innerWidth < 761) return; setTimeout(() => warmV(SV[1]), 4000); setTimeout(() => warmV(SV[2]), 6000); });
   window.addEventListener('scroll', () => { if (window.scrollY > heroTop + 8) warmV(SV[1]); if (window.scrollY > heroTop + heroStep*.6) warmV(SV[2]); }, {passive:true});
   new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) warmV(tr); }), {rootMargin:'900px 0px'}).observe(wipe);
   requestAnimationFrame(frame);
