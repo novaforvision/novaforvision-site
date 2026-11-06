@@ -21,6 +21,7 @@
 <meta property="og:image:alt" content="NOVA For Vision, postproduction, VFX et création IA">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="media/hero/oakley-p.jpg" as="image" fetchpriority="high">
 <script>
 (function(){var d=document.documentElement;d.classList.add('js');var skip=false;try{skip=sessionStorage.getItem('nova-intro')==='1'}catch(e){}
 if(skip||matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('no-intro');else d.classList.add('intro-run');
@@ -473,8 +474,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   <section class="hero" id="hero" aria-label="Projets phares">
     <div class="stage" id="stage">
       <div class="slide" data-id="oakley"><video src="media/hero/oakley.mp4" poster="media/hero/oakley-p.jpg" muted playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
-      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" poster="media/hero/crame.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
-      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" poster="media/hero/crame.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
       <span class="seam" id="seam" aria-hidden="true"><i class="star-mask"></i></span>
     </div>
     <canvas class="hdust" id="hdust" aria-hidden="true"></canvas>
@@ -558,7 +559,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     </div>
     <div class="wipe wrap">
       <div class="wipe-box" id="wipe" data-cursor="Parcourir">
-        <video id="tr" src="media/oakley/transition.mp4" poster="media/oakley/transition.jpg" muted loop playsinline preload="auto" aria-label="Le saut du coureur, de la couleur au noir et blanc"></video>
+        <video id="tr" src="media/oakley/transition.mp4" poster="media/oakley/transition.jpg" muted loop playsinline preload="none" aria-label="Le saut du coureur, de la couleur au noir et blanc"></video>
         <span class="ba-state" id="tr-state" aria-live="polite">Couleur</span>
       </div>
       <div class="ba-tl" id="tr-tl">
@@ -1675,6 +1676,11 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   desk.addEventListener('change', layoutWorks);
   if (document.fonts) document.fonts.ready.then(() => { layoutHero(); layoutWorks(); layoutCredits(); });
   window.addEventListener('load', layoutHero);
+  // vidéos différées : on les met en mémoire quand le réseau est libre ou quand on s'en approche
+  const warmV = v => { if (!v || v.preload === 'auto') return; v.preload = 'auto'; if (v.readyState === 0 && v.paused) { try { v.load(); } catch(e){} } };
+  window.addEventListener('load', () => { setTimeout(() => warmV(SV[1]), 4000); setTimeout(() => warmV(SV[2]), 6000); });
+  window.addEventListener('scroll', () => { if (window.scrollY > heroTop + 8) warmV(SV[1]); if (window.scrollY > heroTop + heroStep*.6) warmV(SV[2]); }, {passive:true});
+  new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) warmV(tr); }), {rootMargin:'900px 0px'}).observe(wipe);
   requestAnimationFrame(frame);
 })();
 </script>
