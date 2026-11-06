@@ -1020,6 +1020,45 @@
     }), {threshold:[0,.25,.5]}).observe(v);
   });
 
+  /* ---------- Visionneuse de stills (projets) : défile seule à l'écran, vignettes, glissé sur téléphone ---------- */
+  const VW_DUR = 3600, viewers = [];
+  $$('[data-vw]').forEach(vw => {
+    const figs = $$('.vw-f', vw), thumbs = $$('.vw-t', vw), stage = vw.querySelector('.vw-stage'), capEl = vw.querySelector('.vw-cap'), numEl = vw.querySelector('.vw-n');
+    const n = figs.length, st = { cur: -1, t0: 0, vis: false, hover: false, hold: 0 };
+    const load = i => { const m = figs[i].querySelector('img,video'); if (m && m.dataset.src) { if (m.dataset.srcset) m.srcset = m.dataset.srcset; m.src = m.dataset.src; m.removeAttribute('data-src'); m.removeAttribute('data-srcset'); } };
+    const show = (i, user) => {
+      i = (i + n) % n; if (i === st.cur) return;
+      load(i); load((i + 1) % n);
+      figs.forEach((f, k) => { f.classList.toggle('on', k === i); const v = f.querySelector('video'); if (v) { if (k === i && motion) playV(v); else v.pause(); } });
+      thumbs.forEach((t, k) => { t.classList.toggle('on', k === i); t.setAttribute('aria-current', String(k === i)); if (k !== i) t.style.removeProperty('--t'); });
+      if (capEl) capEl.textContent = figs[i].dataset.cap || '';
+      if (numEl) numEl.textContent = `${pad(i + 1)} / ${pad(n)}`;
+      st.cur = i; st.t0 = performance.now();
+      if (user) st.hold = performance.now() + 9000;
+      // la vignette en cours reste visible dans la planche (téléphone)
+      const strip = thumbs[i].parentElement;
+      if (strip.scrollWidth > strip.clientWidth + 2) { const tl = thumbs[i].offsetLeft - strip.clientWidth/2 + thumbs[i].offsetWidth/2; strip.scrollTo({ left: tl, behavior: motion ? 'smooth' : 'auto' }); }
+    };
+    thumbs.forEach((t, k) => t.addEventListener('click', () => show(k, true)));
+    let sx = null, sy = 0, swiped = false;
+    stage.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; swiped = false; });
+    stage.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { swiped = true; show(st.cur + (dx < 0 ? 1 : -1), true); } });
+    stage.addEventListener('click', () => { if (swiped) { swiped = false; return; } show(st.cur + 1, true); });
+    stage.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.hover = true; });
+    stage.addEventListener('pointerleave', () => { st.hover = false; });
+    vw.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show(st.cur + (e.key === 'ArrowRight' ? 1 : -1), true); const t = thumbs[st.cur]; if (t && vw.contains(document.activeElement)) t.focus({preventScroll:true}); } });
+    new IntersectionObserver(es => es.forEach(en => { st.vis = en.isIntersecting && en.intersectionRatio > .45; if (!st.vis) st.t0 = performance.now(); figs.forEach((f, k) => { const v = f.querySelector('video'); if (v) { if (st.vis && k === st.cur && motion) playV(v); else v.pause(); } }); }), {threshold:[0,.45,.7]}).observe(stage);
+    show(0);
+    viewers.push(now => {
+      if (!st.vis) return;
+      const t = thumbs[st.cur];
+      if (!motion || st.hover || now < st.hold) { st.t0 = now - (parseFloat(t.style.getPropertyValue('--t')) || 0) * VW_DUR; return; }
+      const k = (now - st.t0) / VW_DUR;
+      if (k >= 1) { show(st.cur + 1); return; }
+      t.style.setProperty('--t', k.toFixed(3));
+    });
+  });
+
   /* ---------- Liens internes : défilement doux, durée selon la distance ---------- */
   let glide = null;
   const easeGlide = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
@@ -1115,6 +1154,7 @@
       if (tr && trVisible) playV(tr);
       if (playPreview && items[active]) playPreview(items[active]);
       inview.forEach(v => { if (v._in) playV(v); });
+      $$('.vw-f.on video').forEach(v => playV(v));
     }
   }
   if (motionBtn) motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; sessStore.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
@@ -1130,6 +1170,7 @@
     if (trVisible && trTick) trTick();
     if (drawLit) drawLit();
     if (drawCredits) drawCredits(false);
+    for (let i = 0; i < viewers.length; i++) viewers[i](now);
     if (drawPeek) drawPeek(now);
     drawScrollFx(); drawSvc();
     if (drawDust) drawDust();
