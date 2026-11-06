@@ -1102,7 +1102,11 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     oak.muted = !on; if (on) playV(oak);
   });
   const openOak = () => { if (player.ctx === 'camp') return; oakFilm.classList.add('playing'); openPlayer('camp', oak, 'oakley', $('#pslot-camp'), () => { oakFilm.classList.remove('playing'); if (motion && oakVisible) playV(oak); }); };
-  $('#oak-play').addEventListener('click', openOak);
+  $('#oak-play').addEventListener('click', () => {
+    const r = oakFilm.getBoundingClientRect(), top = bandH() + 8;
+    if (r.top < top - 1 || r.bottom > window.innerHeight) window.scrollTo({top: r.top + window.scrollY - top, behavior: motion ? 'smooth' : 'auto'});
+    openOak();
+  });
   oakFilm.addEventListener('click', e => { if (player.ctx === 'camp') { togglePlay(); return; } openOak(); });
   // transition couleur → noir et blanc, parcourue à la souris
   const tr = $('#tr'), wipe = $('#wipe'), trTl = $('#tr-tl'), trHead = $('#tr-head'), trRange = $('#tr-range'), trState = $('#tr-state');
