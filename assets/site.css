@@ -458,6 +458,9 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 .door-media{position:relative;height:clamp(320px,40vw,600px);overflow:hidden;border-radius:4px;background:var(--raised)}
 .door-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
 .door:hover .door-media video{transform:scale(1.03)}
+/* aperçu dont le logo NOVA est incrusté en bas à gauche : l'image est recadrée vers le haut et la droite pour le laisser hors champ */
+.door-media.crop video{object-position:100% 0;transform-origin:100% 0;transform:scale(1.2)}
+.door:hover .door-media.crop video{transform:scale(1.23)}
 .door-cap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:8px 24px;padding-bottom:16px;border-bottom:1px solid var(--line);transition:border-color .3s var(--ease)}
 .door:hover .door-cap{border-color:var(--line-2)}
 .door-t{font-size:clamp(40px,5.4vw,84px);line-height:.98;letter-spacing:-.035em;transition:transform .5s var(--ease)}
