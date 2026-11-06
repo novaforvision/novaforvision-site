@@ -847,6 +847,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     intro.addEventListener('click', skip);
     window.addEventListener('keydown', skip, {once:true});
     window.addEventListener('wheel', skip, {once:true, passive:true});
+    window.addEventListener('touchstart', skip, {once:true, passive:true});
     setTimeout(() => { if (!ready) skip(); }, 2500);
   } else intro.hidden = true;
 
