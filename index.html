@@ -134,7 +134,7 @@ html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{op
 .kicker{position:absolute;top:100%;left:0;right:0;margin:-10px auto 0;padding:0 max(var(--pad),env(safe-area-inset-right,0px)) 12px max(var(--pad),env(safe-area-inset-left,0px));max-width:48rem;text-align:center;text-wrap:balance;font-size:12px;line-height:1.45;font-weight:400;color:rgba(238,239,237,.86);pointer-events:none;transition:opacity .3s var(--ease),visibility .3s}
 .band.solid .kicker{opacity:0;visibility:hidden}
 body:has(.hero.playing) .kicker{opacity:0;visibility:hidden}
-@media (max-width:760px){.kicker{text-align:left;margin:-8px 0 0;max-width:none}}
+@media (max-width:760px){.kicker{text-align:left;margin:-8px 0 0;max-width:none}.band.moved .kicker{opacity:0;visibility:hidden}}
 .caps{position:absolute;left:0;right:0;bottom:72px;pointer-events:none}
 .cap{position:absolute;left:0;right:0;bottom:0;display:grid;gap:16px;visibility:hidden;padding-left:max(var(--pad),env(safe-area-inset-left,0px));padding-right:max(var(--pad),env(safe-area-inset-right,0px))}
 .cap.on{visibility:visible}
@@ -1669,7 +1669,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; sessStore.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
 
   /* ---------- Boucle ---------- */
-  const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '', bandSolid = false;
+  const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '', bandSolid = false, bandMoved = false;
   new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(heroWrap);
   new IntersectionObserver(es => es.forEach(en => {
     worksVisible = en.isIntersecting;
@@ -1698,6 +1698,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     }
     const solid = window.scrollY > heroTop + heroStep*(N-1) + window.innerHeight*.6;
     if (solid !== bandSolid) { bandSolid = solid; $('#band').classList.toggle('solid', solid); }
+    const moved = window.scrollY > 24;
+    if (moved !== bandMoved) { bandMoved = moved; $('#band').classList.toggle('moved', moved); }
     const max = document.documentElement.scrollHeight - window.innerHeight;
     const pr = (window.scrollY / Math.max(1,max) * 180).toFixed(1);
     if (pr !== progLast) { progLast = pr; prog.style.transform = `rotate(${pr}deg)`; }
