@@ -479,8 +479,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   <section class="hero" id="hero" aria-label="Projets phares">
     <div class="stage" id="stage">
       <div class="slide" data-id="oakley"><video src="media/hero/oakley.mp4" poster="media/hero/oakley-p.jpg" muted playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
-      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" poster="media/hero/crame.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
-      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" data-poster="media/hero/crame.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" data-poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
       <span class="seam" id="seam" aria-hidden="true"><i class="star-mask"></i></span>
     </div>
     <canvas class="hdust" id="hdust" aria-hidden="true"></canvas>
@@ -546,7 +546,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
       <p class="op-note">Pour les marques, du concept au film final&nbsp;: création IA, effets visuels et postproduction dans un seul workflow.</p>
     </div>
     <div class="camp-film" id="camp-film" data-cursor="Lire">
-      <video id="oak" src="media/oakley/film.mp4" poster="media/oakley/film.jpg" muted loop playsinline preload="metadata" aria-label="Film de campagne Oakley × Meta"></video>
+      <video id="oak" src="media/oakley/film.mp4" data-poster="media/oakley/film.jpg" muted loop playsinline preload="none" data-preload="metadata" aria-label="Film de campagne Oakley × Meta"></video>
       <div class="camp-ui wrap">
         <button id="oak-sound" type="button" aria-pressed="false">Son</button>
         <span class="sp"></span>
@@ -565,7 +565,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     </div>
     <div class="wipe wrap">
       <div class="wipe-box" id="wipe" data-cursor="Parcourir">
-        <video id="tr" src="media/oakley/transition.mp4" poster="media/oakley/transition.jpg" muted loop playsinline preload="none" aria-label="Le saut du coureur, de la couleur au noir et blanc"></video>
+        <video id="tr" src="media/oakley/transition.mp4" data-poster="media/oakley/transition.jpg" muted loop playsinline preload="none" aria-label="Le saut du coureur, de la couleur au noir et blanc"></video>
         <span class="ba-state" id="tr-state" aria-live="polite">Couleur</span>
       </div>
       <div class="ba-tl" id="tr-tl">
@@ -581,7 +581,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
       <li><figure><div class="ph clip-in"><img src="media/oakley/rain-world-onevision.jpg" alt="Le coureur sur un rocher, titre One vision. Every World." width="1400" height="788" loading="lazy"></div><figcaption>One vision. Every World.</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/unettes-sable-logo.jpg" alt="Une main pose les lunettes dans le sable" width="1400" height="788" loading="lazy"></div><figcaption>Les lunettes dans le sable</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/end-oakley-meta.jpg" alt="Logos Oakley et Meta gravés dans le sable" width="1400" height="788" loading="lazy"></div><figcaption>Plan de fin</figcaption></figure></li>
-      <li><figure><div class="ph clip-in"><video id="oak-motion" src="media/oakley/motion.mp4" poster="media/oakley/motion.jpg" muted loop playsinline preload="none" aria-label="Motion design du logo Oakley × Meta"></video></div><figcaption>Motion design du logo</figcaption></figure></li>
+      <li><figure><div class="ph clip-in"><video id="oak-motion" src="media/oakley/motion.mp4" data-poster="media/oakley/motion.jpg" muted loop playsinline preload="none" aria-label="Motion design du logo Oakley × Meta"></video></div><figcaption>Motion design du logo</figcaption></figure></li>
     </ul>
   </section>
 
@@ -599,7 +599,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     </div>
     <div class="ba-stage">
       <div class="ba-box" id="ba-box" data-cursor="Parcourir">
-        <video id="ba" src="media/ba/crame-ba.mp4" poster="media/ba/crame-ba.jpg" muted loop playsinline preload="metadata" aria-label="Avant et après VFX sur le clip CRAMÉ"></video>
+        <video id="ba" src="media/ba/crame-ba.mp4" data-poster="media/ba/crame-ba.jpg" muted loop playsinline preload="none" data-preload="metadata" aria-label="Avant et après VFX sur le clip CRAMÉ"></video>
         <span class="ba-state" id="ba-state" aria-live="polite">Avant</span>
       </div>
       <div class="ba-tl" id="ba-tl">
@@ -1289,6 +1289,12 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     if (pk.imgs && now - pk.t > 420) { pk.t = now; pk.k = (pk.k + 1) % pk.imgs.length; peekI.src = pk.imgs[pk.k]; }
   }
 
+  /* ---------- Blocs proches de l'écran : on ne mesure (et on ne charge) rien de ce qui est loin ---------- */
+  const nearMap = new WeakMap(), isNear = el => nearMap.get(el) === true;
+  const nearIO = new IntersectionObserver(es => es.forEach(en => nearMap.set(en.target, en.isIntersecting)), {rootMargin:'300px 0px'});
+  const lazyIO = new IntersectionObserver(es => es.forEach(en => { if (!en.isIntersecting) return; const v = en.target; if (v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } if (v.dataset.preload) { v.preload = v.dataset.preload; v.removeAttribute('data-preload'); } lazyIO.unobserve(v); }), {rootMargin:'1400px 0px'});
+  $$('video[data-poster]').forEach(v => { if (!v.closest('#stage')) lazyIO.observe(v); });
+
   /* ---------- Studio : texte qui s'allume ---------- */
   const lit = $('#lit');
   const words = lit.textContent.split(/(\s+)/);
@@ -1297,6 +1303,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   words.forEach(w => { if (/^\s+$/.test(w)) { lit.appendChild(document.createTextNode(w)); return; } const s = document.createElement('span'); s.className = 'wd'; s.textContent = w; lit.appendChild(s); wds.push(s); });
   let litLast = -1;
   function drawLit(){
+    if (!isNear(lit)) return;
     const r = lit.getBoundingClientRect(), vh = window.innerHeight;
     if (r.bottom < 0 || r.top > vh) return;
     const p = clamp((vh*.85 - r.top) / (vh*.85 - vh*.35 + r.height*.5), 0, 1);
@@ -1320,7 +1327,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   }
   let crLast = '';
   function drawCredits(force){
-    if (!crOn) return;
+    if (!crOn || (!force && !isNear(credits))) return;
     const r = credits.getBoundingClientRect(); const vh = window.innerHeight;
     if (!force && (r.bottom < 0 || r.top > vh)) return;
     const total = credits.offsetHeight - (vh - bandH());
@@ -1570,14 +1577,15 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   const phs = $$('.stills .ph'), rail = $('#rail'), railStars = $$('#rail i'), railBox = rail.parentElement;
   // parallaxe à la souris : chaque cadre flotte à sa profondeur, l'image glisse à l'inverse dans son cadre
   const stillsBox = $('.stills'), stillFigs = phs.map(ph => ph.closest('figure')), DEPTH = [1, .55, .8, 1.2, .7, 1];
+  [lit, credits, stillsBox, railBox].forEach(el => nearIO.observe(el));
   const pm = { x:0, y:0, on:false }, par = { x:0, y:0 };
   window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; pm.x = e.clientX; pm.y = e.clientY; pm.on = true; }, {passive:true});
   document.documentElement.addEventListener('mouseleave', () => { pm.on = false; });
   let railLast = '';
   function drawScrollFx(){
     const vh = window.innerHeight;
-    const sb = stillsBox.getBoundingClientRect();
-    if (sb.bottom > -50 && sb.top < vh + 50) {
+    const sb = isNear(stillsBox) ? stillsBox.getBoundingClientRect() : null;
+    if (sb && sb.bottom > -50 && sb.top < vh + 50) {
       const tx = motion && pm.on ? clamp((pm.x - innerWidth/2) / (innerWidth/2), -1, 1) : 0, ty = motion && pm.on ? clamp((pm.y - vh/2) / (vh/2), -1, 1) : 0;
       par.x += (tx - par.x) * .06; par.y += (ty - par.y) * .06;
       phs.forEach((ph, i) => {
@@ -1589,8 +1597,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
         stillFigs[i].style.transform = `translate3d(${(par.x*10*k).toFixed(1)}px,${(par.y*8*k).toFixed(1)}px,0)`;
       });
     }
-    const rr = railBox.getBoundingClientRect();
-    if (rr.bottom > 0 && rr.top < vh) {
+    const rr = isNear(railBox) ? railBox.getBoundingClientRect() : null;
+    if (rr && rr.bottom > 0 && rr.top < vh) {
       const p = clamp((vh - rr.top) / (vh + rr.height), 0, 1);
       const x = -(p * (rail.scrollWidth - window.innerWidth*.6)).toFixed(1);
       const key = x + '';
@@ -1684,7 +1692,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   if (document.fonts) document.fonts.ready.then(() => { layoutHero(); layoutWorks(); layoutCredits(); });
   window.addEventListener('load', layoutHero);
   // vidéos différées : on les met en mémoire quand le réseau est libre ou quand on s'en approche
-  const warmV = v => { if (!v || v.preload === 'auto') return; v.preload = 'auto'; if (v.readyState === 0 && v.paused) { try { v.load(); } catch(e){} } };
+  const warmV = v => { if (v && v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } if (!v || v.preload === 'auto') return; v.preload = 'auto'; if (v.readyState === 0 && v.paused) { try { v.load(); } catch(e){} } };
   window.addEventListener('load', () => { setTimeout(() => warmV(SV[1]), 4000); setTimeout(() => warmV(SV[2]), 6000); });
   window.addEventListener('scroll', () => { if (window.scrollY > heroTop + 8) warmV(SV[1]); if (window.scrollY > heroTop + heroStep*.6) warmV(SV[2]); }, {passive:true});
   new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) warmV(tr); }), {rootMargin:'900px 0px'}).observe(wipe);
