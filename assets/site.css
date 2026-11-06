@@ -488,6 +488,14 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 .js[data-tab="clips"] #t-clips{color:var(--fg)}
 .tab-t{font-size:clamp(44px,11vw,184px);line-height:.88;letter-spacing:-.045em}
 .tab-n{font-size:12px;color:var(--fg-3);padding-top:.5em}
+.pj-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.pj-cats{font-size:12px;color:var(--fg-3)}
+/* Trait sous la catégorie affichée, posé sur la ligne ; trait fin sous l'autre au survol */
+.tab{position:relative}
+.tab::after{content:"";position:absolute;left:0;right:0;bottom:-25px;height:3px;background:var(--fg);transform:scaleX(0);transform-origin:0 50%;transition:transform .45s var(--ease),background-color .2s}
+.tab[aria-selected="true"]::after,.js[data-tab="campagnes"] #t-campagnes::after,.js[data-tab="clips"] #t-clips::after{transform:none;background:var(--fg)}
+.js[data-tab="clips"] #t-campagnes::after,.js[data-tab="campagnes"] #t-clips::after{transform:scaleX(0)}
+@media (hover:hover){.tab[aria-selected="false"]:hover::after,.js[data-tab="clips"] #t-campagnes:hover::after,.js[data-tab="campagnes"] #t-clips:hover::after{transform:none;background:var(--fg-3)}}
 .js[data-tab="clips"] #tab-campagnes,.js[data-tab="campagnes"] #tab-clips{display:none}
 .pj-note{padding-block:32px 40px}
 .p-projets .camp{padding-top:0}
@@ -521,6 +529,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   .tab{gap:6px}
   .tab-t{font-size:clamp(40px,11.5vw,64px)}
   .tab-n{padding-top:.3em}
+  .tab::after{bottom:-17px}
   .pj-note{padding-block:24px 32px}
   .p-projets .works-pin{padding-top:32px}
   .team{grid-template-columns:1fr;padding-block:64px 96px}
