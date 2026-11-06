@@ -525,8 +525,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   .m-txt{font-size:15px}
 }
 .studio-body>.link{justify-self:start}
-/* titres sur deux lignes équilibrées (pas de mot seul en fin de titre sur téléphone) */
-.h2 .li{text-wrap:balance}
+/* les sections en grille gardent la largeur de l'écran, même si un navigateur (celui d'Instagram par exemple) refuse de couper un titre */
+.contact,.cta,.pj-head,.studio-body,.camp,.wipe,.door,.member{grid-template-columns:minmax(0,1fr)}
 @media (max-width:760px){.tabs{gap:4px 20px}.tab-t{font-size:clamp(32px,10.4vw,64px)}}
 /* Projets : deuxième campagne (Tea Storm), séparée de la première par un filet */
 .camp.ts{padding-top:64px;border-top:1px solid var(--line)}
