@@ -1023,7 +1023,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   const SLANT_DEG = 35.2, SLANT = Math.tan(SLANT_DEG*Math.PI/180);   // angle de la branche oblique de l'étoile NOVA
   const vfx = new WeakMap();
   function setV(el, key, css){ if (vfx.get(el) === key) return; vfx.set(el, key); el.style.cssText = css; }
-  /* ---------- Accueil : onde de choc d'un projet à l'autre (WebGL) ; sans WebGL, le rideau oblique reste ---------- */
+  /* ---------- Accueil : trou noir d'un projet à l'autre (WebGL) ; sans WebGL, le rideau oblique reste ---------- */
   const shockCv = $('#shock');
   let shock = null, shockOff = !shockCv, shockShown = false;
   function shockInit(){
@@ -1031,20 +1031,25 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
       const gl = shockCv.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false });
       if (!gl) throw new Error('webgl');
       const vs = 'attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;v.y=1.-v.y;gl_Position=vec4(p,0.,1.);}';
-      // l'onde : un anneau-lentille qui part du centre, pousse l'image vers l'extérieur et sépare légèrement les couleurs ; le projet suivant est à l'intérieur
+      // le trou noir : l'image est courbée autour d'un trou qui naît au centre (lentille gravitationnelle), tourne en tourbillon,
+      // s'étire vers le centre ; un anneau de lumière doux l'entoure ; le projet suivant ressort quand le trou se referme
       const fs = '#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'
-        + 'varying vec2 v;uniform sampler2D A,B;uniform vec2 res,c,kA,kB;uniform float R,w,amp,light,shade;'
+        + 'varying vec2 v;uniform sampler2D A,B;uniform vec2 res,c,kA,kB;uniform float rs,twist,lens,suck,blur,glow,xf,halo;'
         + 'vec3 tx(sampler2D s,vec2 k,vec2 uv){return texture2D(s,clamp((uv-.5)*k+.5,.001,.999)).rgb;}'
-        + 'void main(){vec2 px=v*res,d=px-c;float L=max(length(d),.001);vec2 dir=d/L;float x=(L-R)/w,g=exp(-x*x*3.),disp=amp*x*g,m=smoothstep(-.1,.1,-x);vec3 col;'
-        + 'for(int k=0;k<3;k++){vec2 uv=(px-dir*disp*(1.+float(k)*.35))/res;vec3 s=mix(tx(A,kA,uv)*(1.-shade),tx(B,kB,uv),m);if(k==0)col.r=s.r;else if(k==1)col.g=s.g;else col.b=s.b;}'
-        + 'gl_FragColor=vec4(col+g*light,1.);}';
+        + 'vec3 smp(vec2 p){vec2 uv=p/res;return mix(tx(A,kA,uv),tx(B,kB,uv),xf);}'
+        + 'void main(){vec2 px=v*res,d=px-c;float r=max(length(d),.001);float near=rs/max(r,rs*.7);'
+        + 'float ang=atan(d.y,d.x)+twist*near*near;float rr=max(r*(1.+suck)-lens*rs*rs/r,0.);vec2 dir=vec2(cos(ang),sin(ang));'
+        + 'float bl=blur*smoothstep(rs*6.,rs,r);float n=1.+7.*min(1.,bl/.12);vec3 col=vec3(0.);float k=0.;'
+        + 'for(int i=0;i<8;i++){if(float(i)>=n)break;col+=smp(c+dir*rr*(1.-bl*float(i)/7.));k+=1.;}col/=k;'
+        + 'col*=1.-halo*smoothstep(rs*4.,rs,r);col*=smoothstep(rs*.8,rs*1.12,r);'
+        + 'float ring=exp(-pow((r-rs*1.3)/(rs*.16+1.),2.));col+=ring*glow*vec3(1.,.93,.84);gl_FragColor=vec4(col,1.);}';
       const mk = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
       const pr = gl.createProgram(); gl.attachShader(pr, mk(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, mk(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr);
       if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error('link');
       gl.useProgram(pr);
       gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
       const lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-      const U = {}; ['A','B','res','c','kA','kB','R','w','amp','light','shade'].forEach(n => U[n] = gl.getUniformLocation(pr, n));
+      const U = {}; ['A','B','res','c','kA','kB','rs','twist','lens','suck','blur','glow','xf','halo'].forEach(n => U[n] = gl.getUniformLocation(pr, n));
       gl.uniform1i(U.A, 0); gl.uniform1i(U.B, 1);
       const tex = SV.map(() => { const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t); [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(p => gl.texParameteri(gl.TEXTURE_2D, p, gl.CLAMP_TO_EDGE)); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); return t; });
       shockCv.addEventListener('webglcontextlost', e => { e.preventDefault(); shockOff = true; shockHide(); });
@@ -1076,12 +1081,14 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     if (shockCv.width !== W || shockCv.height !== H) { shockCv.width = W; shockCv.height = H; gl.viewport(0, 0, W, H); }
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, shock.tex[i]);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, shock.tex[i + 1]);
-    const e = easeIO(t), diag = Math.hypot(W, H), fade = Math.pow(1 - e, 1.4), U = shock.U;
+    // le trou grandit puis se referme (sin), le changement de projet se fait au plus fort du tourbillon
+    const bump = Math.sin(Math.PI * t), U = shock.U;
     const cov = (d, z) => { const ca = W / H, ta = d[0] / d[1]; return ta > ca ? [ca / ta / z, 1 / z] : [1 / z, ta / ca / z]; };
-    const ka = cov(a, 1 + .03 * e), kb = cov(b, 1.06 - .06 * (1 - Math.pow(1 - t, 3)));
+    const ka = cov(a, 1 + .06 * bump), kb = cov(b, t > .5 ? 1 + .1 * (1 - t) : 1 + .06 * bump);
     gl.uniform2f(U.res, W, H); gl.uniform2f(U.c, W * .5, H * .46); gl.uniform2f(U.kA, ka[0], ka[1]); gl.uniform2f(U.kB, kb[0], kb[1]);
-    gl.uniform1f(U.R, e * diag * .72); gl.uniform1f(U.w, (.018 + .03 * e) * diag); gl.uniform1f(U.amp, .028 * diag * fade * Math.min(1, t * 6));
-    gl.uniform1f(U.light, .05 * fade); gl.uniform1f(U.shade, .35 * e);
+    gl.uniform1f(U.rs, Math.pow(bump, 1.5) * Math.min(W, H) * .3); gl.uniform1f(U.twist, 2.4 * bump); gl.uniform1f(U.lens, .85); gl.uniform1f(U.suck, .28 * bump);
+    gl.uniform1f(U.blur, .32 * bump); gl.uniform1f(U.glow, .32 * bump); gl.uniform1f(U.halo, .5);
+    gl.uniform1f(U.xf, t < .42 ? 0 : t > .58 ? 1 : (t - .42) / .16);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if (!shockShown) { shockShown = true; shockCv.style.display = 'block'; seam.style.visibility = 'hidden'; hdc.style.visibility = 'hidden'; }
   }
