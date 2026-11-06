@@ -1680,7 +1680,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 
   /* ---------- Boucle ---------- */
   const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '', bandSolid = false, bandMoved = false;
-  new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(heroWrap);
+  new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible) { if (player.ctx === 'hero') closePlayer(true); SV.forEach(v => { if (!v.paused) v.pause(); }); } }), {threshold:0}).observe(heroWrap);
   new IntersectionObserver(es => es.forEach(en => {
     worksVisible = en.isIntersecting;
     const el = items[active]; if (!el) return;
