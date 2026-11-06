@@ -321,7 +321,7 @@ html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{op
 .studio-body{grid-column:4/13;display:grid;gap:40px;min-width:0}
 .lit{max-width:24em;font-size:clamp(24px,2.8vw,44px);line-height:1.28;letter-spacing:-.02em}
 .lit .wd{opacity:var(--o,1);transition:opacity .25s linear}
-.js .lit .wd{--o:.22}
+.js .lit .wd{--o:.4}
 .svc{display:grid;border-top:1px solid var(--line)}
 .svc li{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:baseline;gap:8px 32px;padding-block:20px;border-bottom:1px solid var(--line);transition:opacity .25s var(--ease)}
 .svc li::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
@@ -1313,7 +1313,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     const p = clamp((vh*.85 - r.top) / (vh*.85 - vh*.35 + r.height*.5), 0, 1);
     const n = Math.round(p * wds.length);
     if (n === litLast) return; litLast = n;
-    wds.forEach((s,i) => s.style.setProperty('--o', i < n ? '1' : '.22'));
+    wds.forEach((s,i) => s.style.setProperty('--o', i < n ? '1' : '.4'));
   }
 
   /* ---------- Générique qui défile ---------- */
