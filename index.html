@@ -76,7 +76,8 @@ ul,ol{padding:0;list-style:none}
 .cursor-on,.cursor-on *{cursor:none!important}
 
 /* Bande du haut */
-.band{position:fixed;top:0;left:0;right:0;z-index:50;padding-top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--line)}
+.band{position:fixed;top:0;left:0;right:0;z-index:50;padding-top:env(safe-area-inset-top,0px);background:rgba(11,12,14,.42);border-bottom:1px solid rgba(238,239,237,.07);transition:background-color .4s var(--ease)}
+.band.solid{background:rgba(11,12,14,.72)}
 .band-in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;height:var(--band);font-size:13px}
 .band-nav{display:flex;gap:20px;color:var(--fg-2)}
 .band-nav a{min-height:44px;display:inline-flex;align-items:center;transition:color .16s var(--ease)}
@@ -89,8 +90,8 @@ ul,ol{padding:0;list-style:none}
 .band-cta{min-height:44px;display:inline-flex;align-items:center;color:var(--fg);transition:color .16s var(--ease)}
 
 /* Slider d'accueil */
-.hero-wrap{--hstep:70vh;position:relative;margin-top:calc(var(--band) + env(safe-area-inset-top,0px));height:calc(100vh - var(--band) + var(--hstep)*2);height:calc(100svh - var(--band) - env(safe-area-inset-top,0px) + var(--hstep)*2)}
-.hero{position:sticky;top:calc(var(--band) + env(safe-area-inset-top,0px));height:calc(100vh - var(--band));height:calc(100svh - var(--band) - env(safe-area-inset-top,0px));min-height:520px;overflow:hidden;background:var(--black);user-select:none;-webkit-user-select:none}
+.hero-wrap{--hstep:70vh;position:relative;height:calc(100vh + var(--hstep)*2);height:calc(100svh + var(--hstep)*2)}
+.hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--black);user-select:none;-webkit-user-select:none}
 .stage{position:absolute;inset:0}
 .slide{position:absolute;inset:0;overflow:hidden}
 .slide+.slide{clip-path:inset(0 0 0 100%)}
@@ -101,7 +102,7 @@ ul,ol{padding:0;list-style:none}
 .hero.playing .slide.cur video{object-fit:contain;background:var(--black)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(11,12,14,.9) 0%,rgba(11,12,14,.45) 32%,rgba(11,12,14,0) 60%),linear-gradient(to bottom,rgba(11,12,14,.5),rgba(11,12,14,0) 18%);transition:opacity .4s var(--ease)}
-.kicker{position:absolute;top:20px;left:0;right:0;font-size:13px;font-weight:400;color:var(--fg-2);pointer-events:none;transition:opacity .3s var(--ease)}
+.kicker{position:absolute;top:calc(var(--band) + env(safe-area-inset-top,0px) + 20px);left:0;right:0;font-size:13px;font-weight:400;color:var(--fg-2);pointer-events:none;transition:opacity .3s var(--ease)}
 .caps{position:absolute;left:0;right:0;bottom:72px;pointer-events:none}
 .cap{position:absolute;left:0;right:0;bottom:0;display:grid;gap:16px;visibility:hidden;padding-left:max(var(--pad),env(safe-area-inset-left,0px));padding-right:max(var(--pad),env(safe-area-inset-right,0px))}
 .cap.on{visibility:visible}
@@ -314,15 +315,47 @@ button.name:hover sup{color:var(--fg)}
 .peek.on{opacity:1}
 .peek video,.peek img{width:100%;height:auto;aspect-ratio:var(--par,1.5);object-fit:cover}
 
-/* Contact */
-.contact{display:grid;gap:40px;padding-block:128px 0;border-top:1px solid var(--line)}
-.contact-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 40px}
-.mail{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
-.mail-addr{font-size:clamp(20px,2.2vw,28px);letter-spacing:-.01em;user-select:all;-webkit-user-select:all}
-.ghost{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--line-2);font-size:13px;color:var(--fg);transition:background-color .16s var(--ease),border-color .16s var(--ease)}
+/* Contact : le clap */
+.contact{display:grid;gap:48px;padding-block:128px 0;border-top:1px solid var(--line)}
+.ct-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px 24px;align-items:start}
+.slate{grid-column:1/8;position:relative;min-width:0;padding-top:30px;margin-top:72px}
+.clapper{position:absolute;left:0;right:0;top:0;height:30px;border-radius:6px 6px 0 0;background:repeating-linear-gradient(115deg,var(--fg) 0 22px,var(--bg) 22px 44px);border:1px solid var(--fg);transform-origin:2px 100%;transform:rotate(-4deg);transition:transform .5s var(--ease)}
+.slate.ready .clapper{transform:rotate(-6.5deg)}
+.slate.snap .clapper{animation:snap .42s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes snap{0%{transform:rotate(-6.5deg)}70%{transform:rotate(.6deg)}100%{transform:rotate(0)}}
+.slate.snap .slate-body{animation:jolt .32s .26s var(--ease)}
+@keyframes jolt{0%{transform:translateY(0)}40%{transform:translateY(3px)}100%{transform:translateY(0)}}
+.slate-body{position:relative;border:1px solid var(--line-2);border-radius:0 0 8px 8px;background:var(--bg-2);display:grid}
+.sl-row{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line);min-height:60px}
+.sl-row:last-child{border-bottom:0}
+.sl-k{font-family:var(--mono);font-size:12px;color:var(--fg-3)}
+.sl-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-family:var(--mono);font-size:12px;color:var(--fg-2)}
+.sl-top b{font-weight:400;color:var(--fg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:0;padding:0;min-width:0}
+.chips legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;margin:0}
+.chip span{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--line-2);font-size:14px;color:var(--fg-2);transition:background-color .16s var(--ease),color .16s var(--ease),border-color .16s var(--ease)}
+.chip:hover span{color:var(--fg);border-color:var(--fg-3)}
+.chip input:checked+span{background:var(--fg);color:var(--ink);border-color:var(--fg)}
+.chip input:focus-visible+span{outline:2px solid var(--fg);outline-offset:3px}
+.chips.err .chip span{border-color:var(--tally)}
+.sl-in{width:100%;min-width:0;border:0;border-bottom:1px solid transparent;background:transparent;color:var(--fg);font:400 18px/1.4 var(--sans);padding:6px 0;resize:none;transition:border-color .16s var(--ease)}
+.sl-in::placeholder{color:var(--fg-3)}
+.sl-in:focus{outline:none;border-bottom-color:var(--fg-3)}
+.sl-send{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:16px 20px}
+.sl-msg{font-size:13px;color:var(--fg-2);min-height:20px}
+.ct-side{grid-column:9/13;display:grid;gap:28px;align-content:start;padding-top:102px}
+.ct-side p{font-size:15px;line-height:1.6;color:var(--fg-2);max-width:30ch}
+.ct-direct{display:grid;gap:4px;border-top:1px solid var(--line);padding-top:16px}
+.ct-direct dt{font-size:12px;color:var(--fg-3)}
+.ct-direct dd{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-bottom:12px}
+.mail-addr{font-size:18px;letter-spacing:-.01em;user-select:all;-webkit-user-select:all}
+.ghost{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--line-2);font-size:13px;color:var(--fg);transition:background-color .16s var(--ease),border-color .16s var(--ease)}
 .ghost:hover{background:var(--raised);border-color:var(--fg-3)}
-.big-star-wrap{perspective:900px;margin-top:24px;padding-block:24px}
-.big-star{--mx:50%;--my:50%;--shine:50%;display:block;width:100%;aspect-ratio:2527.4/914.6;max-width:100%;background:radial-gradient(circle at var(--mx) var(--my),rgba(255,255,255,.95) 0,rgba(255,255,255,0) 16%),linear-gradient(113deg,#676b70 0%,#a8adb2 22%,#e7e9e9 33%,#aeb2b6 41%,#fbfcfc var(--shine),#b5b9bd 62%,#71767b 75%,#e2e4e4 87%,#989da2 100%);transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s var(--ease)}
+/* L'étoile de poussière */
+.dust{position:relative;margin-top:16px;width:100%;aspect-ratio:2527.4/914.6;max-height:62vh;touch-action:pan-y}
+.dust canvas{position:absolute;inset:0;width:100%;height:100%}
 
 /* Pied de page */
 .foot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:16px;min-height:64px;margin-top:64px;border-top:1px solid var(--line);font-size:13px;color:var(--fg-3);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -365,6 +398,12 @@ button.name:hover sup{color:var(--fg)}
   .name{font-size:clamp(28px,9vw,40px)}
   .name sup{display:none}
   .contact{padding-top:96px}
+  .ct-grid{grid-template-columns:1fr}
+  .slate,.ct-side{grid-column:auto}
+  .ct-side{padding-top:0}
+  .slate{margin-top:40px}
+  .sl-row{grid-template-columns:1fr;gap:8px;padding:14px 16px}
+  .sl-send{padding:16px}
   .foot{grid-template-columns:1fr 1fr;padding-block:12px}
   .peek{display:none}
 }
@@ -606,15 +645,46 @@ button.name:hover sup{color:var(--fg)}
   <section class="contact wrap" id="contact" aria-labelledby="contact-t">
     <p class="label">Contact</p>
     <h2 class="h2 rv" id="contact-t"><span>Une idée, une image, un projet</span><span class="dim">Et si on lui donnait forme&nbsp;?</span></h2>
-    <div class="contact-row">
-      <div class="mail">
-        <span class="mail-addr" id="mail">contact@novaforvision.fr</span>
-        <button class="ghost" id="copy" type="button">Copier l'adresse</button>
-        <a class="link" href="mailto:contact@novaforvision.fr">Ouvrir la messagerie</a>
+    <div class="ct-grid">
+      <form class="slate" id="slate" novalidate aria-label="Composer votre message">
+        <span class="clapper" aria-hidden="true"></span>
+        <div class="slate-body">
+          <div class="sl-row"><span class="sl-k">PROD.</span><span class="sl-top"><b>NOVA For Vision</b><span>PRISE <span id="sl-take">01</span> · <span id="sl-date"></span></span></span></div>
+          <div class="sl-row"><span class="sl-k" id="lk-type">PROJET</span>
+            <fieldset class="chips" id="ch-type" aria-labelledby="lk-type"><legend>Type de projet</legend>
+              <label class="chip"><input type="radio" name="type" value="Campagne IA" id="t-camp"><span>Campagne IA</span></label>
+              <label class="chip"><input type="radio" name="type" value="Clip" id="t-clip"><span>Clip</span></label>
+              <label class="chip"><input type="radio" name="type" value="VFX / postproduction" id="t-vfx"><span>VFX / postproduction</span></label>
+              <label class="chip"><input type="radio" name="type" value="Autre" id="t-autre"><span>Autre</span></label>
+            </fieldset></div>
+          <div class="sl-row"><span class="sl-k" id="lk-when">DÉLAI</span>
+            <fieldset class="chips" id="ch-when" aria-labelledby="lk-when"><legend>Délai</legend>
+              <label class="chip"><input type="radio" name="when" value="Ce mois-ci" id="w-1"><span>Ce mois-ci</span></label>
+              <label class="chip"><input type="radio" name="when" value="Dans 1 à 3 mois" id="w-2"><span>1 à 3 mois</span></label>
+              <label class="chip"><input type="radio" name="when" value="Pas encore daté" id="w-3"><span>Pas encore daté</span></label>
+            </fieldset></div>
+          <div class="sl-row"><label class="sl-k" for="sl-idea">IDÉE</label><textarea class="sl-in" id="sl-idea" rows="2" placeholder="En une phrase : l'artiste ou la marque, l'envie, la référence"></textarea></div>
+          <div class="sl-row"><label class="sl-k" for="sl-name">NOM</label><input class="sl-in" id="sl-name" type="text" autocomplete="name" placeholder="Votre nom ou celui de l'artiste"></div>
+          <div class="sl-send">
+            <button class="btn" type="submit" id="sl-mail">Clap, envoyer par e-mail</button>
+            <a class="link" id="sl-ig" href="https://ig.me/m/novaforvision" target="_blank" rel="noopener noreferrer">Envoyer en DM Instagram ↗</a>
+            <span class="sl-msg" id="sl-msg" aria-live="polite"></span>
+          </div>
+        </div>
+      </form>
+      <div class="ct-side">
+        <p>Remplissez le clap en quelques clics&nbsp;: votre messagerie s'ouvre avec le message déjà écrit. Pour Instagram, le message est copié, il ne reste qu'à le coller.</p>
+        <dl class="ct-direct">
+          <dt>E-mail</dt>
+          <dd><span class="mail-addr" id="mail">contact@novaforvision.fr</span><button class="ghost" id="copy" type="button">Copier</button></dd>
+          <dt>Instagram</dt>
+          <dd><a class="link" href="https://www.instagram.com/novaforvision/" target="_blank" rel="noopener noreferrer">@novaforvision ↗</a></dd>
+          <dt>Studio</dt>
+          <dd>Liège, Belgique</dd>
+        </dl>
       </div>
-      <a class="link" href="https://www.instagram.com/novaforvision/" target="_blank" rel="noopener noreferrer">Instagram @novaforvision ↗</a>
     </div>
-    <div class="big-star-wrap" id="big-star-wrap"><span class="big-star star-mask" id="big-star" role="img" aria-label="L'étoile NOVA"></span></div>
+    <div class="dust" id="dust" aria-hidden="true"><canvas id="dust-c"></canvas></div>
   </section>
 </main>
 
@@ -1057,22 +1127,104 @@ button.name:hover sup{color:var(--fg)}
   }
   $$('#cr-list button.name').forEach(b => b.addEventListener('click', () => { hidePeek(); const i = items.findIndex(el => el.dataset.id === b.dataset.open); if (i < 0) return; scrollToItem(i, () => openWork(i)); }));
 
-  /* ---------- Contact : l'étoile ---------- */
-  const bigStar = $('#big-star'), bsw = $('#big-star-wrap');
-  $('#contact').addEventListener('pointermove', e => {
-    const r = bigStar.getBoundingClientRect();
-    const mx = clamp((e.clientX - r.left)/r.width, -.2, 1.2), my = clamp((e.clientY - r.top)/r.height, -.6, 1.6);
-    bigStar.style.setProperty('--mx', (mx*100).toFixed(1)+'%'); bigStar.style.setProperty('--my', (my*100).toFixed(1)+'%');
-    bigStar.style.setProperty('--shine', (36 + mx*32).toFixed(1)+'%');
-    if (motion) { bigStar.style.setProperty('--ry', ((mx-.5)*16).toFixed(2)+'deg'); bigStar.style.setProperty('--rx', ((.5-my)*10).toFixed(2)+'deg'); }
+  /* ---------- Contact : le clap ---------- */
+  const slate = $('#slate'), slMsg = $('#sl-msg');
+  try { $('#sl-date').textContent = new Date().toLocaleDateString('fr-BE', {day:'2-digit', month:'2-digit', year:'numeric'}); } catch(e) {}
+  let take = 1;
+  const val = n => { const r = slate.querySelector(`input[name="${n}"]:checked`); return r ? r.value : ''; };
+  function compose(){
+    const type = val('type'), when = val('when'), idea = $('#sl-idea').value.trim(), name = $('#sl-name').value.trim();
+    const subject = `Projet ${type || 'NOVA'}${name ? ' · ' + name : ''}`;
+    const body = ['Bonjour NOVA,', '', `Type de projet : ${type || 'à préciser'}`, `Délai : ${when || 'à préciser'}`, idea ? `Idée : ${idea}` : '', '', name || ''].filter((l,i,a) => l !== '' || (a[i-1] !== '' && i < a.length-1)).join('\n');
+    return { type, subject, body };
+  }
+  function check(){
+    if (val('type')) { $('#ch-type').classList.remove('err'); return true; }
+    $('#ch-type').classList.add('err'); slMsg.textContent = 'Choisissez un type de projet'; $('#t-camp').focus(); return false;
+  }
+  function clap(){ slate.classList.remove('snap'); void slate.offsetWidth; slate.classList.add('snap'); take++; setTimeout(() => { $('#sl-take').textContent = pad(take); }, 400); }
+  slate.addEventListener('change', () => { if (val('type')) { $('#ch-type').classList.remove('err'); if (slMsg.textContent === 'Choisissez un type de projet') slMsg.textContent = ''; } slate.classList.toggle('ready', !!val('type')); });
+  slate.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!check()) return;
+    const m = compose();
+    clap();
+    slMsg.textContent = 'Votre messagerie s\'ouvre avec le message prêt';
+    setTimeout(() => { window.location.href = `mailto:contact@novaforvision.fr?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`; }, motion ? 520 : 0);
   });
-  $('#contact').addEventListener('pointerleave', () => { bigStar.style.setProperty('--rx','0deg'); bigStar.style.setProperty('--ry','0deg'); });
+  $('#sl-ig').addEventListener('click', e => {
+    if (!check()) { e.preventDefault(); return; }
+    const m = compose();
+    clap();
+    const done = () => { slMsg.textContent = 'Message copié : collez-le dans la conversation Instagram'; };
+    try { navigator.clipboard.writeText(m.body).then(done, () => { slMsg.textContent = 'Instagram s\'ouvre : écrivez votre message dans la conversation'; }); } catch(_) { slMsg.textContent = 'Instagram s\'ouvre : écrivez votre message dans la conversation'; }
+  });
   const copyBtn = $('#copy');
   copyBtn.addEventListener('click', () => {
-    const reset = () => setTimeout(() => copyBtn.textContent = "Copier l'adresse", 2000);
-    const fallback = () => { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($('#mail')); s.removeAllRanges(); s.addRange(rg); copyBtn.textContent = 'Adresse sélectionnée'; reset(); };
-    try { navigator.clipboard.writeText('contact@novaforvision.fr').then(() => { copyBtn.textContent = 'Adresse copiée'; reset(); }, fallback); } catch(e){ fallback(); }
+    const reset = () => setTimeout(() => copyBtn.textContent = 'Copier', 2000);
+    const fallback = () => { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($('#mail')); s.removeAllRanges(); s.addRange(rg); copyBtn.textContent = 'Sélectionnée'; reset(); };
+    try { navigator.clipboard.writeText('contact@novaforvision.fr').then(() => { copyBtn.textContent = 'Copiée'; reset(); }, fallback); } catch(e){ fallback(); }
   });
+
+  /* ---------- L'étoile de poussière ---------- */
+  const dust = $('#dust'), dc = $('#dust-c'), dctx = dc.getContext('2d');
+  let parts = [], dustVis = false, dustAwake = 0, dustBuilt = false, dustIn = false;
+  const dm = { x:-9999, y:-9999, on:false };
+  function buildDust(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = dust.clientWidth, h = dust.clientHeight;
+    if (!w || !h) return;
+    dc.width = Math.round(w*dpr); dc.height = Math.round(h*dpr);
+    const img = new Image();
+    img.onload = () => {
+      const oc = document.createElement('canvas'); oc.width = dc.width; oc.height = dc.height;
+      const ox = oc.getContext('2d');
+      const sw = Math.min(dc.width, dc.height*2.7633), sh = sw/2.7633;
+      ox.drawImage(img, (dc.width - sw)/2, (dc.height - sh)/2, sw, sh);
+      let data; try { data = ox.getImageData(0, 0, oc.width, oc.height).data; } catch(e) { return; }
+      const step = Math.max(2, Math.round(3*dpr*(w < 600 ? .85 : 1)));
+      const old = parts; parts = [];
+      for (let y = 0; y < oc.height; y += step) for (let x = 0; x < oc.width; x += step) {
+        const jx = x + (Math.random()-.5)*step*.6, jy = y + (Math.random()-.5)*step*.6;
+        const a = data[((Math.round(jy)|0)*oc.width + (Math.round(jx)|0))*4 + 3];
+        if (a > 110) parts.push({ hx:jx, hy:jy, x: dustIn ? jx : Math.random()*oc.width, y: dustIn ? jy : jy + (Math.random()-.5)*oc.height*.9, vx:0, vy:0, s:(.7 + Math.random()*.8)*dpr, a:.45 + Math.random()*.55 });
+      }
+      dustBuilt = true; dustAwake = 240;
+    };
+    img.src = 'assets/nova-star.svg';
+  }
+  dust.addEventListener('pointermove', e => { const r = dc.getBoundingClientRect(); const k = dc.width / r.width; dm.x = (e.clientX - r.left)*k; dm.y = (e.clientY - r.top)*k; dm.on = true; dustAwake = 240; });
+  dust.addEventListener('pointerleave', () => { dm.on = false; dm.x = dm.y = -9999; dustAwake = 240; });
+  new IntersectionObserver(es => es.forEach(en => { dustVis = en.isIntersecting; if (dustVis) { if (!dustBuilt) buildDust(); else if (!dustIn) dustAwake = 240; } }), {threshold:.15}).observe(dust);
+  const fgCol = getComputedStyle(root).getPropertyValue('--fg').trim() || '#eeefed';
+  function drawDust(){
+    if (!dustVis || !dustBuilt) return;
+    if (!dustIn) { dustIn = true; dustAwake = 260; }
+    if (dustAwake <= 0 && !dm.on) return;
+    dustAwake--;
+    const R = 90 * (dc.width / Math.max(1, dust.clientWidth)), R2 = R*R;
+    const still = !motion;
+    dctx.clearRect(0, 0, dc.width, dc.height);
+    dctx.fillStyle = fgCol;
+    let moving = 0;
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i];
+      if (still) { p.x = p.hx; p.y = p.hy; }
+      else {
+        const dx = p.x - dm.x, dy = p.y - dm.y, d2 = dx*dx + dy*dy;
+        if (dm.on && d2 < R2) { const d = Math.sqrt(d2) || 1, f = (1 - d/R) * 2.4; p.vx += dx/d*f; p.vy += dy/d*f; }
+        p.vx += (p.hx - p.x) * .045; p.vy += (p.hy - p.y) * .045;
+        p.vx *= .84; p.vy *= .84;
+        p.x += p.vx; p.y += p.vy;
+        if (Math.abs(p.vx) + Math.abs(p.vy) > .05) moving++;
+      }
+      dctx.globalAlpha = p.a;
+      dctx.fillRect(p.x, p.y, p.s, p.s);
+    }
+    dctx.globalAlpha = 1;
+    if (moving) dustAwake = Math.max(dustAwake, 20);
+  }
+  window.addEventListener('resize', () => { if (dustBuilt) { dustBuilt = false; dustIn = true; if (dustVis) buildDust(); } });
 
   /* ---------- Révélations ---------- */
   $$('.h2.rv>span').forEach(s => { const li = document.createElement('span'); li.className = 'li'; while (s.firstChild) li.appendChild(s.firstChild); s.appendChild(li); });
@@ -1106,14 +1258,14 @@ button.name:hover sup{color:var(--fg)}
   motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; store.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
 
   /* ---------- Boucle ---------- */
-  const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '';
+  const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '', bandSolid = false;
   new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(heroWrap);
   function frame(now){
     drawCursor();
     if (heroVisible) heroFrame(now);
     if (baVisible) baTick();
     if (trVisible) trTick();
-    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx();
+    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx(); drawDust();
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
@@ -1126,6 +1278,8 @@ button.name:hover sup{color:var(--fg)}
       const v = player.video; $('#pc-cur').textContent = tc(v.currentTime, P[player.id].fps);
       if (!seeking && v.duration) { const val = Math.round(v.currentTime/v.duration*1000); seek.value = val; seek.style.setProperty('--p', (val/10)+'%'); }
     }
+    const solid = window.scrollY > heroTop + heroStep*(N-1) + window.innerHeight*.6;
+    if (solid !== bandSolid) { bandSolid = solid; $('#band').classList.toggle('solid', solid); }
     const max = document.documentElement.scrollHeight - window.innerHeight;
     const pr = (window.scrollY / Math.max(1,max) * 180).toFixed(1);
     if (pr !== progLast) { progLast = pr; prog.style.transform = `rotate(${pr}deg)`; }
