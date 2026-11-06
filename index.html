@@ -339,6 +339,18 @@ body:has(.hero.playing) .kicker{opacity:0;visibility:hidden}
 .js .svc.in li{opacity:1;transform:none}
 .js .svc.in:hover li{opacity:.4}
 .js .svc.in li:hover{opacity:1}
+/* Studio : chaque métier montre un plan du studio (panneau collant sur ordinateur, vignette sur téléphone) */
+.svc-wrap{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:48px;align-items:start}
+.svc-wrap .svc-n{font-size:clamp(24px,2.5vw,40px)}
+.svc-wrap .svc li{grid-template-columns:minmax(0,1fr) minmax(0,.95fr)}
+.svc-th{display:none}
+.svc-pv{position:sticky;top:calc(var(--band) + 32px);margin:0;display:grid;gap:10px}
+.svc-pv .ph{position:relative;aspect-ratio:4/5;max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised)}
+.svc-pv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .45s var(--ease),transform 1.2s var(--ease)}
+.svc-pv img.off{opacity:0;transform:scale(1.04)}
+.svc-pv figcaption{font:400 12px/1.4 var(--mono);color:var(--fg-3)}
+@media (min-width:761px){.js .svc.in.pv li{opacity:.42}.js .svc.in.pv li.on{opacity:1}.svc.pv li.on::after{transform:scaleX(1)}.svc.pv li.on .svc-n{transform:translateX(12px)}}
+@media (min-width:761px) and (max-width:1100px){.svc-wrap .svc li{grid-template-columns:1fr}}
 .facts{display:flex;flex-wrap:wrap;gap:16px 48px}
 .facts dt{font-size:12px;color:var(--fg-3)}
 .facts dd{font-size:14px}
@@ -446,6 +458,12 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   .studio{grid-template-columns:1fr;padding-block:96px}
   .studio>.label,.studio-body{grid-column:auto}
   .svc li{grid-template-columns:1fr}
+  .svc-wrap{grid-template-columns:1fr;gap:0}
+  .svc-pv{display:none}
+  .svc-wrap .svc li{grid-template-columns:72px minmax(0,1fr);grid-template-rows:auto auto;column-gap:16px;row-gap:4px;align-items:center}
+  .svc-th{display:block;grid-row:1/3;grid-column:1;width:72px;height:90px;object-fit:cover;border-radius:4px;background:var(--raised)}
+  .svc-wrap .svc-n{grid-column:2;grid-row:1;align-self:end;font-size:clamp(24px,7vw,30px)}
+  .svc-wrap .svc-d{grid-column:2;grid-row:2;align-self:start}
   .name{font-size:clamp(28px,9vw,40px)}
   .name sup{display:none}
   .contact{padding-top:96px}
@@ -530,14 +548,17 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     <div class="studio-body">
       <h2 class="h2 rv dhov" id="studio-t"><span>La création guide,</span><span class="dim">la technologie ouvre</span></h2>
       <p class="lit" id="lit">NOVA est un studio indépendant de postproduction, d’effets visuels et de création IA basé à Liège. Il réalise des campagnes publicitaires IA, des VFX et des montages pour les marques, les agences et les artistes, en Belgique et en France. Son workflow hybride associe IA générative, 3D et compositing, de l’exploration au plan final&nbsp;: donner forme à votre vision.</p>
-      <ul class="svc" id="svc">
-        <li><span class="svc-n">Montage</span><span class="svc-d">Rythme, structure et coupe, du teaser au film de campagne</span></li>
-        <li><span class="svc-n">Effets visuels</span><span class="svc-d">VFX hybrides&nbsp;: 3D, compositing et IA générative</span></li>
-        <li><span class="svc-n">Création IA</span><span class="svc-d">Plans et visuels générés par IA, puis retravaillés en postproduction</span></li>
-        <li><span class="svc-n">Sound design</span><span class="svc-d">Effets sonores pensés avec les VFX et le montage</span></li>
-        <li><span class="svc-n">Direction artistique</span><span class="svc-d">Moodboard, références et cohérence visuelle</span></li>
-        <li><span class="svc-n">Storyboard</span><span class="svc-d">Découpage plan par plan, validé avant production</span></li>
-      </ul>
+      <div class="svc-wrap">
+        <ul class="svc" id="svc">
+          <li data-pv="assets/svc/montage.jpg" data-cap="KILLCAM · King Kifla"><img class="svc-th" src="assets/svc/montage-s.jpg" alt="" width="72" height="90" loading="lazy" decoding="async"><span class="svc-n">Montage</span><span class="svc-d">Rythme, structure et coupe, du teaser au film de campagne</span></li>
+          <li data-pv="assets/svc/vfx.jpg" data-cap="CRAMÉ · RR"><img class="svc-th" src="assets/svc/vfx-s.jpg" alt="" width="72" height="90" loading="lazy" decoding="async"><span class="svc-n">Effets visuels</span><span class="svc-d">VFX hybrides&nbsp;: 3D, compositing et IA générative</span></li>
+          <li data-pv="assets/svc/ia.jpg" data-cap="Oakley × Meta · téléobjectif 400&nbsp;mm"><img class="svc-th" src="assets/svc/ia-s.jpg" alt="" width="72" height="90" loading="lazy" decoding="async"><span class="svc-n">Création IA</span><span class="svc-d">Plans et visuels générés par IA, puis retravaillés en postproduction</span></li>
+          <li data-pv="assets/svc/son.jpg" data-cap="NDRANGETHA · Thabiti"><img class="svc-th" src="assets/svc/son-s.jpg" alt="" width="72" height="90" loading="lazy" decoding="async"><span class="svc-n">Sound design</span><span class="svc-d">Effets sonores pensés avec les VFX et le montage</span></li>
+          <li data-pv="assets/svc/da.jpg" data-cap="DEMANDEASHH · Sheu, réalisation NOVA"><img class="svc-th" src="assets/svc/da-s.jpg" alt="" width="72" height="90" loading="lazy" decoding="async"><span class="svc-n">Direction artistique</span><span class="svc-d">Moodboard, références et cohérence visuelle</span></li>
+          <li data-pv="assets/svc/storyboard.jpg" data-cap="Oakley × Meta · les lunettes dans le sable"><img class="svc-th" src="assets/svc/storyboard-s.jpg" alt="" width="72" height="90" loading="lazy" decoding="async"><span class="svc-n">Storyboard</span><span class="svc-d">Découpage plan par plan, validé avant production</span></li>
+        </ul>
+        <figure class="svc-pv" aria-hidden="true"><div class="ph"><img src="assets/svc/vfx.jpg" alt="" width="640" height="800" loading="lazy" decoding="async"><img class="off" alt="" width="640" height="800" decoding="async"></div><figcaption>CRAMÉ · RR</figcaption></figure>
+      </div>
       <dl class="facts">
         <div><dt>Base</dt><dd>Liège, Belgique</dd></div>
         <div><dt>Formats</dt><dd>Clips, teasers, campagnes</dd></div>
@@ -1616,6 +1637,38 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; pm.x = e.clientX; pm.y = e.clientY; pm.on = true; }, {passive:true});
   document.documentElement.addEventListener('mouseleave', () => { pm.on = false; });
   let railLast = '';
+  /* ---------- Studio : le métier survolé, ou le plus proche du centre de l'écran, montre son plan ---------- */
+  const svcList = $('#svc'), svcRows = $$('#svc li'), svcPv = $('.svc-pv');
+  const svcImgs = svcPv ? $$('.svc-pv img') : [], svcCap = svcPv ? svcPv.querySelector('figcaption') : null;
+  let svcFront = svcImgs[0], svcBack = svcImgs[1], svcOn = -1, svcHover = -1, svcWarm = false;
+  function showSvc(i){
+    if (i === svcOn || i < 0 || !svcPv) return; svcOn = i;
+    svcRows.forEach((li, k) => li.classList.toggle('on', k === i));
+    svcCap.textContent = svcRows[i].dataset.cap;
+    const src = svcRows[i].dataset.pv;
+    if (svcFront.getAttribute('src') === src) return;
+    svcBack.src = src; svcBack.classList.remove('off'); svcFront.classList.add('off');
+    [svcFront, svcBack] = [svcBack, svcFront];
+  }
+  if (svcPv) {
+    svcList.classList.add('pv');
+    svcRows.forEach((li, i) => {
+      li.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { svcHover = i; showSvc(i); } });
+      li.addEventListener('focusin', () => showSvc(i));
+    });
+    svcList.addEventListener('pointerleave', () => { svcHover = -1; });
+    nearIO.observe(svcList);
+    showSvc(1);
+  }
+  function drawSvc(){
+    if (!svcPv || svcHover >= 0 || !isNear(svcList) || !svcPv.offsetParent) return;
+    if (!svcWarm) { svcWarm = true; svcRows.forEach(li => { const im = new Image(); im.src = li.dataset.pv; }); }
+    const mid = window.innerHeight * .5, lr = svcList.getBoundingClientRect();
+    if (lr.bottom < mid * .5 || lr.top > mid * 1.5) return;
+    let best = -1, bd = 1e9;
+    svcRows.forEach((li, k) => { const r = li.getBoundingClientRect(), d = Math.abs(r.top + r.height/2 - mid); if (d < bd) { bd = d; best = k; } });
+    showSvc(best);
+  }
   function drawScrollFx(){
     const vh = window.innerHeight;
     const sb = isNear(stillsBox) ? stillsBox.getBoundingClientRect() : null;
@@ -1694,7 +1747,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     if (worksVisible) applyWorks(false);
     if (baVisible) baTick();
     if (trVisible) trTick();
-    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx(); drawDust(); drawHoverDust();
+    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx(); drawSvc(); drawDust(); drawHoverDust();
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
