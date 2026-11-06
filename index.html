@@ -930,18 +930,29 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     heroTop = heroWrap.getBoundingClientRect().top + window.scrollY;
   }
   const scrollForSlide = i => heroTop + i*heroStep;
-  ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); window.scrollTo({top: scrollForSlide(k), behavior: motion ? 'smooth' : 'auto'}); }));
-  // après un arrêt du défilement, l'image se pose doucement sur le projet le plus proche
-  window.addEventListener('scroll', () => {
+  // un tiret mène au projet ; le recalage ci-dessous attend la fin de ce défilement
+  let heroAuto = 0;
+  ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); heroAuto = performance.now() + 1600; window.scrollTo({top: scrollForSlide(k), behavior: motion ? 'smooth' : 'auto'}); }));
+  // après un arrêt du défilement, l'image se pose doucement sur le projet suivant dans le sens du geste ;
+  // jamais pendant qu'un doigt est posé, et sur écran tactile seulement une fois l'élan terminé
+  let touching = false, lastY = window.scrollY, lastDir = 0;
+  const settleWait = fine.matches ? 260 : 450;
+  function armSettle(){
     clearTimeout(settleT);
+    if (touching) return;
     settleT = setTimeout(() => {
-      if (!motion || player.ctx) return;
+      if (!motion || player.ctx || touching || performance.now() < heroAuto) return;
       const p = (window.scrollY - heroTop) / heroStep;
       if (p <= 0.02 || p >= N - 1 - 0.02) return;
-      const r = Math.round(p);
+      const f = p - Math.floor(p);
+      const r = lastDir > 0 ? (f > .15 ? Math.ceil(p) : Math.floor(p)) : lastDir < 0 ? (f < .85 ? Math.floor(p) : Math.ceil(p)) : Math.round(p);
       if (Math.abs(p - r) > .02) window.scrollTo({top: scrollForSlide(r), behavior:'smooth'});
-    }, 260);
-  }, {passive:true});
+    }, settleWait);
+  }
+  window.addEventListener('touchstart', () => { touching = true; clearTimeout(settleT); }, {passive:true});
+  window.addEventListener('touchend', () => { touching = false; armSettle(); }, {passive:true});
+  window.addEventListener('touchcancel', () => { touching = false; armSettle(); }, {passive:true});
+  window.addEventListener('scroll', () => { const y = window.scrollY; if (y !== lastY) { lastDir = Math.sign(y - lastY); lastY = y; } armSettle(); }, {passive:true});
   const heroClickable = () => !player.ctx && !introOn && Math.abs(pos - Math.round(pos)) < .04;
   hero.addEventListener('click', e => { if (!heroClickable() || e.target.closest('a,.hbar,.pc,.cap-a')) return; openHero(); });
   $$('#caps [data-play]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openHero(); }));
