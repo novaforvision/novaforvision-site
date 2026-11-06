@@ -356,16 +356,8 @@ button.name:hover sup{color:var(--fg)}
 .ghost{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--line-2);font-size:13px;color:var(--fg);transition:background-color .16s var(--ease),border-color .16s var(--ease)}
 .ghost:hover{background:var(--raised);border-color:var(--fg-3)}
 .fly{position:fixed;inset:0;width:100%;height:100%;z-index:70;pointer-events:none}
-/* Titres en poussière */
-.dust-t{position:relative}
-.h2>span.dust-t{overflow:visible;width:fit-content;max-width:100%}
-.studio,.ba,.contact{overflow-x:clip}
-.opener{overflow-x:clip}
-.js .dust-t.pending{color:transparent}
-.dust-t .dt-c{position:absolute;pointer-events:none}
-.h2 .dust-t{white-space:nowrap}
-@media (max-width:760px){.h2 .dust-t{white-space:normal}}
-.dust-t.done{transition:color .5s var(--ease)}
+/* Poussière discrète au survol des grands titres */
+.hov-dust{position:fixed;inset:0;width:100%;height:100%;z-index:45;pointer-events:none}
 /* Poussière du rideau */
 .hdust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
@@ -490,7 +482,7 @@ button.name:hover sup{color:var(--fg)}
   <section class="studio wrap" id="studio" aria-labelledby="studio-t">
     <p class="label">Studio</p>
     <div class="studio-body">
-      <h2 class="h2" id="studio-t"><span class="dust-t">La création guide,</span><span class="dim dust-t">la technologie ouvre</span></h2>
+      <h2 class="h2 rv dhov" id="studio-t"><span>La création guide,</span><span class="dim">la technologie ouvre</span></h2>
       <p class="lit" id="lit">NOVA réunit postproduction, effets visuels et intelligence artificielle dans un même workflow. De l'exploration au plan final, chaque outil sert une intention&nbsp;: donner forme à votre vision.</p>
       <ul class="svc" id="svc">
         <li><span class="svc-n">Montage</span><span class="svc-d">Rythme, structure et coupe, du teaser au clip complet</span></li>
@@ -512,7 +504,7 @@ button.name:hover sup{color:var(--fg)}
 
   <section class="camp" id="campagnes" aria-labelledby="camp-t">
     <div class="opener wrap">
-      <div class="op-row"><p class="op-t dust-t" role="heading" aria-level="2">Campagnes</p><span class="op-count mono">1 projet</span></div>
+      <div class="op-row"><p class="op-t split chars dhov" role="heading" aria-level="2">Campagnes</p><span class="op-count mono">1 projet</span></div>
       <p class="op-note">Pour les marques, du concept au film final&nbsp;: création IA, effets visuels et postproduction dans un seul workflow.</p>
     </div>
     <div class="camp-film" id="camp-film" data-cursor="Lire">
@@ -558,7 +550,7 @@ button.name:hover sup{color:var(--fg)}
   <section class="ba wrap" id="avant-apres" aria-labelledby="ba-t">
     <div class="ba-side">
       <p class="label">Avant / Après</p>
-      <h2 class="h2" id="ba-t"><span class="dust-t">Le plan brut,</span><span class="dim dust-t">puis le plan final</span></h2>
+      <h2 class="h2 rv dhov" id="ba-t"><span>Le plan brut,</span><span class="dim">puis le plan final</span></h2>
       <p class="ba-txt">CRAMÉ, pour RR. Chaque plan passe d'abord tel qu'il a été tourné, puis tel qu'il sort de postproduction.</p>
       <ol class="ba-ch" id="ba-ch">
         <li><button type="button" data-i="0"><span class="mono">01</span>Étalonnage<span class="st">Avant</span></button></li>
@@ -581,7 +573,7 @@ button.name:hover sup{color:var(--fg)}
   </section>
 
   <div class="opener wrap" id="clips-open">
-    <div class="op-row"><p class="op-t dust-t" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
+    <div class="op-row"><p class="op-t split chars dhov" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
     <p class="op-note">Montage, VFX et IA pour les artistes. Faites défiler pour faire avancer la bobine, cliquez sur un film pour le lancer ici même, avec le son.</p>
   </div>
 
@@ -662,7 +654,7 @@ button.name:hover sup{color:var(--fg)}
 
   <section class="contact wrap" id="contact" aria-labelledby="contact-t">
     <p class="label">Contact</p>
-    <h2 class="h2" id="contact-t"><span class="dust-t">Une idée, une image, un projet</span><span class="dim dust-t">Et si on lui donnait forme&nbsp;?</span></h2>
+    <h2 class="h2 rv dhov" id="contact-t"><span>Une idée, une image, un projet</span><span class="dim">Et si on lui donnait forme&nbsp;?</span></h2>
     <div class="ct-grid">
       <form class="sentence" id="sentence" novalidate aria-label="Écrire au studio">
         <p class="sen" id="sen">Je m'appelle <input class="sen-in" id="s-name" type="text" autocomplete="name" placeholder="votre nom" size="9" aria-label="Votre nom">, je prépare <select class="sen-sel" id="s-type" aria-label="Type de projet"><option>une campagne IA</option><option>un clip</option><option>des VFX</option><option>de la postproduction</option><option>autre chose</option></select> pour <select class="sen-sel" id="s-when" aria-label="Délai"><option>ce mois-ci</option><option selected>dans 1 à 3 mois</option><option>une date encore libre</option></select>. L'idée&nbsp;: <input class="sen-in" id="s-idea" type="text" placeholder="en une phrase" size="14" aria-label="Votre idée en une phrase"></p>
@@ -900,21 +892,21 @@ button.name:hover sup{color:var(--fg)}
   const easeIO = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
   // le bord du rideau lâche une fine poussière de lumière pendant le passage
   const hdc = $('#hdust'), hdx = hdc.getContext('2d'), hp = [];
-  let hdLastX = null, hdIdle = 0;
+  let hdLastX = null, hdIdle = 0, hdAcc = 0;
   function heroDust(seamX, seamO){
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const W = Math.round(hero.clientWidth*dpr), H = Math.round(hero.clientHeight*dpr);
     if (hdc.width !== W || hdc.height !== H) { hdc.width = W; hdc.height = H; }
     const x = seamX/100*W, moved = hdLastX === null ? 0 : Math.abs(x - hdLastX);
     if (motion && seamO > .05 && moved > .5) {
-      const n = Math.min(26, 4 + moved*.35);
-      for (let i = 0; i < n && hp.length < 700; i++) hp.push({ x: x + (Math.random()-.5)*4*dpr, y: Math.random()*H, vx: (x < (hdLastX ?? x) ? -1 : 1)*(.4 + Math.random()*1.6)*dpr, vy: (Math.random()-.5)*.6*dpr, life: 1, dec: .012 + Math.random()*.02, s: (.8 + Math.random()*1.3)*dpr });
+      hdAcc += Math.min(4, moved*.05);
+      for (; hdAcc >= 1 && hp.length < 140; hdAcc--) hp.push({ x: x + (Math.random()-.5)*3*dpr, y: Math.random()*H, vx: (x < (hdLastX ?? x) ? -1 : 1)*(.3 + Math.random()*1.1)*dpr, vy: (Math.random()-.5)*.4*dpr, life: 1, dec: .016 + Math.random()*.022, s: (.6 + Math.random()*.9)*dpr });
     }
     hdLastX = x;
     if (!hp.length) { if (!hdIdle) { hdx.clearRect(0,0,W,H); hdIdle = 1; } return; }
     hdIdle = 0;
     hdx.clearRect(0,0,W,H); hdx.fillStyle = '#ffffff';
-    for (let i = hp.length - 1; i >= 0; i--) { const p = hp[i]; p.x += p.vx; p.y += p.vy; p.vx *= .97; p.life -= p.dec; if (p.life <= 0) { hp.splice(i,1); continue; } hdx.globalAlpha = p.life*.85; hdx.fillRect(p.x, p.y, p.s, p.s); }
+    for (let i = hp.length - 1; i >= 0; i--) { const p = hp[i]; p.x += p.vx; p.y += p.vy; p.vx *= .97; p.life -= p.dec; if (p.life <= 0) { hp.splice(i,1); continue; } hdx.globalAlpha = p.life*.5; hdx.fillRect(p.x, p.y, p.s, p.s); }
     hdx.globalAlpha = 1;
   }
   const vfx = new WeakMap();
@@ -1326,42 +1318,70 @@ button.name:hover sup{color:var(--fg)}
     try { navigator.clipboard.writeText('contact@novaforvision.fr').then(() => { copyBtn.textContent = 'Copiée'; reset(); }, fallback); } catch(e){ fallback(); }
   });
 
-  /* ---------- Grands titres qui se forment en poussière ---------- */
-  const dustTitles = $$('.dust-t');
-  dustTitles.forEach(el => { el._col = getComputedStyle(el).color; });
-  if (motion && !reduce) dustTitles.forEach(el => el.classList.add('pending'));
-  function formTitle(el){
-    if (!el.classList.contains('pending')) return;
-    const cs = getComputedStyle(el), r = el.getBoundingClientRect();
-    if (r.height > parseFloat(cs.fontSize)*1.8) { el.classList.add('done'); el.classList.remove('pending'); return; }
-    const dpr = Math.min(window.devicePixelRatio || 1, 2), padX = Math.min(120, innerWidth*.08), padY = 60;
-    const W = Math.ceil(r.width + padX*2), H = Math.ceil(r.height + padY*2);
-    const cv = document.createElement('canvas'); cv.className = 'dt-c'; cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
-    Object.assign(cv.style, { left: -padX + 'px', top: -padY + 'px', width: W + 'px', height: H + 'px' });
-    el.appendChild(cv);
-    const cx = cv.getContext('2d');
-    const oc = document.createElement('canvas'); oc.width = cv.width; oc.height = cv.height; const ox = oc.getContext('2d');
-    const fs = parseFloat(cs.fontSize);
-    ox.font = `${cs.fontWeight} ${fs*dpr}px ${cs.fontFamily}`;
-    try { ox.letterSpacing = (parseFloat(cs.letterSpacing) || 0)*dpr + 'px'; } catch(_) {}
-    ox.textBaseline = 'alphabetic'; ox.fillStyle = '#fff';
-    const mt = ox.measureText(el.textContent.trim());
-    const asc = mt.fontBoundingBoxAscent || fs*dpr*.8, desc = mt.fontBoundingBoxDescent || fs*dpr*.2;
-    const lh = r.height*dpr, base = padY*dpr + (lh - (asc + desc))/2 + asc;
-    ox.fillText(el.textContent.trim(), padX*dpr, base);
-    let data; try { data = ox.getImageData(0,0,oc.width,oc.height).data; } catch(_) { el.classList.remove('pending'); cv.remove(); return; }
-    const step = Math.max(2, Math.round((fs > 80 ? 2.6 : 1.8)*dpr)), pts = [];
-    for (let y = 0; y < oc.height; y += step) for (let x = 0; x < oc.width; x += step) if (data[(y*oc.width + x)*4 + 3] > 120) pts.push({ hx:x, hy:y, x:x + (Math.random()-.5)*cv.width*.9, y:y + (Math.random()-.5)*cv.height*1.6, d:Math.random()*380, s:(.7 + Math.random()*.9)*dpr, a:.5 + Math.random()*.5 });
-    const t0 = performance.now(); let shown = false;
-    (function step2(now){
-      const t = now - t0; cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle = el._col || fgCol;
-      for (const p of pts) { const e = clamp((t - p.d)/900, 0, 1), q = 1 - Math.pow(1-e, 3); cx.globalAlpha = p.a*(t > 1250 ? clamp(1 - (t-1250)/450, 0, 1) : 1); cx.fillRect(p.x + (p.hx - p.x)*q, p.y + (p.hy - p.y)*q, p.s, p.s); }
-      if (!shown && t > 1150) { shown = true; el.classList.add('done'); el.classList.remove('pending'); }
-      if (t < 1750) requestAnimationFrame(step2); else cv.remove();
-    })(t0);
+  /* ---------- Grands titres : une poussière discrète se détache des lettres sous le curseur ---------- */
+  const hovC = document.createElement('canvas'); hovC.className = 'hov-dust'; hovC.setAttribute('aria-hidden','true'); document.body.appendChild(hovC);
+  const hovX = hovC.getContext('2d'), hovP = []; let hovDirty = false;
+  const hovEls = $$('.dhov');
+  // relevé des pixels des lettres, caractère par caractère (gère les lignes, les lettres animées et la couleur de chaque ligne)
+  function sampleGlyphs(el){
+    const er = el.getBoundingClientRect(), pts = [];
+    const oc = document.createElement('canvas'); oc.width = Math.ceil(er.width); oc.height = Math.ceil(er.height);
+    if (!oc.width || !oc.height) return pts;
+    const ox = oc.getContext('2d'), rg = document.createRange(), cols = [];
+    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = tw.nextNode())) {
+      const pe = n.parentElement, cs = getComputedStyle(pe), fs = parseFloat(cs.fontSize);
+      let ci = cols.indexOf(cs.color); if (ci < 0) { cols.push(cs.color); ci = cols.length - 1; }
+      ox.font = `${cs.fontWeight} ${fs}px ${cs.fontFamily}`; ox.textBaseline = 'alphabetic'; ox.fillStyle = `rgb(${ci*40 + 20},0,0)`;
+      const tx = n.textContent;
+      for (let i = 0; i < tx.length; i++) {
+        if (!tx[i].trim()) continue;
+        rg.setStart(n, i); rg.setEnd(n, i + 1);
+        const r = rg.getBoundingClientRect(); if (!r.width) continue;
+        const mt = ox.measureText(tx[i]), asc = mt.fontBoundingBoxAscent || fs*.8, desc = mt.fontBoundingBoxDescent || fs*.2;
+        ox.fillText(tx[i], r.left - er.left, r.top - er.top + (r.height - (asc + desc))/2 + asc);
+      }
+    }
+    let d; try { d = ox.getImageData(0,0,oc.width,oc.height).data; } catch(_) { return pts; }
+    const st = parseFloat(getComputedStyle(el).fontSize) > 90 ? 3 : 2;
+    for (let y = 0; y < oc.height; y += st) for (let x = 0; x < oc.width; x += st) { const k = (y*oc.width + x)*4; if (d[k+3] > 140) pts.push(x, y, Math.round((d[k]/(d[k+3]/255) - 20)/40)); }
+    el._cols = cols;
+    return pts;
   }
-  const dtIO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { dtIO.unobserve(en.target); const go2 = () => formTitle(en.target); (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(go2); } }), {threshold:.4});
-  dustTitles.forEach(el => dtIO.observe(el));
+  hovEls.forEach(el => {
+    let lx = null, ly = null;
+    el.addEventListener('pointerleave', () => { lx = ly = null; });
+    el.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse' || !motion || reduce || introOn) return;
+      const r = el.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+      const moved = lx === null ? 0 : Math.hypot(mx - lx, my - ly); lx = mx; ly = my;
+      if (moved < 1.5) return;
+      if (!el._g || el._gw !== Math.round(r.width)) { if (el.classList.contains('rv') || el.classList.contains('chars')) { if (!el.classList.contains('in')) return; } el._g = sampleGlyphs(el); el._gw = Math.round(r.width); }
+      const g = el._g, R = 34, near = [];
+      for (let i = 0; i < g.length; i += 3) { const dx = g[i] - mx, dy = g[i+1] - my; if (dx*dx + dy*dy < R*R) near.push(i); }
+      if (!near.length) return;
+      const n = Math.min(4, 1 + Math.floor(moved*.08));
+      for (let k = 0; k < n && hovP.length < 120; k++) {
+        const i = near[(Math.random()*near.length) | 0], gx = g[i], gy = g[i+1];
+        const dx = gx - mx, dy = gy - my, dl = Math.hypot(dx, dy) || 1, sp = .15 + Math.random()*.45;
+        hovP.push({ x: r.left + gx + scrollX, y: r.top + gy + scrollY, vx: dx/dl*sp + (Math.random()-.5)*.2, vy: dy/dl*sp*.6 - (.12 + Math.random()*.3), life: 1, dec: .011 + Math.random()*.014, s: 1 + Math.random()*.9, c: el._cols[g[i+2]] || fgCol });
+      }
+    }, {passive:true});
+  });
+  window.addEventListener('resize', () => hovEls.forEach(el => { el._g = null; }));
+  function drawHoverDust(){
+    if (!hovP.length) { if (hovDirty) { hovX.clearRect(0,0,hovC.width,hovC.height); hovDirty = false; } return; }
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = Math.round(innerWidth*dpr), H = Math.round(innerHeight*dpr);
+    if (hovC.width !== W || hovC.height !== H) { hovC.width = W; hovC.height = H; }
+    hovX.setTransform(1,0,0,1,0,0); hovX.clearRect(0,0,W,H); hovX.setTransform(dpr,0,0,dpr,-scrollX*dpr,-scrollY*dpr);
+    for (let i = hovP.length - 1; i >= 0; i--) {
+      const p = hovP[i]; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.vy *= .985; p.life -= p.dec;
+      if (p.life <= 0) { hovP.splice(i,1); continue; }
+      hovX.globalAlpha = Math.min(1, p.life*1.4)*.7; hovX.fillStyle = p.c; hovX.fillRect(p.x, p.y, p.s, p.s);
+    }
+    hovX.globalAlpha = 1; hovX.setTransform(1,0,0,1,0,0); hovDirty = true;
+  }
 
   /* ---------- L'étoile de poussière ---------- */
   const dust = $('#dust'), dc = $('#dust-c'), dctx = dc.getContext('2d');
@@ -1467,7 +1487,7 @@ button.name:hover sup{color:var(--fg)}
     if (worksVisible) applyWorks(false);
     if (baVisible) baTick();
     if (trVisible) trTick();
-    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx(); drawDust();
+    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx(); drawDust(); drawHoverDust();
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
