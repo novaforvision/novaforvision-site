@@ -406,6 +406,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 .foot>:last-child{justify-self:end}
 
 @media (max-width:1100px){.band-nav .opt2{display:none}}
+/* tablette : les infos du film et de la bobine passent sur une ligne entière au lieu de colonnes serrées */
+@media (min-width:761px) and (max-width:1100px){.ci-title{grid-column:1/-1}.ci-meta{grid-column:1/10}.ci-act{grid-column:10/13}.js .works.h .works-cap{grid-template-columns:minmax(0,1fr) auto}.works-cap .cap-main{grid-column:1;grid-row:1}.works-cap .cap-actions{grid-column:2;grid-row:1}.works-cap .cap-meta{grid-column:1/-1;grid-row:2}}
 @media (max-width:900px){.band-nav .opt{display:none}.tc{display:none}}
 @media (max-width:760px){
   :root{--band:52px}
