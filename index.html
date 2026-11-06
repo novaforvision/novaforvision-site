@@ -72,15 +72,19 @@ ul,ol{padding:0;list-style:none}
 @keyframes openB{to{transform:translateY(101%)}}
 
 /* Curseur étoile */
-.cur-star,.cur-l{position:fixed;left:0;top:0;z-index:95;pointer-events:none;opacity:0;will-change:transform}
+.cur-star,.cur-l{position:fixed;left:0;top:0;z-index:95;pointer-events:none;opacity:0;will-change:transform;mix-blend-mode:difference}
 .cursor-on .cur-star,.cursor-on .cur-l{opacity:1}
-.cur-star{width:34px;height:13px;margin:-6.5px 0 0 -17px;mix-blend-mode:difference}
-.cur-star i{display:block;width:100%;height:100%;background:var(--white);transition:transform .25s var(--ease)}
-.cur-l{width:84px;height:84px;margin:-42px 0 0 -42px}
-.cur-l span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:var(--fg);color:var(--ink);font-size:13px;font-weight:500;transform:scale(0);transition:transform .28s var(--ease)}
-.cur-l.on span{transform:scale(1)}
-.cur-star.link i{transform:scale(1.6)}
-.cur-star.hide i{transform:scale(0)}
+.cur-star{width:30px;height:11px;margin:-5.5px 0 0 -15px;transition:filter .4s var(--ease)}
+.cur-star i{display:block;width:100%;height:100%;background:var(--white);transition:transform .35s var(--ease)}
+.cur-star.link i{transform:scale(1.5)}
+.cur-star.play{filter:drop-shadow(0 0 6px rgba(255,255,255,.75))}
+.cur-star.play i{animation:starIn .8s cubic-bezier(.2,.9,.25,1) forwards}
+.cur-star.out i{animation:starOut .4s var(--ease) forwards}
+@keyframes starIn{0%{transform:rotate(-220deg) scale(.3)}55%{transform:rotate(12deg) scale(3.1,2.3)}100%{transform:rotate(0) scale(2.6,1.9)}}
+@keyframes starOut{from{transform:scale(2.6,1.9)}to{transform:scale(1)}}
+.cur-l{margin:-9px 0 0 48px;font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--white);white-space:nowrap}
+.cur-l span{display:inline-block;opacity:0;transform:translateX(-8px);transition:opacity .25s var(--ease),transform .4s var(--ease)}
+.cur-l.on span{opacity:1;transform:none;transition-delay:.2s}
 .cursor-on,.cursor-on *{cursor:none!important}
 
 /* Bande du haut */
@@ -114,13 +118,15 @@ ul,ol{padding:0;list-style:none}
 .cap-k{display:flex;gap:12px;align-items:baseline;font-size:13px;color:var(--fg-2);opacity:0;transition:opacity .4s var(--ease)}
 .cap-k .mono{font-size:12px;color:var(--fg-3)}
 .cap-t{font-size:clamp(44px,7vw,112px);line-height:.98;font-weight:400;letter-spacing:-.035em;max-width:12em}
-.wm{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.06em;margin-bottom:-.06em}
-.w{display:inline-block;transform:translateY(105%);transition:transform .8s var(--ease)}
+.wm{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.w{display:inline-block}
+.js .ch{display:inline-block;transform:translateY(112%) rotate(7deg);transform-origin:0 100%;transition:transform .9s var(--ease)}
+.js .chars.in .ch{transform:none}
 .cap-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 40px;opacity:0;transform:translateY(8px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
 .cap-m{font-size:15px;color:var(--fg-2)}
 .cap-a{display:flex;align-items:center;gap:24px;pointer-events:auto}
 .cap.on .cap-k{opacity:1;transition-delay:.05s}
-.cap.on .w{transform:none}
+.cap.on .ch{transform:none}
 .cap.on .cap-row{opacity:1;transform:none;transition-delay:.25s}
 .hbar{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;height:56px;border-top:1px solid var(--line-2);font-size:13px;color:var(--fg-2)}
 .ticks{display:flex;gap:8px;justify-self:center}
@@ -170,8 +176,20 @@ ul,ol{padding:0;list-style:none}
 .js .clip-in{clip-path:inset(0 0 100% 0);transition:clip-path 1s var(--ease)}
 .js .clip-in.in{clip-path:inset(0 0 0 0)}
 
+/* Bandeau des disciplines */
+.rail{overflow:hidden;padding-block:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rail-in{display:flex;align-items:center;gap:.35em;width:max-content;white-space:nowrap;font-size:clamp(44px,8vw,128px);line-height:1.02;letter-spacing:-.035em;will-change:transform}
+.rail-in span{color:var(--fg)}
+.rail-in span:nth-of-type(even){color:var(--fg-3)}
+.rail-in i{display:inline-block;flex:none;width:1.5em;height:.54em;background:var(--fg-2);will-change:transform}
+
 /* Campagnes */
-.camp{display:grid;gap:24px;padding-top:112px;background:var(--bg)}
+.opener{display:grid;gap:24px;padding-block:128px 48px}
+.op-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px 40px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:24px}
+.op-t{font-size:clamp(64px,12vw,184px);line-height:.88;font-weight:400;letter-spacing:-.045em}
+.op-count{font-size:12px;color:var(--fg-3);padding-bottom:12px}
+.op-note{max-width:34rem;font-size:18px;line-height:1.55;color:var(--fg-2)}
+.camp{display:grid;gap:24px;background:var(--bg)}
 .camp-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 40px;flex-wrap:wrap}
 .camp-head .h2{max-width:14em}
 .camp-note{font-size:13px;color:var(--fg-3)}
@@ -184,10 +202,10 @@ ul,ol{padding:0;list-style:none}
 .camp-ui .mono{font-size:12px}
 .camp-film.playing .camp-ui{opacity:0;pointer-events:none}
 .camp-info{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end;padding-block:8px 24px;border-bottom:1px solid var(--line)}
-.ci-title{grid-column:1/5;display:grid;gap:6px}
+.ci-title{grid-column:1/6;display:grid;gap:10px}
 .ci-idx{font-size:12px;color:var(--fg-3)}
-.camp-title{font-size:clamp(32px,4vw,56px);line-height:1.04;font-weight:400;letter-spacing:-.03em}
-.ci-meta{grid-column:5/11;display:grid;grid-template-columns:1.4fr 1.4fr .8fr;gap:8px 32px}
+.camp-title{font-size:clamp(40px,5.4vw,84px);line-height:.98;font-weight:400;letter-spacing:-.035em}
+.ci-meta{grid-column:6/11;display:grid;grid-template-columns:1.4fr 1.4fr .8fr;gap:8px 32px}
 .ci-meta dt,.wipe-cap .k{font-size:12px;color:var(--fg-3)}
 .ci-meta dd{font-size:14px;line-height:1.45}
 .ci-act{grid-column:11/13;justify-self:end}
@@ -201,13 +219,19 @@ ul,ol{padding:0;list-style:none}
 .wipe-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;pointer-events:none}
 .wipe-box:has(.wipe-range:focus-visible){outline:2px solid var(--fg);outline-offset:4px}
 .wipe-cap{display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:13px;color:var(--fg-2)}
-.stills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding-block:24px 128px}
+.stills{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:64px 24px;align-items:start;padding-block:64px 128px}
+.stills li:nth-child(1){grid-column:1/8}
+.stills li:nth-child(2){grid-column:9/13;margin-top:160px}
+.stills li:nth-child(3){grid-column:2/7}
+.stills li:nth-child(4){grid-column:7/13;margin-top:96px}
+.stills li:nth-child(5){grid-column:1/6;margin-top:48px}
+.stills li:nth-child(6){grid-column:6/13}
 .stills figure{margin:0;display:grid;gap:10px;min-width:0}
 .stills .ph{position:relative;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised)}
-.stills .ph img,.stills .ph video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.stills .ph img,.stills .ph video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:translate3d(0,var(--py,0%),0) scale(var(--sc,1.14));transition:transform .7s var(--ease)}
+.stills .ph:hover img,.stills .ph:hover video{--sc:1.2}
 .stills figcaption{font-size:13px;color:var(--fg-2)}
-.js .stills li:nth-child(3n+2) .clip-in{transition-delay:.08s}
-.js .stills li:nth-child(3n) .clip-in{transition-delay:.16s}
+.js .stills li:nth-child(2n) .clip-in{transition-delay:.1s}
 
 /* Avant / Après */
 .ba{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:128px;border-top:1px solid var(--line)}
@@ -234,7 +258,7 @@ ul,ol{padding:0;list-style:none}
 .ba-legend i.a{background:var(--fg);margin-left:16px}
 
 /* Clips : la bobine */
-.works{position:relative;background:var(--bg);border-top:1px solid var(--line)}
+.works{position:relative;background:var(--bg)}
 .works-pin{display:grid;gap:32px;padding-block:96px 64px}
 .works-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
 .works-hint{font-size:13px;color:var(--fg-3)}
@@ -272,10 +296,10 @@ ul,ol{padding:0;list-style:none}
 .works.h.open #pslot-works{display:block;border-top:1px solid var(--line)}
 
 /* Studio */
-.studio{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:128px;border-top:1px solid var(--line)}
+.studio{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:128px}
 .studio>.label{grid-column:1/4}
 .studio-body{grid-column:4/13;display:grid;gap:40px;min-width:0}
-.lit{max-width:30em;font-size:clamp(20px,2vw,28px);line-height:1.45;letter-spacing:-.01em}
+.lit{max-width:24em;font-size:clamp(24px,2.8vw,44px);line-height:1.28;letter-spacing:-.02em}
 .lit .wd{opacity:var(--o,1);transition:opacity .25s linear}
 .js .lit .wd{--o:.22}
 .svc{display:grid;border-top:1px solid var(--line)}
@@ -351,7 +375,11 @@ button.name:hover sup{color:var(--fg)}
   .ci-title,.ci-meta,.ci-act{grid-column:auto}
   .ci-meta{grid-template-columns:1fr 1fr}
   .ci-act{justify-self:start}
-  .stills{grid-template-columns:1fr 1fr;gap:16px;padding-bottom:96px}
+  .stills{grid-template-columns:1fr 1fr;gap:24px 16px;padding-block:32px 96px}
+  .stills li:nth-child(n){grid-column:auto;margin-top:0}
+  .opener{padding-block:96px 32px}
+  .op-note{font-size:16px}
+  .rail-in{font-size:clamp(36px,12vw,56px)}
   .ba{grid-template-columns:1fr;padding-block:96px}
   .ba-side,.ba-stage{grid-column:auto}
   .studio{grid-template-columns:1fr;padding-block:96px}
@@ -364,8 +392,8 @@ button.name:hover sup{color:var(--fg)}
   .peek{display:none}
 }
 @media (max-width:420px){.ci-meta{grid-template-columns:1fr}.band-cta{font-size:0}.band-cta::after{content:"Contact ↗";font-size:13px}}
-.motion-off .w,.motion-off .cap-row,.motion-off .cap-k{transition:none}
-@media (prefers-reduced-motion:reduce){.w,.cap-row,.cap-k,.js .rv .li,.js .clip-in,.js .svc li{transition:none!important}}
+.motion-off .ch,.motion-off .cap-row,.motion-off .cap-k{transition:none}
+@media (prefers-reduced-motion:reduce){.js .ch,.cap-row,.cap-k,.js .rv .li,.js .clip-in,.js .svc li{transition:none!important}.cur-star.play i{animation:none;transform:scale(2.6,1.9)}}
 </style>
 </head>
 <body>
@@ -376,10 +404,10 @@ button.name:hover sup{color:var(--fg)}
 <header class="band" id="band">
   <div class="band-in wrap">
     <nav class="band-nav" aria-label="Sections">
+      <a class="opt" href="#studio">Studio</a>
       <a href="#campagnes">Campagnes</a>
       <a class="opt" href="#avant-apres">Avant / Après</a>
-      <a href="#projets">Clips</a>
-      <a class="opt" href="#studio">Studio</a>
+      <a href="#clips-open">Clips</a>
       <a class="opt2" href="#generique">Générique</a>
     </nav>
     <a class="band-logo" href="#top" aria-label="NOVA, retour en haut"><img src="assets/nova-white.svg" alt="NOVA" width="51" height="18"></a>
@@ -444,10 +472,33 @@ button.name:hover sup{color:var(--fg)}
     <div class="pslot wrap" id="pslot-hero"></div>
   </section>
 
+  <section class="studio wrap" id="studio" aria-labelledby="studio-t">
+    <p class="label">Studio</p>
+    <div class="studio-body">
+      <h2 class="h2 rv" id="studio-t"><span>La création guide,</span><span class="dim">la technologie ouvre</span></h2>
+      <p class="lit" id="lit">NOVA réunit postproduction, effets visuels et intelligence artificielle dans un même workflow. De l'exploration au plan final, chaque outil sert une intention&nbsp;: donner forme à votre vision.</p>
+      <ul class="svc" id="svc">
+        <li><span class="svc-n">Montage</span><span class="svc-d">Rythme, structure et coupe, du teaser au clip complet</span></li>
+        <li><span class="svc-n">Effets visuels</span><span class="svc-d">VFX hybrides&nbsp;: 3D, compositing et IA générative</span></li>
+        <li><span class="svc-n">Création IA</span><span class="svc-d">Plans générés puis retravaillés en postproduction</span></li>
+        <li><span class="svc-n">Sound design</span><span class="svc-d">Effets sonores pensés avec les VFX</span></li>
+        <li><span class="svc-n">Direction artistique</span><span class="svc-d">Moodboard, références et cohérence visuelle</span></li>
+        <li><span class="svc-n">Storyboard</span><span class="svc-d">Découpage plan par plan, validé avant production</span></li>
+      </ul>
+      <dl class="facts">
+        <div><dt>Base</dt><dd>Liège, Belgique</dd></div>
+        <div><dt>Formats</dt><dd>Clips, teasers, campagnes</dd></div>
+        <div><dt>Tournage</dt><dd>Avec une équipe de production partenaire</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="rail" aria-hidden="true"><div class="rail-in" id="rail"><span>Postproduction</span><i class="star-mask"></i><span>Effets visuels</span><i class="star-mask"></i><span>Création IA</span><i class="star-mask"></i><span>Sound design</span><i class="star-mask"></i><span>Direction artistique</span><i class="star-mask"></i><span>Storyboard</span><i class="star-mask"></i><span>Montage</span></div></div>
+
   <section class="camp" id="campagnes" aria-labelledby="camp-t">
-    <div class="camp-head wrap">
-      <div><p class="label">Campagnes <span class="mono">1</span></p></div>
-      <p class="camp-note">Pour les marques, du concept au film final</p>
+    <div class="opener wrap">
+      <div class="op-row"><p class="op-t split chars" role="heading" aria-level="2">Campagnes</p><span class="op-count mono">1 projet</span></div>
+      <p class="op-note">Pour les marques, du concept au film final&nbsp;: création IA, effets visuels et postproduction dans un seul workflow.</p>
     </div>
     <div class="camp-film" id="camp-film" data-cursor="Lire">
       <video id="oak" src="media/oakley/film.mp4" poster="media/oakley/film.jpg" muted loop playsinline preload="metadata" aria-label="Film de campagne Oakley × Meta"></video>
@@ -459,7 +510,7 @@ button.name:hover sup{color:var(--fg)}
     </div>
     <div class="pslot wrap" id="pslot-camp"></div>
     <div class="camp-info wrap">
-      <div class="ci-title"><span class="ci-idx mono">Campagne IA</span><h2 class="camp-title rv h2" id="camp-t"><span>Oakley × Meta</span></h2></div>
+      <div class="ci-title"><span class="ci-idx mono">Campagne IA</span><h2 class="camp-title split chars" id="camp-t">Oakley × Meta</h2></div>
       <dl class="ci-meta">
         <div><dt>Rôle</dt><dd>Création IA, VFX, montage, sound design et motion design</dd></div>
         <div><dt>Livrables</dt><dd>Film 16:9 et 9:16, motion design du logo, stills 4K</dd></div>
@@ -480,7 +531,7 @@ button.name:hover sup{color:var(--fg)}
       <p class="wipe-cap"><span>Le saut, de la couleur au noir et blanc · plans 00:00:09:14 à 00:00:12:00</span><span class="k" id="wipe-hint">Survolez l'image pour parcourir la transition à la souris</span></p>
     </div>
     <ul class="stills wrap">
-      <li><figure><div class="ph clip-in"><img src="media/oakley/macro-prizm-led.jpg" alt="Gros plan sur le verre Prizm qui reflète le désert" width="1400" height="788" loading="lazy"></div><figcaption>Macro, verre Prizm</figcaption></figure></li>
+      <li><figure><div class="ph clip-in" data-cursor="Voir"><img src="media/oakley/macro-prizm-led.jpg" alt="Gros plan sur le verre Prizm qui reflète le désert" width="1400" height="788" loading="lazy"></div><figcaption>Macro, verre Prizm</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/400mm-subject.jpg" alt="Le coureur au téléobjectif, fond de dunes" width="1400" height="788" loading="lazy"></div><figcaption>Téléobjectif 400 mm</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/rain-world-onevision.jpg" alt="Le coureur sur un rocher, titre One vision. Every World." width="1400" height="788" loading="lazy"></div><figcaption>One vision. Every World.</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/unettes-sable-logo.jpg" alt="Une main pose les lunettes dans le sable" width="1400" height="788" loading="lazy"></div><figcaption>Les lunettes dans le sable</figcaption></figure></li>
@@ -513,6 +564,11 @@ button.name:hover sup{color:var(--fg)}
       <p class="ba-legend"><span><i aria-hidden="true"></i>Plan brut<i class="a" aria-hidden="true"></i>Plan final</span><span id="ba-hint">Survolez l'image pour parcourir le film à la souris</span></p>
     </div>
   </section>
+
+  <div class="opener wrap" id="clips-open">
+    <div class="op-row"><p class="op-t split chars" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
+    <p class="op-note">Montage, VFX et IA pour les artistes. Défilez pour faire avancer la bobine, survolez le film au centre pour le parcourir.</p>
+  </div>
 
   <section class="works" id="projets" aria-labelledby="works-t">
     <div class="works-pin">
@@ -563,26 +619,6 @@ button.name:hover sup{color:var(--fg)}
     </div>
   </section>
 
-  <section class="studio wrap" id="studio" aria-labelledby="studio-t">
-    <p class="label">Studio</p>
-    <div class="studio-body">
-      <h2 class="h2 rv" id="studio-t"><span>La création guide,</span><span class="dim">la technologie ouvre</span></h2>
-      <p class="lit" id="lit">NOVA réunit postproduction, effets visuels et intelligence artificielle dans un même workflow. De l'exploration au plan final, chaque outil sert une intention&nbsp;: donner forme à votre vision.</p>
-      <ul class="svc" id="svc">
-        <li data-peek="media/prev/killcam.mp4"><span class="svc-n">Montage</span><span class="svc-d">Rythme, structure et coupe, du teaser au clip complet</span></li>
-        <li data-peek="media/prev/fire.mp4" data-par="1.4778"><span class="svc-n">Effets visuels</span><span class="svc-d">VFX hybrides&nbsp;: 3D, compositing et IA générative</span></li>
-        <li data-peek="media/prev/oakley.mp4" data-par="1.7778"><span class="svc-n">Création IA</span><span class="svc-d">Plans générés puis retravaillés en postproduction</span></li>
-        <li data-peek="media/prev/crame.mp4" data-par="1.4778"><span class="svc-n">Sound design</span><span class="svc-d">Effets sonores pensés avec les VFX</span></li>
-        <li data-peek="media/prev/demandeashh.mp4" data-par="0.5625"><span class="svc-n">Direction artistique</span><span class="svc-d">Moodboard, références et cohérence visuelle</span></li>
-        <li data-peek-imgs="media/oakley/macro-prizm-led.jpg,media/oakley/400mm-subject.jpg,media/oakley/rain-world-onevision.jpg,media/oakley/unettes-sable-logo.jpg,media/oakley/end-oakley-meta.jpg" data-par="1.7778"><span class="svc-n">Storyboard</span><span class="svc-d">Découpage plan par plan, validé avant production</span></li>
-      </ul>
-      <dl class="facts">
-        <div><dt>Base</dt><dd>Liège, Belgique</dd></div>
-        <div><dt>Formats</dt><dd>Clips, teasers, campagnes</dd></div>
-        <div><dt>Tournage</dt><dd>Avec une équipe de production partenaire</dd></div>
-      </dl>
-    </div>
-  </section>
 
   <section class="credits" id="generique" aria-labelledby="cr-t">
     <div class="cr-pin">
@@ -699,17 +735,24 @@ button.name:hover sup{color:var(--fg)}
     const inter = e.target.closest('a,button:not(.work-media),input,[data-peek],[data-peek-imgs]');
     const c = inter ? null : e.target.closest('[data-cursor]');
     const label = c && !(c.closest('.playing,.open')) ? c.dataset.cursor : null;
-    if (label) { curT.textContent = label; curL.classList.add('on'); curS.classList.add('hide'); curS.classList.remove('link'); return; }
-    curL.classList.remove('on'); curS.classList.remove('hide');
-    curS.classList.toggle('link', !!e.target.closest('a,button,input,[data-peek],[data-peek-imgs]'));
+    if (label) {
+      if (curT.textContent !== label) curT.textContent = label;
+      curL.classList.add('on');
+      if (!curS.classList.contains('play')) { curS.classList.remove('out','link'); void curS.offsetWidth; curS.classList.add('play'); }
+      return;
+    }
+    curL.classList.remove('on');
+    if (curS.classList.contains('play')) { curS.classList.remove('play'); curS.classList.add('out'); clearTimeout(curS._t); curS._t = setTimeout(() => curS.classList.remove('out'), 420); }
+    curS.classList.toggle('link', !!inter);
   });
   document.addEventListener('pointerleave', () => { cur.x = cur.y = -100; });
   function drawCursor(){
     if (!fine.matches) return;
     cur.sx = lerp(cur.sx, cur.x, .35); cur.sy = lerp(cur.sy, cur.y, .35);
     cur.lx = lerp(cur.lx, cur.x, .18); cur.ly = lerp(cur.ly, cur.y, .18);
-    cur.rot = lerp(cur.rot, clamp(cur.vx*1.2, -30, 30), .12); cur.vx *= .85;
-    curS.style.transform = `translate3d(${cur.sx.toFixed(1)}px,${cur.sy.toFixed(1)}px,0) rotate(${cur.rot.toFixed(1)}deg)`;
+    cur.rot = lerp(cur.rot, clamp(cur.vx*1.2, -30, 30), .12); cur.vxs = lerp(cur.vxs || 0, Math.abs(cur.vx), .2); cur.vx *= .85;
+    const st = 1 + Math.min(cur.vxs/45, .9);
+    curS.style.transform = `translate3d(${cur.sx.toFixed(1)}px,${cur.sy.toFixed(1)}px,0) rotate(${cur.rot.toFixed(1)}deg) scale(${st.toFixed(3)},${(1/Math.sqrt(st)).toFixed(3)})`;
     curL.style.transform = `translate3d(${cur.lx.toFixed(1)}px,${cur.ly.toFixed(1)}px,0)`;
   }
 
@@ -722,7 +765,16 @@ button.name:hover sup{color:var(--fg)}
   let pos = 0, target = 0, prevPos = 0, vel = 0, cur0 = 0, heroVisible = true;
   const par = { x:0, y:0, tx:0, ty:0 };
   // titres découpés en mots
-  $$('.split').forEach(h => { const words = h.textContent.trim().split(/\s+/); h.textContent = ''; words.forEach((w,i) => { const m = document.createElement('span'); m.className = 'wm'; const s = document.createElement('span'); s.className = 'w'; s.style.transitionDelay = (i*60) + 'ms'; s.textContent = w; m.appendChild(s); h.appendChild(m); if (i < words.length-1) h.appendChild(document.createTextNode(' ')); }); });
+  $$('.split').forEach(h => {
+    h.setAttribute('aria-label', h.textContent.trim());
+    const words = h.textContent.trim().split(/\s+/); h.textContent = ''; let k = 0;
+    words.forEach((w,i) => {
+      const m = document.createElement('span'); m.className = 'wm'; m.setAttribute('aria-hidden','true');
+      const s = document.createElement('span'); s.className = 'w';
+      [...w].forEach(c => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.transitionDelay = (k++*24) + 'ms'; s.appendChild(ch); });
+      m.appendChild(s); h.appendChild(m); if (i < words.length-1) { h.appendChild(document.createTextNode(' ')); k += 2; }
+    });
+  });
   function setCurrent(i){
     if (i === cur0 && caps[i].classList.contains('on')) return;
     if (introOn && i === 0 && performance.now() < 1400) return;
@@ -1232,8 +1284,24 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
 
   /* ---------- Révélations ---------- */
   $$('.h2.rv>span').forEach(s => { const li = document.createElement('span'); li.className = 'li'; while (s.firstChild) li.appendChild(s.firstChild); s.appendChild(li); });
-  const revIO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); revIO.unobserve(en.target); } }), {threshold:.25, rootMargin:'0px 0px -5% 0px'});
-  $$('.rv,.clip-in,.svc').forEach(el => revIO.observe(el));
+  // les éléments masqués (clip-path) sont observés via leur parent, sinon ils ne croisent jamais l'écran
+  const revIO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { (en.target._rv || en.target).classList.add('in'); revIO.unobserve(en.target); } }), {threshold:.2, rootMargin:'0px 0px -5% 0px'});
+  $$('.rv,.svc,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
+  $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
+  // parallaxe des stills et bandeau des disciplines
+  const phs = $$('.stills .ph'), rail = $('#rail'), railStars = $$('#rail i'), railBox = rail.parentElement;
+  let railLast = '';
+  function drawScrollFx(){
+    const vh = window.innerHeight;
+    if (motion) phs.forEach(ph => { const r = ph.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return; const d = ((r.top + r.height/2) - vh/2) / vh; ph.style.setProperty('--py', (d*-7).toFixed(2) + '%'); });
+    const rr = railBox.getBoundingClientRect();
+    if (rr.bottom > 0 && rr.top < vh) {
+      const p = clamp((vh - rr.top) / (vh + rr.height), 0, 1);
+      const x = -(p * (rail.scrollWidth - window.innerWidth*.6)).toFixed(1);
+      const key = x + '';
+      if (key !== railLast) { railLast = key; rail.style.transform = `translate3d(${x}px,0,0)`; railStars.forEach((st,i) => st.style.transform = `rotate(${((p*540) + i*30).toFixed(1)}deg)`); }
+    }
+  }
 
   /* ---------- Mouvement (bouton) ---------- */
   function applyMotion(){
@@ -1259,7 +1327,8 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
     if (worksVisible) applyWorks(false);
     if (baVisible) baTick();
     if (trVisible) trTick();
-    drawLit(); drawCredits(false); drawPeek(now);
+    drawLit(); drawCredits(false); drawPeek(now); drawScrollFx();
+    if (heroVisible) { const k = clamp(window.scrollY / (hero.offsetHeight*.7), 0, 1); const capsEl = $('#caps'); capsEl.style.transform = k ? `translate3d(0,${(-k*90).toFixed(1)}px,0)` : ''; capsEl.style.opacity = k ? (1 - k*1.1).toFixed(3) : ''; }
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
