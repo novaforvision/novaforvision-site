@@ -237,7 +237,8 @@ ul,ol{padding:0;list-style:none}
 .stills li:nth-child(6){grid-column:6/13}
 .stills figure{margin:0;display:grid;gap:10px;min-width:0}
 .stills .ph{position:relative;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised)}
-.stills .ph img,.stills .ph video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:translate3d(0,var(--py,0%),0) scale(var(--sc,1.14));transition:transform .7s var(--ease)}
+.stills .ph img,.stills .ph video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:translate3d(var(--mx,0%),calc(var(--py,0%) + var(--my,0%)),0);scale:var(--sc,1.14);transition:scale .7s var(--ease)}
+.stills figure{will-change:transform}
 .stills .ph:hover img,.stills .ph:hover video{--sc:1.2}
 .stills figcaption{font-size:13px;color:var(--fg-2)}
 .js .stills li:nth-child(2n) .clip-in{transition-delay:.1s}
@@ -1536,10 +1537,27 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
   // parallaxe des stills et bandeau des disciplines
   const phs = $$('.stills .ph'), rail = $('#rail'), railStars = $$('#rail i'), railBox = rail.parentElement;
+  // parallaxe à la souris : chaque cadre flotte à sa profondeur, l'image glisse à l'inverse dans son cadre
+  const stillsBox = $('.stills'), stillFigs = phs.map(ph => ph.closest('figure')), DEPTH = [1, .55, .8, 1.2, .7, 1];
+  const pm = { x:0, y:0, on:false }, par = { x:0, y:0 };
+  window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; pm.x = e.clientX; pm.y = e.clientY; pm.on = true; }, {passive:true});
+  document.documentElement.addEventListener('mouseleave', () => { pm.on = false; });
   let railLast = '';
   function drawScrollFx(){
     const vh = window.innerHeight;
-    if (motion) phs.forEach(ph => { const r = ph.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return; const d = ((r.top + r.height/2) - vh/2) / vh; ph.style.setProperty('--py', (d*-7).toFixed(2) + '%'); });
+    const sb = stillsBox.getBoundingClientRect();
+    if (sb.bottom > -50 && sb.top < vh + 50) {
+      const tx = motion && pm.on ? clamp((pm.x - innerWidth/2) / (innerWidth/2), -1, 1) : 0, ty = motion && pm.on ? clamp((pm.y - vh/2) / (vh/2), -1, 1) : 0;
+      par.x += (tx - par.x) * .06; par.y += (ty - par.y) * .06;
+      phs.forEach((ph, i) => {
+        const r = ph.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
+        const d = motion ? ((r.top + r.height/2) - vh/2) / vh : 0, k = DEPTH[i % DEPTH.length];
+        ph.style.setProperty('--py', (d*-7).toFixed(2) + '%');
+        ph.style.setProperty('--mx', (-par.x*1.8*k).toFixed(2) + '%');
+        ph.style.setProperty('--my', (-par.y*.8*k).toFixed(2) + '%');
+        stillFigs[i].style.transform = `translate3d(${(par.x*10*k).toFixed(1)}px,${(par.y*8*k).toFixed(1)}px,0)`;
+      });
+    }
     const rr = railBox.getBoundingClientRect();
     if (rr.bottom > 0 && rr.top < vh) {
       const p = clamp((vh - rr.top) / (vh + rr.height), 0, 1);
