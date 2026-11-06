@@ -148,6 +148,11 @@
   const curS = $('#cur-star'), curL = $('#cur-l'), curT = $('#cur-t');
   const cur = { x:-100, y:-100, sx:-100, sy:-100, lx:-100, ly:-100, rot:0, vx:0 };
   window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; cur.vx = e.clientX - cur.x; cur.x = e.clientX; cur.y = e.clientY; }, {passive:true});
+  // d'une page à l'autre, l'étoile reprend là où était la souris (sinon elle reste invisible jusqu'au premier mouvement)
+  try { const s = JSON.parse(sessionStorage.getItem('nova-cur') || 'null'); if (s && fine.matches && Date.now() - s.t < 8000) { cur.x = cur.sx = cur.lx = s.x; cur.y = cur.sy = cur.ly = s.y; } } catch(e){}
+  const saveCur = () => { try { if (cur.x > -50) sessionStorage.setItem('nova-cur', JSON.stringify({ x: cur.x, y: cur.y, t: Date.now() })); } catch(e){} };
+  window.addEventListener('pagehide', saveCur);
+  document.addEventListener('click', e => { if (e.target.closest && e.target.closest('a[href]')) saveCur(); }, true);
   let curTarget = null;
   document.addEventListener('pointerover', e => { curTarget = e.target; updateCursor(); });
   function updateCursor(){

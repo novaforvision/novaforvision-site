@@ -444,10 +444,6 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 
 /* ==================== Site en quatre pages : NOVA, Projets, Studio, Contact ==================== */
 .label{font-weight:400}
-/* passage d'une page à l'autre : fondu, la bande du haut reste en place */
-@view-transition{navigation:auto}
-.band{view-transition-name:band}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.32s}
 
 /* Bande : la page ouverte est marquée par une petite étoile */
 .band-nav a{position:relative}
