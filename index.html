@@ -488,8 +488,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   <section class="hero" id="hero" aria-label="Projets phares">
     <div class="stage" id="stage">
       <div class="slide" data-id="oakley"><video src="media/hero/oakley.mp4" poster="media/hero/oakley-p.jpg" muted playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
-      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" poster="media/hero/crame.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
-      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" data-poster="media/hero/crame.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" data-poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><span class="shade"></span></div>
       <span class="seam" id="seam" aria-hidden="true"><i class="star-mask"></i></span>
     </div>
     <canvas class="hdust" id="hdust" aria-hidden="true"></canvas>
@@ -1731,6 +1731,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   const warmV = v => { if (v && v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } if (!v || v.preload === 'auto') return; v.preload = 'auto'; if (v.readyState === 0 && v.paused) { try { v.load(); } catch(e){} } };
   // préchargement en tâche de fond seulement sur ordinateur avec une bonne connexion ; sur mobile, les vidéos se chargent quand on commence à défiler
   const fastNet = (() => { const c = navigator.connection; return !(c && (c.saveData || /(^|-)2g|3g/.test(c.effectiveType || ''))); })();
+  window.addEventListener('load', () => { [SV[1], SV[2]].forEach(v => { if (v && v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } }); });
   window.addEventListener('load', () => { if (!fastNet || window.innerWidth < 761) return; setTimeout(() => warmV(SV[1]), 4000); setTimeout(() => warmV(SV[2]), 6000); });
   window.addEventListener('scroll', () => { if (window.scrollY > heroTop + 8) warmV(SV[1]); if (window.scrollY > heroTop + heroStep*.6) warmV(SV[2]); }, {passive:true});
   new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) warmV(tr); }), {rootMargin:'900px 0px'}).observe(wipe);
