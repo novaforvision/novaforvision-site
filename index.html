@@ -756,7 +756,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   const fine = matchMedia('(hover:hover) and (pointer:fine)');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
-  const playV = v => { if (v) { const p = v.play(); if (p && p.catch) p.catch(()=>{}); } };
+  const playV = v => { if (v) { const p = v.play(); if (p && p.catch) p.catch(e => { if (e && e.name === 'NotAllowedError') v._blocked = true; }); } };
 
   /* ---------- Mouvement ---------- */
   const saved = store.get('nova-motion');
@@ -776,7 +776,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     const base = Math.min(innerWidth*.62, 780) / SW;
     const cxs = innerWidth/2, cys = innerHeight/2;
     const place = (el, sc, rot) => el.setAttribute('transform', `translate(${cxs} ${cys}) rotate(${rot}) scale(${sc}) translate(${-SW/2} ${-SH/2})`);
-    const P2 = []; let ready = false, t0 = null, done = false;
+    const P2 = []; let ready = false, t0 = null, done = false, opened = false;
     const img = new Image();
     img.onload = () => {
       const w = Math.round(SW*base*dpr), h = Math.round(SH*base*dpr);
@@ -803,7 +803,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
       ix.clearRect(0,0,W,H);
       // l'ouverture : l'étoile devient une fenêtre qui tourne et grandit
       const o = clamp((t - 2150)/950, 0, 1), oe = ein(o);
-      if (t >= 2150) place(hole, base*(1 + oe*48), -oe*90);
+      if (t >= 2150) { place(hole, base*(1 + oe*48), -oe*90); if (!opened) { opened = true; try { onIntroOpen(); } catch(e){} } }
       const sweep = (t - 1550)/600;              // balayage de lumière de gauche à droite
       ix.fillStyle = '#ffffff';
       for (const p of P2) {
@@ -883,13 +883,17 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     });
   });
   // Oakley : le titre attend que le logo de la vidéo ait disparu, puis la boucle repart après le logo (il ne revient plus)
-  const LOGO_END = 1.92, oakV = SV[SID.indexOf('oakley')], holdT0 = performance.now();
-  let logoDone = !oakV;
-  const logoHold = () => !logoDone && performance.now() - holdT0 < 6000;
+  const LOGO_END = 1.92, oakV = SV[SID.indexOf('oakley')];
+  let logoDone = !oakV, holdT0 = performance.now();
+  // le titre attend tant que la vidéo peut encore montrer le logo ; il s'affiche quand même si la vidéo ne peut pas jouer
+  const logoHold = () => !logoDone && motion && oakV && !oakV._blocked && !oakV.error && performance.now() - holdT0 < 15000;
+  // l'étoile de l'intro s'ouvre sur le logo de la campagne
+  function onIntroOpen(){ if (!oakV || !motion || oakV.readyState < 2) return; try { oakV.currentTime = 0; } catch(e){} logoDone = false; holdT0 = performance.now(); playV(oakV); }
   const oakLoopOwn = () => !(player.ctx && player.video === oakV);
   if (oakV) {
     oakV.loop = false;
     oakV.addEventListener('timeupdate', () => { if (oakV.currentTime >= LOGO_END + .08) logoDone = true; });
+    oakV.addEventListener('error', () => { logoDone = true; });
     oakV.addEventListener('ended', () => { if (!oakLoopOwn()) return; oakV.currentTime = LOGO_END; playV(oakV); });
   }
   function setCurrent(i){
@@ -1026,7 +1030,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     v.pause();
     if (r.src && !v.src.endsWith(r.src)) v.src = r.src; else if (!r.src) { v.removeAttribute('src'); v.load(); }
     v.muted = r.muted; v.loop = r.loop;
-    try { v.currentTime = r.time; } catch(e){}
+    try { v.currentTime = (v === oakV && r.time < LOGO_END + .1) ? LOGO_END + .1 : r.time; } catch(e){}
     pc.hidden = true; document.body.appendChild(pc);
     const cb = player.onClose; const op = player.opener;
     player.ctx = null; player.video = null; player.id = null;
