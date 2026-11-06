@@ -249,26 +249,43 @@ ul,ol{padding:0;list-style:none}
 .ba-legend i{display:inline-block;width:16px;height:2px;margin-right:8px;vertical-align:middle;background:var(--fg-3)}
 .ba-legend i.a{background:var(--fg);margin-left:16px}
 
-/* Clips : grille simple */
-.works{position:relative;padding-bottom:128px}
-.cgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:56px 24px}
-.cgrid .work:nth-child(1){grid-column:span 7}
-.cgrid .work:nth-child(2){grid-column:span 5}
-.cgrid .work:nth-child(3){grid-column:span 5}
-.cgrid .work:nth-child(4){grid-column:span 7}
-.cgrid .work:nth-child(n+5){grid-column:span 4}
-.work{display:grid;gap:12px;min-width:0}
-.work-media{position:relative;display:block;width:100%;height:clamp(240px,30vw,500px);max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised);text-align:left}
-.cgrid .work:nth-child(n+5) .work-media{height:clamp(220px,24vw,400px)}
+/* Clips : la bobine */
+.works{position:relative;background:var(--bg)}
+.works-pin{display:grid;gap:32px;padding-block:96px 64px}
+.works-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.works-hint{font-size:13px;color:var(--fg-3)}
+.track{display:grid;gap:48px}
+.work{min-width:0;transition:opacity .35s var(--ease)}
+.work-media{position:relative;display:block;width:100%;aspect-ratio:var(--ar);max-width:100%;overflow:hidden;border-radius:4px;background:var(--raised);text-align:left;transition:transform .6s var(--ease)}
 .work-media img,.work-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.work-media video{opacity:0;transition:opacity .4s var(--ease)}
+.work-media video{opacity:0;transition:opacity .35s var(--ease)}
 .work.playing .work-media video,.work.open .work-media video{opacity:1}
-.work.open .work-media video{object-fit:contain;background:var(--black)}
-.work-cap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline}
-.work-cap h3{font-size:clamp(18px,1.6vw,24px);font-weight:400;letter-spacing:-.01em}
-.work-cap p{grid-column:1/2;font-size:13px;color:var(--fg-2)}
-.work-cap .mono{grid-column:2/3;grid-row:1/3;font-size:12px;color:var(--fg-3);align-self:start}
-.work .pslot{margin-top:-4px}
+.work-cap{display:flex;justify-content:space-between;gap:16px;padding-top:12px}
+.work-cap h3{font-size:16px;font-weight:500}
+.work-cap p{font-size:13px;color:var(--fg-2);text-align:right}
+.work.v .work-media{width:min(100%,calc(66svh * .5625))}
+.works-cap{display:none}
+.js .works.h{height:var(--h-total)}
+.js .works.h .works-pin{grid-template-columns:minmax(0,1fr);position:sticky;top:var(--band);height:calc(100vh - var(--band));height:calc(100svh - var(--band));grid-template-rows:auto 1fr auto;padding-block:32px 24px;overflow:hidden}
+.js .works.h .track{align-self:center;display:flex;align-items:center;gap:clamp(32px,4vw,72px);width:max-content;padding:0;will-change:transform;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.js .works.h .work{height:var(--ih);width:calc(var(--ih) * var(--ar))}
+.js .works.h .work-media{height:100%;width:100%;max-width:none;aspect-ratio:auto}
+.js .works.h .work-cap{display:none}
+.js .works.h .work-media img{pointer-events:none;-webkit-user-drag:none}
+.js .works.h .works-cap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.6fr) auto;align-items:end;gap:24px 40px;border-top:1px solid var(--line);padding-top:20px}
+.cap-main{display:grid;gap:6px;min-width:0}
+.cap-idx{font-size:12px;color:var(--fg-3)}
+.cap-title{font-size:clamp(28px,3vw,44px);line-height:1.05;font-weight:400;letter-spacing:-.025em}
+.cap-meta{display:grid;grid-template-columns:repeat(3,minmax(0,auto));gap:8px 40px;justify-content:start}
+.cap-meta dt{font-size:12px;color:var(--fg-3)}
+.cap-meta dd{font-size:14px;color:var(--fg)}
+.cap-actions{display:flex;align-items:center;gap:20px;justify-self:end}
+.works-cap .fade{transition:opacity .18s var(--ease)}
+.works-cap.swap .fade{opacity:0}
+.works.h.open .works-cap{display:none}
+.works.h.open .work:not(.open){opacity:.06!important}
+#pslot-works{display:none}
+.works.h.open #pslot-works{display:block;border-top:1px solid var(--line)}
 
 /* Studio */
 .studio{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:128px}
@@ -387,9 +404,6 @@ button.name:hover sup{color:var(--fg)}
   .opener{padding-block:96px 32px}
   .op-note{font-size:16px}
   .rail-in{font-size:clamp(36px,12vw,56px)}
-  .cgrid{grid-template-columns:1fr;gap:40px}
-  .cgrid .work:nth-child(n){grid-column:auto}
-  .work-media,.cgrid .work:nth-child(n+5) .work-media{height:auto;aspect-ratio:4/3}
   .ba{grid-template-columns:1fr;padding-block:96px}
   .ba-side,.ba-stage{grid-column:auto}
   .studio{grid-template-columns:1fr;padding-block:96px}
@@ -572,48 +586,56 @@ button.name:hover sup{color:var(--fg)}
 
   <div class="opener wrap" id="clips-open">
     <div class="op-row"><p class="op-t split chars" role="heading" aria-level="2">Clips</p><span class="op-count mono">7 projets</span></div>
-    <p class="op-note">Montage, VFX et IA pour les artistes. Cliquez sur un film pour le lancer ici même, avec le son.</p>
+    <p class="op-note">Montage, VFX et IA pour les artistes. Faites défiler pour faire avancer la bobine, cliquez sur un film pour le lancer ici même, avec le son.</p>
   </div>
 
-  <section class="works wrap" id="projets" aria-labelledby="works-t">
-    <h2 class="sr-only" id="works-t">Clips</h2>
-    <ul class="cgrid" id="cgrid">
-      <li class="work" data-id="ndrangetha">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire NDRANGETHA, Thabiti"><img src="media/poster/ndrangetha.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/ndrangetha.mp4"></video></button>
-        <div class="work-cap"><h3>NDRANGETHA</h3><p>Thabiti · Montage · VFX · IA · SFX</p><span class="mono">00:00:35:00</span></div>
-        <div class="pslot"></div>
-      </li>
-      <li class="work" data-id="killcam">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire KILLCAM, King Kifla"><img src="media/poster/killcam.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/killcam.mp4"></video></button>
-        <div class="work-cap"><h3>KILLCAM</h3><p>King Kifla · Montage · VFX</p><span class="mono">00:00:29:20</span></div>
-        <div class="pslot"></div>
-      </li>
-      <li class="work" data-id="crame">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire CRAMÉ, RR"><img src="media/poster/crame.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/crame.mp4"></video></button>
-        <div class="work-cap"><h3>CRAMÉ</h3><p>RR · Montage · VFX · IA · SFX</p><span class="mono">00:00:38:02</span></div>
-        <div class="pslot"></div>
-      </li>
-      <li class="work" data-id="back">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire BACK, LP2.0"><img src="media/poster/back.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/back.mp4"></video></button>
-        <div class="work-cap"><h3>BACK</h3><p>LP2.0 · Montage · VFX</p><span class="mono">00:00:22:23</span></div>
-        <div class="pslot"></div>
-      </li>
-      <li class="work" data-id="demandeashh">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire DEMANDEASHH, Sheu"><img src="media/poster/demandeashh.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/demandeashh.mp4"></video></button>
-        <div class="work-cap"><h3>DEMANDEASHH</h3><p>Sheu · Teaser IA</p><span class="mono">00:00:33:07</span></div>
-        <div class="pslot"></div>
-      </li>
-      <li class="work" data-id="jamaiquaine">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire JAMAÏQUAINE IS DEAD, LP Killer"><img src="media/poster/jamaiquaine.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/jamaiquaine.mp4"></video></button>
-        <div class="work-cap"><h3>JAMAÏQUAINE IS DEAD</h3><p>LP Killer · VFX</p><span class="mono">00:00:33:17</span></div>
-        <div class="pslot"></div>
-      </li>
-      <li class="work" data-id="bellodallas">
-        <button class="work-media" type="button" data-cursor="Lire" aria-label="Lire REEL VFX, Bello &amp; Dallas"><img src="media/poster/bellodallas.jpg" alt="" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/bellodallas.mp4"></video></button>
-        <div class="work-cap"><h3>REEL VFX</h3><p>Bello &amp; Dallas · VFX</p><span class="mono">00:00:13:11</span></div>
-        <div class="pslot"></div>
-      </li>
-    </ul>
+  <section class="works" id="projets" aria-labelledby="works-t">
+    <div class="works-pin">
+      <div class="works-head wrap">
+        <h2 class="label" id="works-t">Clips <span class="mono">7</span></h2>
+        <p class="works-hint" id="works-hint">Défilez pour faire avancer la bobine</p>
+      </div>
+      <div class="track wrap" id="track">
+        <article class="work" data-id="ndrangetha" style="--ar:1.5722">
+          <button class="work-media" type="button" aria-label="Lire NDRANGETHA, Thabiti"><img src="media/poster/ndrangetha.jpg" alt="" width="1132" height="720"><video muted loop playsinline preload="none" data-src="media/prev/ndrangetha.mp4"></video></button>
+          <div class="work-cap"><h3>NDRANGETHA</h3><p>Thabiti · Montage · VFX · IA · SFX</p></div>
+        </article>
+        <article class="work" data-id="killcam" style="--ar:1.3333">
+          <button class="work-media" type="button" aria-label="Lire KILLCAM, King Kifla"><img src="media/poster/killcam.jpg" alt="" width="960" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/killcam.mp4"></video></button>
+          <div class="work-cap"><h3>KILLCAM</h3><p>King Kifla · Montage · VFX</p></div>
+        </article>
+        <article class="work" data-id="crame" style="--ar:1.4778">
+          <button class="work-media" type="button" aria-label="Lire CRAMÉ, RR"><img src="media/poster/crame.jpg" alt="" width="1064" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/crame.mp4"></video></button>
+          <div class="work-cap"><h3>CRAMÉ</h3><p>RR · Montage · VFX · IA · SFX</p></div>
+        </article>
+        <article class="work" data-id="back" style="--ar:1.3333">
+          <button class="work-media" type="button" aria-label="Lire BACK, LP2.0"><img src="media/poster/back.jpg" alt="" width="960" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/back.mp4"></video></button>
+          <div class="work-cap"><h3>BACK</h3><p>LP2.0 · Montage · VFX</p></div>
+        </article>
+        <article class="work v" data-id="demandeashh" style="--ar:.5625">
+          <button class="work-media" type="button" aria-label="Lire DEMANDEASHH, Sheu"><img src="media/poster/demandeashh.jpg" alt="" width="720" height="1280" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/demandeashh.mp4"></video></button>
+          <div class="work-cap"><h3>DEMANDEASHH</h3><p>Sheu · Teaser IA</p></div>
+        </article>
+        <article class="work" data-id="jamaiquaine" style="--ar:1.3333">
+          <button class="work-media" type="button" aria-label="Lire JAMAÏQUAINE IS DEAD, LP Killer"><img src="media/poster/jamaiquaine.jpg" alt="" width="960" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/jamaiquaine.mp4"></video></button>
+          <div class="work-cap"><h3>JAMAÏQUAINE IS DEAD</h3><p>LP Killer · VFX</p></div>
+        </article>
+        <article class="work" data-id="bellodallas" style="--ar:1.4778">
+          <button class="work-media" type="button" aria-label="Lire REEL VFX, Bello &amp; Dallas"><img src="media/poster/bellodallas.jpg" alt="" width="1064" height="720" loading="lazy"><video muted loop playsinline preload="none" data-src="media/prev/bellodallas.mp4"></video></button>
+          <div class="work-cap"><h3>REEL VFX</h3><p>Bello &amp; Dallas · VFX</p></div>
+        </article>
+      </div>
+      <div class="works-cap wrap" id="works-cap" aria-live="polite">
+        <div class="cap-main fade"><span class="cap-idx mono" id="wc-idx">01 / 07</span><h3 class="cap-title" id="wc-title">NDRANGETHA</h3></div>
+        <dl class="cap-meta fade">
+          <div><dt>Artiste</dt><dd id="wc-artist">Thabiti</dd></div>
+          <div><dt>Rôle</dt><dd id="wc-roles">Montage · VFX · IA · SFX</dd></div>
+          <div><dt>Durée</dt><dd class="mono" id="wc-dur">00:00:35:00</dd></div>
+        </dl>
+        <div class="cap-actions"><button class="btn" id="wc-play" type="button">Lire le film</button><a class="link" id="wc-ig" href="https://www.instagram.com/reel/Dcyn_7qtQiD/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
+      </div>
+      <div class="pslot wrap" id="pslot-works"></div>
+    </div>
   </section>
 
 
@@ -1031,31 +1053,131 @@ button.name:hover sup{color:var(--fg)}
   if (!fine.matches) $('#ba-hint').textContent = "Glissez sur l'image pour parcourir le film";
   new IntersectionObserver(es => es.forEach(en => { baVisible = en.isIntersecting; if (baVisible && motion && !baHover) playV(ba); else if (!baVisible) ba.pause(); }), {threshold:.2}).observe(baBox);
 
-  /* ---------- Clips : grille simple, lecture dans la carte ---------- */
-  const works = $('#projets');
-  const items = $$('#cgrid .work');
-  const cardVis = new WeakMap();
+  /* ---------- Clips : la bobine ---------- */
+  const works = $('#projets'), track = $('#track');
+  const items = $$('#track .work');
+  let horiz = false, centers = [], pitch = 1, stepPx = 1, pShown = 0, pPrev = 0, wVel = 0, active = -1, worksVisible = false;
+  const desk = matchMedia('(min-width:761px)');
+  items.forEach(el => el.querySelector('.work-media').setAttribute('data-cursor', 'Lire'));
+  function layoutWorks(){
+    if (player.ctx === 'works') closePlayer(true);
+    horiz = desk.matches;
+    works.classList.toggle('h', horiz);
+    if (horiz) {
+      const vh = window.innerHeight - parseFloat(getComputedStyle(root).getPropertyValue('--band') || 56);
+      works.style.setProperty('--ih', clamp(vh*.56, 240, 640) + 'px');
+      stepPx = Math.round(window.innerHeight*.62);
+      works.style.setProperty('--h-total', (window.innerHeight + stepPx*(items.length-1)) + 'px');
+      track.style.transform = 'none';
+      centers = items.map(el => el.offsetLeft + el.offsetWidth/2);
+      pitch = (centers[centers.length-1] - centers[0]) / (items.length-1);
+    } else {
+      works.style.removeProperty('--h-total'); track.style.transform = '';
+      items.forEach(el => { const m = el.querySelector('.work-media'); m.style.transform = ''; el.style.opacity = ''; });
+    }
+    applyWorks(true);
+  }
+  const bandH = () => parseFloat(getComputedStyle(root).getPropertyValue('--band')) || 56;
+  const targetP = () => clamp(-(works.getBoundingClientRect().top - bandH()) / stepPx, 0, items.length-1);
+  const centerAt = p => { const i = Math.floor(p), j = Math.min(i+1, centers.length-1); return lerp(centers[i], centers[j], p - i); };
+  const fx = new WeakMap();
+  function setFx(el, o, s){ const key = `${o.toFixed(2)}|${s.toFixed(3)}`; if (fx.get(el) === key) return; fx.set(el, key); el.style.opacity = o > .995 ? '' : o.toFixed(2); el.querySelector('.work-media').style.transform = s > .999 ? '' : `scale(${s.toFixed(3)})`; }
+  function applyWorks(snap){
+    if (horiz) {
+      const tp = targetP();
+      pPrev = pShown;
+      pShown = (snap || !motion) ? tp : lerp(pShown, tp, .14);
+      if (Math.abs(pShown - tp) < .0005) pShown = tp;
+      wVel = lerp(wVel, pShown - pPrev, .3);
+      const x = window.innerWidth/2 - centerAt(pShown);
+      const sk = motion ? clamp(-wVel*60, -6, 6) : 0, sy = motion ? 1 - Math.min(Math.abs(wVel)*1.2, .06) : 1;
+      track.style.transform = `translate3d(${x.toFixed(1)}px,0,0) skewX(${sk.toFixed(2)}deg) scaleY(${sy.toFixed(3)})`;
+      if (player.ctx !== 'works') items.forEach((el,i) => { const d = Math.min(Math.abs(centers[i] - centerAt(pShown)) / pitch, 1); setFx(el, 1 - d*.62, 1 - d*.06); });
+      setActive(Math.round(pShown));
+    } else {
+      const mid = window.innerHeight/2; let best = 0, bd = 1e9;
+      items.forEach((el,i) => { const r = el.querySelector('.work-media').getBoundingClientRect(); const d = Math.abs((r.top + r.height/2) - mid); if (d < bd) { bd = d; best = i; } });
+      setActive(best);
+    }
+  }
+  const wcap = $('#works-cap');
+  function setActive(i){
+    if (i === active) return;
+    if (player.ctx === 'works') closePlayer(true);
+    const prev = items[active];
+    active = i;
+    if (prev) { const v = prev.querySelector('video'); if (v) v.pause(); prev.classList.remove('playing'); }
+    const el = items[i], d = P[el.dataset.id];
+    wcap.classList.add('swap');
+    setTimeout(() => {
+      $('#wc-idx').textContent = `${pad(i+1)} / ${pad(items.length)}`;
+      $('#wc-title').textContent = d.title; $('#wc-artist').textContent = d.artist; $('#wc-roles').textContent = d.roles; $('#wc-dur').textContent = tc(d.dur, d.fps);
+      const ig = $('#wc-ig'); ig.hidden = !d.ig; if (d.ig) ig.href = d.ig;
+      wcap.classList.remove('swap');
+    }, motion ? 140 : 0);
+    playPreview(el);
+  }
   function playPreview(el){
-    const v = el.querySelector('video'); if (!v || !motion || el.classList.contains('open')) return;
+    const v = el.querySelector('video'); if (!v || !motion || !worksVisible) return;
     if (!v.getAttribute('src')) v.src = v.dataset.src;
     v.onplaying = () => el.classList.add('playing');
     playV(v);
   }
-  const cardIO = new IntersectionObserver(es => es.forEach(en => {
-    const el = en.target; cardVis.set(el, en.isIntersecting);
-    if (en.isIntersecting) playPreview(el);
-    else { if (player.ctx === 'works' && el.classList.contains('open')) closePlayer(true); const v = el.querySelector('video'); if (v) v.pause(); }
-  }), {threshold:.5});
-  items.forEach(el => cardIO.observe(el));
   function openWork(i){
     const el = items[i], v = el.querySelector('video');
     if (!v.getAttribute('src')) v.src = v.dataset.src;
-    el.classList.add('open');
-    openPlayer('works', v, el.dataset.id, el.querySelector('.pslot'), () => { el.classList.remove('open'); if (cardVis.get(el)) playPreview(el); });
+    let slot = $('#pslot-works');
+    if (horiz) {
+      works.classList.add('open'); el.classList.add('open');
+      const m = el.querySelector('.work-media'), r = el.getBoundingClientRect();
+      const avail = window.innerHeight - bandH() - 230, s = clamp(Math.min(avail / r.height, window.innerWidth*.9 / r.width), 1, 1.6);
+      m.style.transform = `scale(${s.toFixed(3)})`;
+      el.style.opacity = '';
+    } else {
+      el.classList.add('open');
+      slot = el.querySelector('.pslot') || el.appendChild(Object.assign(document.createElement('div'), {className:'pslot'}));
+    }
+    openPlayer('works', v, el.dataset.id, slot, () => {
+      works.classList.remove('open'); el.classList.remove('open');
+      fx.delete(el); el.querySelector('.work-media').style.transform = '';
+      if (el === items[active]) playPreview(el);
+    });
   }
-  items.forEach((el,i) => el.querySelector('.work-media').addEventListener('click', () => { if (player.ctx === 'works' && el.classList.contains('open')) { togglePlay(); return; } openWork(i); }));
-  function scrollToItem(i, then){ items[i].scrollIntoView({behavior: motion ? 'smooth' : 'auto', block:'center'}); if (then) setTimeout(then, motion ? 900 : 60); }
-  const bandH = () => parseFloat(getComputedStyle(root).getPropertyValue('--band')) || 56;
+  $('#wc-play').addEventListener('click', () => openWork(active));
+  function scrollToItem(i, then){
+    if (!horiz) { items[i].scrollIntoView({behavior: motion ? 'smooth' : 'auto', block:'center'}); if (then) setTimeout(then, motion ? 900 : 50); return; }
+    const top = works.getBoundingClientRect().top + window.scrollY - bandH() + i*stepPx;
+    window.scrollTo({top, behavior: motion ? 'smooth' : 'auto'});
+    if (then) { let done = false; const fin = () => { if (done) return; done = true; window.removeEventListener('scrollend', fin); setTimeout(then, 120); }; window.addEventListener('scrollend', fin); setTimeout(fin, motion ? 1400 : 80); }
+  }
+  // glisser la bobine
+  let drag = null;
+  track.addEventListener('pointerdown', e => { if (!horiz || e.button !== 0 || player.ctx === 'works') return; drag = { x:e.clientX, y:e.clientY, p:targetP(), moved:false, id:e.pointerId }; });
+  window.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(e.clientY - drag.y)) drag.moved = true;
+    if (drag.moved) { const p = clamp(drag.p - dx/pitch, 0, items.length-1); window.scrollTo({top: works.getBoundingClientRect().top + window.scrollY - bandH() + p*stepPx, behavior:'auto'}); }
+  });
+  const endDrag = () => { setTimeout(() => drag = null, 0); };
+  window.addEventListener('pointerup', endDrag); window.addEventListener('pointercancel', endDrag);
+  items.forEach((el,i) => {
+    const m = el.querySelector('.work-media');
+    m.addEventListener('click', e => { if (drag && drag.moved) { e.preventDefault(); return; } if (player.ctx === 'works' && el.classList.contains('open')) { togglePlay(); return; } if (!horiz || i === active) openWork(i); else scrollToItem(i); });
+  });
+  works.addEventListener('wheel', e => {
+    if (!horiz || player.ctx === 'works' || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    const p = -(works.getBoundingClientRect().top - bandH())/stepPx;
+    if ((p <= 0 && e.deltaX < 0) || (p >= items.length-1 && e.deltaX > 0)) return;
+    e.preventDefault(); window.scrollBy({top: e.deltaX * stepPx / pitch, behavior:'auto'});
+  }, {passive:false});
+  document.addEventListener('keydown', e => {
+    if (player.ctx || !horiz || e.altKey || e.metaKey || e.ctrlKey) return;
+    const r = works.getBoundingClientRect(); if (r.top > bandH()+1 || r.bottom < window.innerHeight - 1) return;
+    if (e.key === 'ArrowRight' && active < items.length-1) { e.preventDefault(); scrollToItem(active+1); }
+    if (e.key === 'ArrowLeft' && active > 0) { e.preventDefault(); scrollToItem(active-1); }
+  });
+  if (!fine.matches) $('#works-hint').textContent = 'Défilez ; touchez un film pour le lire';
 
   /* ---------- Aperçu flottant (Studio, Générique) ---------- */
   const peek = $('#peek'), peekV = $('#peek-v'), peekI = $('#peek-i');
@@ -1253,16 +1375,22 @@ button.name:hover sup{color:var(--fg)}
     motionBtn.setAttribute('aria-pressed', String(motion));
     motionBtn.querySelector('span').textContent = motion ? 'Mouvement activé' : 'Mouvement en pause';
     if (!motion) { $$('video').forEach(v => { if (v !== player.video) v.pause(); }); }
-    else { if (oakVisible && player.ctx !== 'camp') playV(oak); if (baVisible) playV(ba); if (trVisible) playV(tr); items.forEach(el => { if (cardVis.get(el)) playPreview(el); }); }
+    else { if (oakVisible && player.ctx !== 'camp') playV(oak); if (baVisible) playV(ba); if (trVisible) playV(tr); if (items[active]) playPreview(items[active]); }
   }
   motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; store.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
 
   /* ---------- Boucle ---------- */
   const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '', bandSolid = false;
   new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(heroWrap);
+  new IntersectionObserver(es => es.forEach(en => {
+    worksVisible = en.isIntersecting;
+    const el = items[active]; if (!el) return;
+    if (worksVisible) playPreview(el); else { if (player.ctx === 'works') closePlayer(true); const v = el.querySelector('video'); if (v) v.pause(); }
+  }), {threshold:0}).observe(works);
   function frame(now){
     drawCursor();
     if (heroVisible) heroFrame(now);
+    if (worksVisible) applyWorks(false);
     if (baVisible) baTick();
     if (trVisible) trTick();
     drawLit(); drawCredits(false); drawPeek(now); drawScrollFx(); drawDust();
@@ -1272,6 +1400,7 @@ button.name:hover sup{color:var(--fg)}
     else if (heroVisible && window.scrollY < heroTop + heroStep*(N-1) + window.innerHeight*.3) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
     else if (oakVisible) { src = oak; fps = 24; }
     else if (baVisible) src = ba;
+    else if (worksVisible && items[active]) src = items[active].querySelector('video');
     if (src) { const s = tc(src.currentTime, fps); if (s !== tcLast) { tcLast = s; tcEl.textContent = s; } }
     if (oakVisible) { const s2 = tc(oak.currentTime, 24); if (s2 !== oakTcLast) { oakTcLast = s2; oakTc.textContent = s2; } }
     if (player.ctx) {
@@ -1287,11 +1416,13 @@ button.name:hover sup{color:var(--fg)}
   }
 
   layoutHero();
+  layoutWorks();
   layoutCredits();
   applyMotion();
   let rz = 0;
-  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { layoutHero(); layoutCredits(); }); });
-  if (document.fonts) document.fonts.ready.then(() => { layoutHero(); layoutCredits(); });
+  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { layoutHero(); layoutWorks(); layoutCredits(); }); });
+  desk.addEventListener('change', layoutWorks);
+  if (document.fonts) document.fonts.ready.then(() => { layoutHero(); layoutWorks(); layoutCredits(); });
   window.addEventListener('load', layoutHero);
   requestAnimationFrame(frame);
 })();
