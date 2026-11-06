@@ -115,6 +115,7 @@ ul,ol{padding:0;list-style:none}
 .seam{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.55);opacity:0;pointer-events:none;will-change:transform,opacity}
 .seam i{position:absolute;top:50%;left:0;width:46px;height:17px;margin:-8.5px 0 0 -23px;background:var(--white)}
 .hero.playing .slide.cur video{object-fit:contain;background:var(--black)}
+.hero.playing.fill .slide.cur video{object-fit:cover}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(11,12,14,.9) 0%,rgba(11,12,14,.45) 32%,rgba(11,12,14,0) 60%),linear-gradient(to bottom,rgba(11,12,14,.5),rgba(11,12,14,0) 18%);transition:opacity .4s var(--ease)}
 .kicker{position:absolute;top:calc(var(--band) + env(safe-area-inset-top,0px) + 20px);left:0;right:0;font-size:13px;font-weight:400;color:var(--fg);text-shadow:0 1px 14px rgba(0,0,0,.55);pointer-events:none;transition:opacity .3s var(--ease)}
@@ -156,7 +157,8 @@ ul,ol{padding:0;list-style:none}
 .pslot{position:relative}
 .hero>.pslot{position:absolute;left:0;right:0;bottom:0}
 .pc{display:grid;gap:4px;padding-block:8px 8px;background:linear-gradient(to top,rgba(11,12,14,.85),rgba(11,12,14,0));animation:pcIn .35s var(--ease) both}
-.camp .pc,.works .pc{background:none}
+.camp .pc,.works .pc,.hero .pc{background:none}
+.hero>.pslot:has(.pc:not([hidden])){background:linear-gradient(to top,rgba(11,12,14,.88) 0%,rgba(11,12,14,.6) 45%,rgba(11,12,14,0) 100%);padding-top:40px}
 @keyframes pcIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pc-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .pc-title{font-size:15px;font-weight:500}
@@ -798,7 +800,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
         const rx = W/2 + (fx - W/2)*cs - (fy - H/2)*sn, ry = H/2 + (fx - W/2)*sn + (fy - H/2)*cs;
         let x = rx, y = ry, a = p.a * clamp(t/300, 0, 1), sz = p.s;
         if (sweep > 0 && sweep < 1.2) { const bx = (sweep - .1) * W, d = Math.abs(x - bx); if (d < W*.06) { const k = 1 - d/(W*.06); a = Math.min(1, a + k*.6); sz = p.s*(1 + k*.8); } }
-        if (o > 0) { const f = 1 + oe*7; x = W/2 + p.ox*f*(Math.cos(-oe*Math.PI/2)) - p.oy*f*Math.sin(-oe*Math.PI/2); y = H/2 + p.ox*f*Math.sin(-oe*Math.PI/2) + p.oy*f*Math.cos(-oe*Math.PI/2); a *= 1 - o; }
+        if (o > 0) { if (o > .42) continue; const f = 1 + oe*48, th = -oe*Math.PI/2, c2 = Math.cos(th), s2 = Math.sin(th); x = W/2 + (p.ox*c2 - p.oy*s2)*f; y = H/2 + (p.ox*s2 + p.oy*c2)*f; a *= 1 - o/.42; }
         ix.globalAlpha = a; ix.fillRect(x, y, sz, sz);
       }
       ix.globalAlpha = 1;
@@ -901,8 +903,19 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   function openHero(){
     if (player.ctx === 'hero') return;
     hero.classList.add('playing');
-    openPlayer('hero', SV[cur0], SID[cur0], $('#pslot-hero'), () => { hero.classList.remove('playing'); });
+    openPlayer('hero', SV[cur0], SID[cur0], $('#pslot-hero'), () => { hero.classList.remove('playing','fill'); });
+    fitHero();
   }
+  // film en lecture : image entière, sauf si les bandes noires seraient très fines (on remplit alors l'écran)
+  function fitHero(){
+    if (player.ctx !== 'hero') return;
+    const v = player.video, vr = (v.videoWidth && v.videoHeight) ? v.videoWidth/v.videoHeight : 16/9;
+    const W = hero.clientWidth, H = hero.clientHeight;
+    const bar = W/H > vr ? (W - H*vr)/2 : (H - W/vr)/2;
+    hero.classList.toggle('fill', bar < 48);
+  }
+  SV.forEach(v => v.addEventListener('loadedmetadata', fitHero));
+  window.addEventListener('resize', fitHero);
   const easeIO = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
   // le bord du rideau lâche une fine poussière de lumière pendant le passage
   const hdc = $('#hdust'), hdx = hdc.getContext('2d'), hp = [];
