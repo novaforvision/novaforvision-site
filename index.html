@@ -29,7 +29,7 @@
 <link rel="preload" href="media/hero/oakley-p.jpg" as="image" fetchpriority="high">
 <script>
 (function(){var d=document.documentElement;d.classList.add('js');var skip=false;try{skip=sessionStorage.getItem('nova-intro')==='1'}catch(e){}
-if(skip||matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('no-intro');else d.classList.add('intro-run');
+if(skip)d.classList.add('no-intro');else d.classList.add('intro-run');
 if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('cursor-on');})();
 </script>
 <style>
@@ -457,7 +457,6 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 @media (max-width:760px){.hcount{white-space:nowrap}.hbar .motion{display:none}.ticks{gap:0}.tick{width:24px}.tick::before,.tick i{left:3px;right:3px}.hbar{gap:12px}}
 @media (max-width:420px){.ci-meta{grid-template-columns:1fr}.band-cta{font-size:0}.band-cta::after{content:"Contact ↗";font-size:13px}}
 .motion-off .ch,.motion-off .cap-row,.motion-off .cap-k{transition:none}
-@media (prefers-reduced-motion:reduce){.js .ch,.cap-row,.cap-k,.js .rv .li,.js .clip-in,.js .svc li{transition:none!important}.cur-star.play i{animation:none;transform:scale(2.6,1.9)}}
 </style>
 </head>
 <body>
@@ -772,7 +771,8 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   const tc = (s, fps = FPS) => { s = Math.max(0,s||0); const f = Math.floor((s%1)*fps); const t = Math.floor(s); return `${pad(Math.floor(t/3600))}:${pad(Math.floor(t/60)%60)}:${pad(t%60)}:${pad(f)}`; };
   const root = document.documentElement;
   const fine = matchMedia('(hover:hover) and (pointer:fine)');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // le réglage « Réduire les animations » du téléphone n'éteint plus le site : le studio veut le même site pour tous
+  const reduce = false;
   const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
   const playV = v => { if (v) { const p = v.play(); if (p && p.catch) p.catch(e => { if (e && e.name === 'NotAllowedError') v._blocked = true; }); } };
 
