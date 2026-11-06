@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /v2/
 Disallow: /v1/
 Sitemap: https://novaforvision.fr/sitemap.xml

@@ -3,6 +3,10 @@
   <url>
     <loc>https://novaforvision.fr/</loc>
     <lastmod>2026-11-06</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.fr/projets/</loc>
+    <lastmod>2026-11-06</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.fr/media/oakley/film.jpg</video:thumbnail_loc>
       <video:title>Oakley × Meta, campagne IA</video:title>
@@ -75,5 +79,13 @@
       <video:duration>13</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.fr/studio/</loc>
+    <lastmod>2026-11-06</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.fr/contact/</loc>
+    <lastmod>2026-11-06</lastmod>
   </url>
 </urlset>
