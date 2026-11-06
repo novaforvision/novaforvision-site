@@ -89,17 +89,16 @@ ul,ol{padding:0;list-style:none}
 .band-cta{min-height:44px;display:inline-flex;align-items:center;color:var(--fg);transition:color .16s var(--ease)}
 
 /* Slider d'accueil */
-.hero{position:relative;margin-top:calc(var(--band) + env(safe-area-inset-top,0px));height:calc(100vh - var(--band));height:calc(100svh - var(--band) - env(safe-area-inset-top,0px));min-height:520px;overflow:hidden;background:var(--black);touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.strip{position:absolute;inset:0;display:flex;will-change:transform}
-.slide{position:relative;flex:0 0 100%;height:100%;overflow:hidden}
-.slide video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .3s var(--ease)}
-.gl{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s var(--ease);pointer-events:none}
-.hero.gl-on .gl{opacity:1}
-.hero.gl-on .slide video{opacity:0}
-.hero:not(.gl-on) .slide video{-webkit-mask:url("assets/nova-star.svg") 50% 42%/130% auto no-repeat;mask:url("assets/nova-star.svg") 50% 42%/130% auto no-repeat}
-.hero:not(.gl-on).playing .slide video{-webkit-mask:none;mask:none}
-.hnav{min-height:44px;display:inline-flex;align-items:center;color:var(--fg-2);transition:color .16s var(--ease)}
-.hnav:hover{color:var(--fg)}
+.hero-wrap{--hstep:70vh;position:relative;margin-top:calc(var(--band) + env(safe-area-inset-top,0px));height:calc(100vh - var(--band) + var(--hstep)*2);height:calc(100svh - var(--band) - env(safe-area-inset-top,0px) + var(--hstep)*2)}
+.hero{position:sticky;top:calc(var(--band) + env(safe-area-inset-top,0px));height:calc(100vh - var(--band));height:calc(100svh - var(--band) - env(safe-area-inset-top,0px));min-height:520px;overflow:hidden;background:var(--black);user-select:none;-webkit-user-select:none}
+.stage{position:absolute;inset:0}
+.slide{position:absolute;inset:0;overflow:hidden}
+.slide+.slide{clip-path:inset(0 0 0 100%)}
+.slide video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+.shade{position:absolute;inset:0;background:var(--black);opacity:0;pointer-events:none}
+.seam{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.55);opacity:0;pointer-events:none;will-change:transform,opacity}
+.seam i{position:absolute;top:50%;left:0;width:46px;height:17px;margin:-8.5px 0 0 -23px;background:var(--white)}
+.hero.playing .slide.cur video{object-fit:contain;background:var(--black)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(11,12,14,.9) 0%,rgba(11,12,14,.45) 32%,rgba(11,12,14,0) 60%),linear-gradient(to bottom,rgba(11,12,14,.5),rgba(11,12,14,0) 18%);transition:opacity .4s var(--ease)}
 .kicker{position:absolute;top:20px;left:0;right:0;font-size:13px;font-weight:400;color:var(--fg-2);pointer-events:none;transition:opacity .3s var(--ease)}
@@ -125,6 +124,7 @@ ul,ol{padding:0;list-style:none}
 .tick::before,.tick i{content:"";position:absolute;left:0;right:0;top:21px;height:2px;background:var(--line-2)}
 .tick i{background:var(--fg);transform:scaleX(0);transform-origin:left}
 .tick.done i{transform:scaleX(1)}
+.tick i{transition:none}
 .hcount{font-size:12px;color:var(--fg-2)}
 .hright{display:flex;align-items:center;gap:24px}
 .motion{min-height:44px;display:inline-flex;align-items:center;gap:8px;color:var(--fg-2);transition:color .16s var(--ease)}
@@ -398,15 +398,14 @@ button.name:hover sup{color:var(--fg)}
 </header>
 
 <main>
-  <section class="hero" id="top" aria-roledescription="carrousel" aria-label="Projets phares">
-    <div class="strip" id="strip">
-      <div class="slide" data-id="oakley"><video src="media/hero/oakley.mp4" poster="media/hero/oakley.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video></div>
-      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video></div>
-      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" poster="media/hero/crame.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></div>
-      <div class="slide" data-id="jamaiquaine"><video src="media/hero/jamaiquaine.mp4" poster="media/hero/jamaiquaine.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></div>
-      <div class="slide" data-id="back"><video src="media/hero/back.mp4" poster="media/hero/back.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></div>
+  <div class="hero-wrap" id="top">
+  <section class="hero" id="hero" aria-label="Projets phares">
+    <div class="stage" id="stage">
+      <div class="slide" data-id="oakley"><video src="media/hero/oakley.mp4" poster="media/hero/oakley.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="crame"><video src="media/hero/crame.mp4" poster="media/hero/crame.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
+      <div class="slide" data-id="ndrangetha"><video src="media/hero/ndrangetha.mp4" poster="media/hero/ndrangetha.jpg" muted loop playsinline preload="auto" aria-hidden="true"></video><span class="shade"></span></div>
+      <span class="seam" id="seam" aria-hidden="true"><i class="star-mask"></i></span>
     </div>
-    <canvas class="gl" id="gl" aria-hidden="true"></canvas>
     <div class="scrim" aria-hidden="true"></div>
     <h1 class="kicker wrap">Campagnes IA, clips et VFX pour les marques et les artistes · Studio indépendant à Liège</h1>
     <div class="caps" id="caps">
@@ -416,39 +415,28 @@ button.name:hover sup{color:var(--fg)}
         <div class="cap-row"><p class="cap-m">Création IA · VFX · Montage · Sound design · Motion design</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button><a class="link" href="#campagnes">L'étude de cas</a></div></div>
       </article>
       <article class="cap" data-i="1">
-        <p class="cap-k"><span class="mono">02</span>Clip · Thabiti</p>
-        <h2 class="cap-t split">NDRANGETHA</h2>
-        <div class="cap-row"><p class="cap-m">Montage · VFX · IA · SFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button></div></div>
-      </article>
-      <article class="cap" data-i="2">
-        <p class="cap-k"><span class="mono">03</span>Clip · RR</p>
+        <p class="cap-k"><span class="mono">02</span>Clip · RR</p>
         <h2 class="cap-t split">CRAMÉ</h2>
         <div class="cap-row"><p class="cap-m">Montage · VFX · IA · SFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button><a class="link" href="#avant-apres">L'avant / après</a></div></div>
       </article>
-      <article class="cap" data-i="3">
-        <p class="cap-k"><span class="mono">04</span>Clip · LP Killer</p>
-        <h2 class="cap-t split">JAMAÏQUAINE IS DEAD</h2>
-        <div class="cap-row"><p class="cap-m">VFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button></div></div>
-      </article>
-      <article class="cap" data-i="4">
-        <p class="cap-k"><span class="mono">05</span>Clip · LP2.0</p>
-        <h2 class="cap-t split">BACK</h2>
-        <div class="cap-row"><p class="cap-m">Montage · VFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button></div></div>
+      <article class="cap" data-i="2">
+        <p class="cap-k"><span class="mono">03</span>Clip · Thabiti</p>
+        <h2 class="cap-t split">NDRANGETHA</h2>
+        <div class="cap-row"><p class="cap-m">Montage · VFX · IA · SFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button></div></div>
       </article>
     </div>
     <div class="hbar wrap">
-      <span class="hcount mono" id="hcount">01 / 05</span>
+      <span class="hcount mono" id="hcount">01 / 03</span>
       <div class="ticks" id="ticks">
         <button class="tick" type="button" aria-label="Oakley × Meta"><i></i></button>
-        <button class="tick" type="button" aria-label="NDRANGETHA"><i></i></button>
         <button class="tick" type="button" aria-label="CRAMÉ"><i></i></button>
-        <button class="tick" type="button" aria-label="JAMAÏQUAINE IS DEAD"><i></i></button>
-        <button class="tick" type="button" aria-label="BACK"><i></i></button>
+        <button class="tick" type="button" aria-label="NDRANGETHA"><i></i></button>
       </div>
-      <div class="hright"><span class="hint" id="hhint">Glissez sur le trackpad ou utilisez les flèches</span><button class="hnav" id="hprev" type="button">Précédent</button><button class="hnav" id="hnext" type="button">Suivant</button><button class="motion" id="motion" type="button" aria-pressed="true"><i aria-hidden="true"></i><span>Mouvement activé</span></button></div>
+      <div class="hright"><span class="hint" id="hhint">Faites défiler pour passer d'un projet à l'autre</span><button class="motion" id="motion" type="button" aria-pressed="true"><i aria-hidden="true"></i><span>Mouvement activé</span></button></div>
     </div>
     <div class="pslot wrap" id="pslot-hero"></div>
   </section>
+  </div>
 
   <section class="studio wrap" id="studio" aria-labelledby="studio-t">
     <p class="label">Studio</p>
@@ -509,7 +497,7 @@ button.name:hover sup{color:var(--fg)}
       <p class="wipe-cap"><span>Le saut, de la couleur au noir et blanc · plans 00:00:09:14 à 00:00:12:00</span><span class="k" id="wipe-hint">Survolez l'image pour parcourir la transition à la souris</span></p>
     </div>
     <ul class="stills wrap">
-      <li><figure><div class="ph clip-in" data-cursor="Voir"><img src="media/oakley/macro-prizm-led.jpg" alt="Gros plan sur le verre Prizm qui reflète le désert" width="1400" height="788" loading="lazy"></div><figcaption>Macro, verre Prizm</figcaption></figure></li>
+      <li><figure><div class="ph clip-in"><img src="media/oakley/macro-prizm-led.jpg" alt="Gros plan sur le verre Prizm qui reflète le désert" width="1400" height="788" loading="lazy"></div><figcaption>Macro, verre Prizm</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/400mm-subject.jpg" alt="Le coureur au téléobjectif, fond de dunes" width="1400" height="788" loading="lazy"></div><figcaption>Téléobjectif 400 mm</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/rain-world-onevision.jpg" alt="Le coureur sur un rocher, titre One vision. Every World." width="1400" height="788" loading="lazy"></div><figcaption>One vision. Every World.</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="media/oakley/unettes-sable-logo.jpg" alt="Une main pose les lunettes dans le sable" width="1400" height="788" loading="lazy"></div><figcaption>Les lunettes dans le sable</figcaption></figure></li>
@@ -729,11 +717,15 @@ button.name:hover sup{color:var(--fg)}
   const curS = $('#cur-star'), curL = $('#cur-l'), curT = $('#cur-t');
   const cur = { x:-100, y:-100, sx:-100, sy:-100, lx:-100, ly:-100, rot:0, vx:0 };
   window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; cur.vx = e.clientX - cur.x; cur.x = e.clientX; cur.y = e.clientY; }, {passive:true});
-  document.addEventListener('pointerover', e => {
-    if (!fine.matches) return;
+  let curTarget = null;
+  document.addEventListener('pointerover', e => { curTarget = e.target; updateCursor(); });
+  function updateCursor(){
+    if (!fine.matches || !curTarget || !curTarget.closest) return;
+    const e = { target: curTarget };
     const inter = e.target.closest('a,button:not(.work-media),input,[data-peek],[data-peek-imgs]');
     const c = inter ? null : e.target.closest('[data-cursor]');
-    const label = c && !(c.closest('.playing,.open')) ? c.dataset.cursor : null;
+    let label = c && !(c.closest('.playing,.open')) ? c.dataset.cursor : null;
+    if (c && c.id === 'hero' && !heroClickable()) label = null;
     if (label) {
       if (curT.textContent !== label) curT.textContent = label;
       curL.classList.add('on');
@@ -743,10 +735,11 @@ button.name:hover sup{color:var(--fg)}
     curL.classList.remove('on');
     if (curS.classList.contains('play')) { curS.classList.remove('play'); curS.classList.add('out'); clearTimeout(curS._t); curS._t = setTimeout(() => curS.classList.remove('out'), 420); }
     curS.classList.toggle('link', !!inter);
-  });
-  document.addEventListener('pointerleave', () => { cur.x = cur.y = -100; });
+  }
+  document.addEventListener('pointerleave', () => { cur.x = cur.y = -100; curTarget = null; });
   function drawCursor(){
     if (!fine.matches) return;
+    if ((cur.n = (cur.n || 0) + 1) % 6 === 0) updateCursor();
     cur.sx = lerp(cur.sx, cur.x, .35); cur.sy = lerp(cur.sy, cur.y, .35);
     cur.lx = lerp(cur.lx, cur.x, .18); cur.ly = lerp(cur.ly, cur.y, .18);
     cur.rot = lerp(cur.rot, clamp(cur.vx*1.2, -30, 30), .12); cur.vxs = lerp(cur.vxs || 0, Math.abs(cur.vx), .2); cur.vx *= .85;
@@ -755,14 +748,12 @@ button.name:hover sup{color:var(--fg)}
     curL.style.transform = `translate3d(${cur.lx.toFixed(1)}px,${cur.ly.toFixed(1)}px,0)`;
   }
 
-  /* ---------- Accueil : fenêtre étoile ---------- */
-  const hero = $('#top'), strip = $('#strip'), canvas = $('#gl');
-  const slides = $$('#strip .slide'), SV = slides.map(s => s.querySelector('video')), SID = slides.map(s => s.dataset.id);
+  /* ---------- Accueil : trois projets qui glissent avec le défilement ---------- */
+  const heroWrap = $('#top'), hero = $('#hero'), seam = $('#seam');
+  const slides = $$('#stage .slide'), SV = slides.map(s => s.querySelector('video')), SID = slides.map(s => s.dataset.id), shades = slides.map(s => s.querySelector('.shade'));
   const caps = $$('#caps .cap'), ticks = $$('#ticks .tick');
   const N = slides.length;
-  const posters = SV.map(v => { const im = new Image(); im.src = v.poster; return im; });
-  let cur0 = 0, heroVisible = true, anim = null, starS = 0, openK = 0, glReady = false;
-  const par = { x:0, y:0, tx:0, ty:0 };
+  let cur0 = 0, heroVisible = true, pos = 0, hTarget = 0, heroStep = 1, heroTop = 0, settleT = 0, settling = false;
   // titres découpés lettre par lettre
   $$('.split').forEach(h => {
     h.setAttribute('aria-label', h.textContent.trim());
@@ -779,147 +770,70 @@ button.name:hover sup{color:var(--fg)}
     if (introOn && i === 0 && performance.now() < 1400) return;
     cur0 = i;
     caps.forEach((c,k) => { c.classList.toggle('on', k === i); c.setAttribute('aria-hidden', String(k !== i)); });
+    slides.forEach((s,k) => s.classList.toggle('cur', k === i));
     $('#hcount').textContent = `${pad(i+1)} / ${pad(N)}`;
-    ticks.forEach((t,k) => { t.classList.toggle('done', k < i); t.setAttribute('aria-current', String(k === i)); if (k !== i) t.querySelector('i').style.transform = k < i ? 'scaleX(1)' : 'scaleX(0)'; });
-    if (!glReady) strip.style.transform = `translate3d(${-i*100}%,0,0)`;
+    ticks.forEach((t,k) => t.setAttribute('aria-current', String(k === i)));
   }
   if (!introOn) setCurrent(0); else setTimeout(() => setCurrent(0), 1500);
-  // changer de projet : l'étoile se referme en un point puis se rouvre sur le suivant
-  function go(to){
-    to = ((to % N) + N) % N;
-    if (anim || to === cur0 || player.ctx === 'hero' || introOn) return;
-    if (!motion) { setCurrent(to); return; }
-    anim = { t0: performance.now(), from: cur0, to, switched: false };
+  function layoutHero(){
+    heroStep = window.innerHeight * .7;
+    heroTop = heroWrap.getBoundingClientRect().top + window.scrollY;
   }
-  ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); go(k); }));
-  $('#hprev').addEventListener('click', e => { e.stopPropagation(); go(cur0 - 1); });
-  $('#hnext').addEventListener('click', e => { e.stopPropagation(); go(cur0 + 1); });
-  // trackpad : seul un balayage horizontal change de projet, le défilement vertical reste libre
-  let gx = { acc:0, last:0, done:false };
-  hero.addEventListener('wheel', e => {
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) || player.ctx === 'hero') return;
-    e.preventDefault();
-    const now = performance.now();
-    if (now - gx.last > 260) gx = { acc:0, last:now, done:false };
-    gx.last = now;
-    if (gx.done) return;
-    gx.acc += e.deltaX;
-    if (Math.abs(gx.acc) > 50) { gx.done = true; go(cur0 + Math.sign(gx.acc)); }
-  }, {passive:false});
-  // glisser au doigt ou à la souris
-  let hd = null, heroDragged = false;
-  hero.addEventListener('pointerdown', e => { if (player.ctx === 'hero' || e.button > 0 || e.target.closest('.cap-a,.hbar,.pc')) return; hd = { x:e.clientX, y:e.clientY, id:e.pointerId }; heroDragged = false; });
-  window.addEventListener('pointermove', e => { if (!hd || e.pointerId !== hd.id) return; const dx = e.clientX - hd.x; if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(e.clientY - hd.y)) heroDragged = true; });
-  const heroUp = e => { if (!hd || e.pointerId !== hd.id) return; const dx = e.clientX - hd.x; if (heroDragged && Math.abs(dx) > 50) go(cur0 - Math.sign(dx)); hd = null; };
-  window.addEventListener('pointerup', heroUp); window.addEventListener('pointercancel', () => { hd = null; });
-  hero.addEventListener('click', e => { if (heroDragged) { heroDragged = false; return; } if (player.ctx || e.target.closest('a,.hbar,.pc,.cap-a')) return; openHero(); });
+  const scrollForSlide = i => heroTop + i*heroStep;
+  ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); window.scrollTo({top: scrollForSlide(k), behavior: motion ? 'smooth' : 'auto'}); }));
+  // après un arrêt du défilement, l'image se pose doucement sur le projet le plus proche
+  window.addEventListener('scroll', () => {
+    clearTimeout(settleT);
+    settleT = setTimeout(() => {
+      if (!motion || player.ctx) return;
+      const p = (window.scrollY - heroTop) / heroStep;
+      if (p <= 0.02 || p >= N - 1 - 0.02) return;
+      const r = Math.round(p);
+      if (Math.abs(p - r) > .02) window.scrollTo({top: scrollForSlide(r), behavior:'smooth'});
+    }, 260);
+  }, {passive:true});
+  const heroClickable = () => !player.ctx && !introOn && Math.abs(pos - Math.round(pos)) < .04;
+  hero.addEventListener('click', e => { if (!heroClickable() || e.target.closest('a,.hbar,.pc,.cap-a')) return; openHero(); });
   $$('#caps [data-play]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openHero(); }));
-  document.addEventListener('keydown', e => {
-    if (player.ctx || introOn || e.altKey || e.metaKey || e.ctrlKey) return;
-    if (hero.getBoundingClientRect().bottom < innerHeight*.5) return;
-    if (e.target.closest && e.target.closest('input,textarea')) return;
-    if (e.key === 'ArrowRight') go(cur0 + 1);
-    if (e.key === 'ArrowLeft') go(cur0 - 1);
-  });
-  hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); par.tx = ((e.clientX - r.left)/r.width - .5)*2; par.ty = ((e.clientY - r.top)/r.height - .5)*2; });
-  hero.addEventListener('pointerleave', () => { par.tx = 0; par.ty = 0; });
   hero.setAttribute('data-cursor', 'Lire');
-  if (!fine.matches) $('#hhint').textContent = 'Glissez pour changer de projet';
+  if (!fine.matches) $('#hhint').textContent = 'Faites défiler pour changer de projet';
   function openHero(){
-    if (anim || player.ctx) return;
+    if (player.ctx === 'hero') return;
     hero.classList.add('playing');
     openPlayer('hero', SV[cur0], SID[cur0], $('#pslot-hero'), () => { hero.classList.remove('playing'); });
   }
-
-  // WebGL : le film du projet, sombre partout sauf dans l'étoile
-  let gl = null, U = {}, texV, texS, starOk = false;
-  const VS = 'attribute vec2 p;varying vec2 vUv;void main(){vUv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
-  const FS = `precision mediump float;
-varying vec2 vUv;uniform sampler2D tV,tS;uniform vec2 uRes,rV,uC,uStar,uPar;uniform float uAng,uS,uOpen,uDim;
-vec2 cover(vec2 uv){float rs=uRes.x/uRes.y;float rt=rV.x/rV.y;vec2 s=rs>rt?vec2(1.,rt/rs):vec2(rs/rt,1.);return (uv-.5)*s/1.04+.5+uPar;}
-void main(){vec3 col=texture2D(tV,clamp(cover(vUv),.001,.999)).rgb;
-vec2 p=gl_FragCoord.xy-uC;float c=cos(uAng);float s=sin(uAng);p=vec2(c*p.x+s*p.y,-s*p.x+c*p.y);
-vec2 q=p/(uStar*max(uS,.0001))+.5;float m=0.;
-if(q.x>0.&&q.x<1.&&q.y>0.&&q.y<1.)m=texture2D(tS,q).a;m*=step(.001,uS);
-float g=dot(col,vec3(.299,.587,.114));vec3 bg=mix(vec3(g),col,.3)*uDim;
-gl_FragColor=vec4(mix(mix(bg,col,m),col,uOpen),1.);}`;
-  function initGL(){
-    try {
-      gl = canvas.getContext('webgl',{antialias:false,alpha:false,premultipliedAlpha:false});
-      if (!gl) return;
-      const sh = (t,src) => { const x = gl.createShader(t); gl.shaderSource(x,src); gl.compileShader(x); if (!gl.getShaderParameter(x,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; };
-      const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER,VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER,FS)); gl.linkProgram(pr);
-      if (!gl.getProgramParameter(pr,gl.LINK_STATUS)) throw new Error('link');
-      gl.useProgram(pr);
-      const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
-      const loc = gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
-      const mk = unit => { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D,t); [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE)); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([0,0,0,0])); return t; };
-      texV = mk(0); texS = mk(1);
-      ['tV','tS','uRes','rV','uC','uStar','uPar','uAng','uS','uOpen','uDim'].forEach(n => U[n] = gl.getUniformLocation(pr,n));
-      gl.uniform1i(U.tV,0); gl.uniform1i(U.tS,1); gl.uniform1f(U.uDim,.13);
-      // texture de l'étoile
-      const img = new Image();
-      img.onload = () => { try { const c = document.createElement('canvas'); c.width = 2048; c.height = 742; const x = c.getContext('2d'); x.drawImage(img, 0, 0, 2048, 742); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texS); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c); starOk = true; } catch(e){ gl = null; } };
-      img.src = 'assets/nova-star.svg';
-      canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); gl = null; glReady = false; hero.classList.remove('gl-on'); setCurrent(cur0); });
-      resizeGL();
-    } catch (err) { gl = null; }
-  }
-  function resizeGL(){
-    if (!gl) return;
-    const sc = Math.min(window.devicePixelRatio || 1, 1.5);
-    const w = Math.min(Math.round(canvas.clientWidth*sc), 2400), h = Math.round(w*canvas.clientHeight/Math.max(1,canvas.clientWidth));
-    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0,0,w,h); }
-    gl.uniform2f(U.uRes,w,h);
-  }
-  function drawGL(i){
-    if (!gl || !starOk) return;
-    const v = SV[i]; let src = null, w = 0, h = 0;
-    if (v.readyState >= 2 && v.videoWidth) { src = v; w = v.videoWidth; h = v.videoHeight; }
-    else if (posters[i].complete && posters[i].naturalWidth) { src = posters[i]; w = src.naturalWidth; h = src.naturalHeight; }
-    if (!src) return;
-    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texV);
-    try { gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,src); } catch(e){ return; }
-    gl.uniform2f(U.rV, w, h);
-    const W = canvas.width, H = canvas.height;
-    const sw = W < H ? W*2.5 : W*1.25;
-    gl.uniform2f(U.uStar, sw, sw/2.763);
-    gl.uniform2f(U.uC, W*(.5 + par.x*.025), H*(.56 - par.y*.03));
-    const spin = anim ? (1 - starS) * .7 : 0;
-    gl.uniform1f(U.uAng, (-4 + par.x*9) * Math.PI/180 + spin);
-    gl.uniform1f(U.uS, starS * (1 + openK*5));
-    gl.uniform1f(U.uOpen, openK);
-    gl.uniform2f(U.uPar, motion ? par.x*.008 : 0, motion ? -par.y*.008 : 0);
-    gl.drawArrays(gl.TRIANGLES,0,3);
-    if (!glReady) { glReady = true; hero.classList.add('gl-on'); strip.style.transform = ''; }
-  }
-  const easeIn = t => t*t*t, easeOut = t => 1 - Math.pow(1-t, 3);
-  function heroFrame(now){
-    par.x = lerp(par.x, par.tx, .06); par.y = lerp(par.y, par.ty, .06);
-    let shown = cur0;
-    if (anim) {
-      const e = (now - anim.t0) / 1100;
-      if (e < .4) { starS = 1 - easeIn(e/.4); shown = anim.from; }
-      else { if (!anim.switched) { anim.switched = true; setCurrent(anim.to); try { SV[anim.to].currentTime = 0; } catch(_){} } shown = anim.to; starS = easeOut(clamp((e-.4)/.6, 0, 1)); }
-      if (e >= 1) { anim = null; starS = 1; }
-    } else starS = introOn ? 0 : lerp(starS, 1, motion ? .05 : 1);
-    openK = lerp(openK, player.ctx === 'hero' ? 1 : 0, motion ? .08 : 1);
-    if (Math.abs(openK - (player.ctx === 'hero' ? 1 : 0)) < .002) openK = player.ctx === 'hero' ? 1 : 0;
-    // lecture : seul le projet affiché joue ; le suivant se précharge
+  const easeIO = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
+  const vfx = new WeakMap();
+  function setV(el, key, css){ if (vfx.get(el) === key) return; vfx.set(el, key); el.style.cssText = css; }
+  function heroFrame(){
+    hTarget = clamp((window.scrollY - heroTop) / heroStep, 0, N-1);
+    if (player.ctx === 'hero' && Math.abs(hTarget - cur0) > .25) closePlayer(true);
+    pos = (!motion) ? hTarget : lerp(pos, hTarget, .1);
+    if (Math.abs(pos - hTarget) < .0005) pos = hTarget;
+    // rideau : la slide suivante se découvre de droite à gauche, son film arrive en léger travelling ; la précédente recule dans l'ombre
+    let seamX = 0, seamO = 0;
+    slides.forEach((sl,i) => {
+      const v = SV[i];
+      const t = i === 0 ? 1 : clamp(pos - (i-1), 0, 1), e = easeIO(t);
+      const k = i < N-1 ? clamp(pos - i, 0, 1) : 0, ek = easeIO(k);
+      if (i > 0) setV(sl, 'c'+e.toFixed(4), e >= .9999 ? 'clip-path:inset(0 0 0 0)' : `clip-path:inset(0 0 0 ${((1-e)*100).toFixed(3)}%)`);
+      const tx = (1-e)*14 - ek*10, sc = 1 + (1-e)*.06;
+      setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), tx === 0 && sc === 1 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
+      setV(shades[i], 's'+ek.toFixed(3), `opacity:${(ek*.55).toFixed(3)}`);
+      if (i > 0 && t > 0 && t < 1) { seamX = (1-e)*100; seamO = Math.sin(Math.PI*t); }
+    });
+    seam.style.transform = `translate3d(${(seamX/100*hero.clientWidth).toFixed(1)}px,0,0)`;
+    seam.style.opacity = seamO.toFixed(3);
+    const ci = clamp(Math.round(pos), 0, N-1);
+    if (ci !== cur0 && !introOn) setCurrent(ci);
+    ticks.forEach((tk,i) => { const f = i === 0 ? 1 : clamp(pos - (i-1), 0, 1); tk.querySelector('i').style.transform = `scaleX(${f.toFixed(3)})`; });
+    // seuls les films visibles jouent
     SV.forEach((v,i) => {
       if (player.ctx === 'hero' && i === cur0) return;
-      const want = heroVisible && motion && i === shown;
+      const vis = i === Math.floor(pos) || i === Math.ceil(pos);
+      const want = heroVisible && motion && vis;
       if (want && v.paused) playV(v); else if (!want && !v.paused) v.pause();
-      if (i === (shown+1) % N && v.preload !== 'auto') v.preload = 'auto';
     });
-    // à la fin de la boucle, passage automatique au projet suivant
-    const v = SV[cur0];
-    if (v && v.duration) {
-      ticks[cur0].querySelector('i').style.transform = `scaleX(${(v.currentTime/v.duration).toFixed(3)})`;
-      if (!anim && !player.ctx && motion && !introOn && v.currentTime >= v.duration - .15) go(cur0 + 1);
-    }
-    drawGL(shown);
   }
 
   /* ---------- Lecteur intégré ---------- */
@@ -1193,18 +1107,17 @@ gl_FragColor=vec4(mix(mix(bg,col,m),col,uOpen),1.);}`;
 
   /* ---------- Boucle ---------- */
   const tcEl = $('#tc'), prog = $('#prog'); let tcLast = '', progLast = '';
-  new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(hero);
+  new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible && player.ctx === 'hero') closePlayer(true); }), {threshold:0}).observe(heroWrap);
   function frame(now){
     drawCursor();
     if (heroVisible) heroFrame(now);
     if (baVisible) baTick();
     if (trVisible) trTick();
     drawLit(); drawCredits(false); drawPeek(now); drawScrollFx();
-    if (heroVisible) { const k = clamp(window.scrollY / (hero.offsetHeight*.7), 0, 1); const capsEl = $('#caps'); capsEl.style.transform = k ? `translate3d(0,${(-k*90).toFixed(1)}px,0)` : ''; capsEl.style.opacity = k ? (1 - k*1.1).toFixed(3) : ''; }
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
-    else if (heroVisible && window.scrollY < hero.offsetHeight*.5) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
+    else if (heroVisible && window.scrollY < heroTop + heroStep*(N-1) + window.innerHeight*.3) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
     else if (oakVisible) { src = oak; fps = 24; }
     else if (baVisible) src = ba;
     if (src) { const s = tc(src.currentTime, fps); if (s !== tcLast) { tcLast = s; tcEl.textContent = s; } }
@@ -1219,12 +1132,13 @@ gl_FragColor=vec4(mix(mix(bg,col,m),col,uOpen),1.);}`;
     requestAnimationFrame(frame);
   }
 
-  initGL();
+  layoutHero();
   layoutCredits();
   applyMotion();
   let rz = 0;
-  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { resizeGL(); layoutCredits(); }); });
-  if (document.fonts) document.fonts.ready.then(() => { layoutCredits(); });
+  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { layoutHero(); layoutCredits(); }); });
+  if (document.fonts) document.fonts.ready.then(() => { layoutHero(); layoutCredits(); });
+  window.addEventListener('load', layoutHero);
   requestAnimationFrame(frame);
 })();
 </script>
