@@ -840,7 +840,7 @@ button.name:hover sup{color:var(--fg)}
 varying vec2 vUv;uniform sampler2D tA,tB;uniform vec2 uRes,rA,rB,uPar;uniform float uFrac,uVel,uSeam;
 vec2 cover(vec2 uv,vec2 tr,float st){float rs=uRes.x/uRes.y;float rt=tr.x/tr.y;vec2 s=rs>rt?vec2(1.,rt/rs):vec2(rs/rt,1.);uv.x=(uv.x-.5)*(1.-st)+.5;return (uv-.5)*s/1.06+.5+uPar;}
 vec3 samp(sampler2D t,vec2 tr,vec2 uv,float ca,float st){vec2 c=cover(uv,tr,st);float r=texture2D(t,clamp(c+vec2(ca,0.),.001,.999)).r;vec2 gb=texture2D(t,clamp(c,.001,.999)).gb;float b=texture2D(t,clamp(c-vec2(ca,0.),.001,.999)).b;return vec3(r,gb.x,b);}
-void main(){vec2 uv=vUv;float v=uVel;float bend=v*.9*sin(3.14159*uv.y);float s=uv.x+uFrac+bend;float ca=clamp(v*.35,-.03,.03);float st=clamp(abs(v)*1.6,0.,.12);
+void main(){vec2 uv=vUv;float s=uv.x+uFrac;float ca=0.;float st=0.;
 vec3 a=samp(tA,rA,vec2(s,uv.y),ca,st);vec3 b=samp(tB,rB,vec2(s-1.,uv.y),ca,st);vec3 col=mix(a,b,step(1.,s));
 col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(col,1.);}`;
   function initGL(){
@@ -885,7 +885,6 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
     if (frac > .0005) upload(1, texB, iB, U.rB);
     if (!okA) return;
     gl.uniform1f(U.uFrac, frac);
-    gl.uniform1f(U.uVel, motion ? clamp(vel, -.12, .12) : 0);
     gl.uniform2f(U.uPar, motion ? par.x*.012 : 0, motion ? -par.y*.012 : 0);
     gl.drawArrays(gl.TRIANGLES,0,3);
     if (!glReady) { glReady = true; hero.classList.add('gl-on'); }
@@ -1085,8 +1084,7 @@ col*=mix(1.,smoothstep(0.,uSeam,abs(s-1.)),step(.0005,uFrac));gl_FragColor=vec4(
       if (Math.abs(pShown - tp) < .0005) pShown = tp;
       wVel = lerp(wVel, pShown - pPrev, .3);
       const x = window.innerWidth/2 - centerAt(pShown);
-      const sk = motion ? clamp(-wVel*60, -5, 5) : 0;
-      track.style.transform = `translate3d(${x.toFixed(1)}px,0,0) skewX(${sk.toFixed(2)}deg)`;
+      track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`;
       if (player.ctx !== 'works') items.forEach((el,i) => { const d = Math.min(Math.abs(centers[i] - centerAt(pShown)) / pitch, 1); setFx(el, 1 - d*.62, 1 - d*.06); });
       setActive(Math.round(pShown));
     } else {
