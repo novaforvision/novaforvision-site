@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Page introuvable · NOVA FOR VISION</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0c0e">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/touch-icon.png">
+<link rel="preload" href="/assets/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Archivo";font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/archivo-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Geist Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/geist-mono-latin-400-normal.woff2) format("woff2")}
+:root{--bg:#0b0c0e;--fg:#eeefed;--fg-2:#a1a3a7;--fg-3:#818389;--line:rgba(238,239,237,.1);--line-2:rgba(238,239,237,.22);--ease:cubic-bezier(.22,1,.36,1);color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;background:var(--bg);color:var(--fg);font:400 15px/1.5 "Archivo","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+::selection{background:var(--fg);color:var(--bg)}
+a{color:inherit}
+.band{display:flex;justify-content:center;align-items:center;height:56px;padding-top:env(safe-area-inset-top,0px)}
+.band img{display:block;width:51px;height:18px}
+main{display:grid;align-content:center;justify-items:start;gap:20px;width:100%;max-width:1200px;margin:0 auto;padding-block:48px}
+.tc{font:400 13px/1 "Geist Mono",ui-monospace,Menlo,monospace;color:var(--fg-3);display:flex;align-items:center;gap:12px}
+.tc i{display:block;width:38px;height:14px;background:var(--fg-2);-webkit-mask:url(/assets/nova-star.svg) center/contain no-repeat;mask:url(/assets/nova-star.svg) center/contain no-repeat;transform:rotate(-12deg)}
+h1{margin:0;font-weight:400;font-size:clamp(40px,7vw,96px);line-height:1.02;letter-spacing:-.03em;text-wrap:balance;max-width:12em}
+p{margin:0;color:var(--fg-2);font-size:clamp(16px,1.4vw,18px);max-width:34rem}
+.btn{display:inline-flex;align-items:center;height:44px;padding:0 20px;margin-top:12px;border-radius:8px;background:var(--fg);color:var(--bg);text-decoration:none;font-size:15px;transition:background-color .16s var(--ease)}
+.btn:hover{background:#ffffff}
+.btn:focus-visible,.band a:focus-visible{outline:2px solid var(--fg);outline-offset:4px}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));font-size:13px;color:var(--fg-3);width:100%;max-width:1200px;margin:0 auto}
+footer a{color:var(--fg-2);text-decoration:none}
+footer a:hover{color:var(--fg)}
+</style>
+</head>
+<body>
+<header class="band"><a href="/" aria-label="NOVA FOR VISION, accueil"><img src="/assets/nova-white.svg" alt="NOVA" width="51" height="18"></a></header>
+<main>
+  <p class="tc"><i aria-hidden="true"></i>00:00:04:04 · Erreur 404</p>
+  <h1>Page introuvable</h1>
+  <p>La page demandée n’existe pas ou a été déplacée.</p>
+  <a class="btn" href="/">Revenir au site</a>
+</main>
+<footer><span>© 2026 NOVA FOR VISION · Liège, Belgique</span><a href="mailto:contact@novaforvision.fr">contact@novaforvision.fr</a></footer>
+</body>
+</html>
