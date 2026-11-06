@@ -1256,8 +1256,14 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     });
   }
   $('#wc-play').addEventListener('click', () => openWork(active));
+  const primeV = v => { if (!v) return; if (!v.getAttribute('src') && v.dataset.src) v.src = v.dataset.src; const m = v.muted; v.muted = !soundOn; const p = v.play(); if (p && p.catch) p.catch(() => {}); v.pause(); v.muted = m; };
   function scrollToItem(i, then){
-    if (!horiz) { items[i].scrollIntoView({behavior: motion ? 'smooth' : 'auto', block:'center'}); if (then) setTimeout(then, motion ? 900 : 50); return; }
+    if (then) primeV(items[i].querySelector('video'));
+    if (!horiz) {
+      items[i].scrollIntoView({behavior: motion ? 'smooth' : 'auto', block:'center'});
+      if (then) { const t0 = performance.now(); let last = -1, still = 0; const wait = () => { const y = window.scrollY; still = y === last ? still + 1 : 0; last = y; if ((performance.now() - t0 > 250 && still >= 6) || performance.now() - t0 > 2500) { setActive(i); then(); } else requestAnimationFrame(wait); }; requestAnimationFrame(wait); }
+      return;
+    }
     const top = works.getBoundingClientRect().top + window.scrollY - bandH() + i*stepPx;
     window.scrollTo({top, behavior: motion ? 'smooth' : 'auto'});
     if (then) { let done = false; const fin = () => { if (done) return; done = true; window.removeEventListener('scrollend', fin); setTimeout(then, 120); }; window.addEventListener('scrollend', fin); setTimeout(fin, motion ? 1400 : 80); }
