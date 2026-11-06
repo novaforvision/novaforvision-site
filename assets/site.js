@@ -923,29 +923,38 @@
   $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
 
   /* ---------- Parallaxe des stills (projets) et bandeau des disciplines (accueil) ---------- */
-  const phs = $$('.stills .ph'), rail = $('#rail'), railStars = $$('#rail i'), railBox = rail ? rail.parentElement : null;
-  // parallaxe à la souris : chaque cadre flotte à sa profondeur, l'image glisse à l'inverse dans son cadre
-  const stillsBox = $('.stills'), stillFigs = phs.map(ph => ph.closest('figure')), DEPTH = [1, .55, .8, 1.2, .7, 1];
-  [stillsBox, railBox].forEach(el => { if (el) nearIO.observe(el); });
+  const rail = $('#rail'), railStars = $$('#rail i'), railBox = rail ? rail.parentElement : null;
+  // parallaxe à la souris : chaque cadre flotte à sa profondeur, l'image glisse à l'inverse dans son cadre ;
+  // une grille de stills par campagne, et l'image d'ouverture en pleine largeur ne bouge que dans son cadre
+  const DEPTH = [1, .55, .8, 1.2, .7, 1];
+  const stillSets = $$('.stills, .ts-lead').map(box => { const phs = $$('.ph', box); return { box, phs, figs: phs.map(ph => ph.closest('figure')), lead: box.classList.contains('ts-lead') }; });
+  stillSets.forEach(s => nearIO.observe(s.box));
+  if (railBox) nearIO.observe(railBox);
   const pm = { x:0, y:0, on:false }, par = { x:0, y:0 };
   window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; pm.x = e.clientX; pm.y = e.clientY; pm.on = true; }, {passive:true});
   document.documentElement.addEventListener('mouseleave', () => { pm.on = false; });
   let railLast = '';
   function drawScrollFx(){
     const vh = window.innerHeight;
-    const sb = stillsBox && isNear(stillsBox) ? stillsBox.getBoundingClientRect() : null;
-    if (sb && sb.bottom > -50 && sb.top < vh + 50) {
-      const tx = motion && pm.on ? clamp((pm.x - innerWidth/2) / (innerWidth/2), -1, 1) : 0, ty = motion && pm.on ? clamp((pm.y - vh/2) / (vh/2), -1, 1) : 0;
-      par.x += (tx - par.x) * .06; par.y += (ty - par.y) * .06;
+    let eased = false;
+    stillSets.forEach(({box, phs, figs, lead}) => {
+      if (!isNear(box)) return;
+      const sb = box.getBoundingClientRect();
+      if (sb.bottom < -50 || sb.top > vh + 50) return;
+      if (!eased) {
+        eased = true;
+        const tx = motion && pm.on ? clamp((pm.x - innerWidth/2) / (innerWidth/2), -1, 1) : 0, ty = motion && pm.on ? clamp((pm.y - vh/2) / (vh/2), -1, 1) : 0;
+        par.x += (tx - par.x) * .06; par.y += (ty - par.y) * .06;
+      }
       phs.forEach((ph, i) => {
         const r = ph.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
-        const d = motion ? ((r.top + r.height/2) - vh/2) / vh : 0, k = DEPTH[i % DEPTH.length];
-        ph.style.setProperty('--py', (d*-7).toFixed(2) + '%');
+        const d = motion ? ((r.top + r.height/2) - vh/2) / vh : 0, k = lead ? .6 : DEPTH[i % DEPTH.length];
+        ph.style.setProperty('--py', (d*(lead ? -5 : -7)).toFixed(2) + '%');
         ph.style.setProperty('--mx', (-par.x*1.8*k).toFixed(2) + '%');
         ph.style.setProperty('--my', (-par.y*.8*k).toFixed(2) + '%');
-        stillFigs[i].style.transform = `translate3d(${(par.x*10*k).toFixed(1)}px,${(par.y*8*k).toFixed(1)}px,0)`;
+        if (figs[i] && !lead) figs[i].style.transform = `translate3d(${(par.x*10*k).toFixed(1)}px,${(par.y*8*k).toFixed(1)}px,0)`;
       });
-    }
+    });
     const rr = railBox && isNear(railBox) ? railBox.getBoundingClientRect() : null;
     if (rr && rr.bottom > 0 && rr.top < vh) {
       const p = clamp((vh - rr.top) / (vh + rr.height), 0, 1);

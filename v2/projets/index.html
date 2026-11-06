@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
 <title>Projets : campagnes IA et clips · NOVA FOR VISION</title>
-<meta name="description" content="Les projets de NOVA FOR VISION : campagnes publicitaires IA pour les marques et clips pour les artistes, avec VFX, montage et création IA.">
+<meta name="description" content="Les projets de NOVA FOR VISION : campagnes publicitaires IA comme Oakley × Meta, et clips rap et drill avec VFX, montage et création IA.">
 <meta name="theme-color" content="#0b0c0e">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="apple-touch-icon" href="/assets/touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
+<meta name="robots" content="noindex, nofollow">
 <link rel="preload" href="/assets/fonts/geist-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css?v=2">
+<link rel="stylesheet" href="/assets/site.css?v=3">
 <script>
 (function(){var d=document.documentElement;d.classList.add('js','no-intro');
 d.setAttribute('data-tab',/^#(clips|bobine|avant-apres|generique)$/.test(location.hash)?'clips':'campagnes');
 if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('cursor-on');})();
 </script>
-<script defer src="/assets/site.js?v=2"></script>
+<script defer src="/assets/site.js?v=3"></script>
 </head>
 <body class="p-projets">
 <div class="cur-star" id="cur-star" aria-hidden="true"><i class="star-mask"></i></div>
@@ -43,14 +43,14 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('curso
   <div class="pj-head wrap">
     <h1 class="label">Projets</h1>
     <div class="tabs" role="tablist" aria-label="Catégories de projets">
-      <a class="tab" role="tab" id="t-campagnes" href="#campagnes" aria-controls="tab-campagnes" aria-selected="true" aria-label="Campagnes, 1 projet"><span class="tab-t split chars dhov">Campagnes</span><span class="tab-n mono" aria-hidden="true">1</span></a>
+      <a class="tab" role="tab" id="t-campagnes" href="#campagnes" aria-controls="tab-campagnes" aria-selected="true" aria-label="Campagnes, 2 projets"><span class="tab-t split chars dhov">Campagnes</span><span class="tab-n mono" aria-hidden="true">2</span></a>
       <a class="tab" role="tab" id="t-clips" href="#clips" aria-controls="tab-clips" aria-selected="false" tabindex="-1" aria-label="Clips, 7 projets"><span class="tab-t split chars dhov">Clips</span><span class="tab-n mono" aria-hidden="true">7</span></a>
     </div>
   </div>
 
   <div class="panel" id="tab-campagnes" role="tabpanel" aria-labelledby="t-campagnes">
     <h2 class="sr-only">Campagnes</h2>
-    <section class="camp" aria-labelledby="camp-t">
+    <section class="camp" id="oakley-meta" aria-labelledby="camp-t">
     <div class="pj-note wrap"><p class="op-note">Pour les marques et les agences&nbsp;: des campagnes publicitaires IA, du concept au film final, avec création IA, effets visuels et postproduction dans un seul workflow.</p></div>
     <div class="camp-film" id="camp-film" data-cursor="Lire">
       <video id="oak" src="/media/oakley/film.mp4" data-poster="/media/oakley/film.jpg" muted loop playsinline preload="none" data-preload="metadata" aria-label="Film de campagne Oakley × Meta"></video>
@@ -89,6 +89,29 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('curso
       <li><figure><div class="ph clip-in"><img src="/media/oakley/unettes-sable-logo.jpg" alt="Une main pose les lunettes dans le sable" width="1400" height="788" loading="lazy"></div><figcaption>Les lunettes dans le sable</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><img src="/media/oakley/end-oakley-meta.jpg" alt="Logos Oakley et Meta gravés dans le sable" width="1400" height="788" loading="lazy"></div><figcaption>Plan de fin</figcaption></figure></li>
       <li><figure><div class="ph clip-in"><video id="oak-motion" src="/media/oakley/motion.mp4" data-poster="/media/oakley/motion.jpg" muted loop playsinline preload="none" aria-label="Motion design du logo Oakley × Meta"></video></div><figcaption>Motion design du logo</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section class="camp ts" id="tea-storm" aria-labelledby="ts-t">
+    <div class="ts-lead"><div class="ph clip-in"><img src="/assets/teastorm/00-2400.jpg" srcset="/assets/teastorm/00-1200.jpg 1200w, /assets/teastorm/00-2400.jpg 2400w" sizes="100vw" alt="Le flacon Tea Storm sur une table laquée noire et rouge, dans un rai de lumière" width="2400" height="1351" loading="lazy" decoding="async"></div></div>
+    <div class="camp-info wrap">
+      <div class="ci-title"><span class="ci-idx mono">Spec ad · Stills IA</span><h3 class="camp-title split chars" id="ts-t">Tea Storm</h3></div>
+      <dl class="ci-meta">
+        <div><dt>Marque</dt><dd>Louis Vuitton, projet personnel non commandé</dd></div>
+        <div><dt>Rôle</dt><dd>Stills IA</dd></div>
+        <div><dt>Livrables</dt><dd>10 stills 16:9</dd></div>
+      </dl>
+    </div>
+    <ul class="stills st2 wrap">
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/01-1600.jpg" srcset="/assets/teastorm/01-800.jpg 800w, /assets/teastorm/01-1600.jpg 1600w" sizes="(max-width:760px) 100vw, 58vw" alt="Le bouchon rose du flacon, monogramme LV doré, posé sur une coupe en céramique" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/02-1600.jpg" srcset="/assets/teastorm/02-800.jpg 800w, /assets/teastorm/02-1600.jpg 1600w" sizes="(max-width:760px) 50vw, 32vw" alt="Le bouchon rose et son reflet sur une table laquée" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/03-1600.jpg" srcset="/assets/teastorm/03-800.jpg 800w, /assets/teastorm/03-1600.jpg 1600w" sizes="(max-width:760px) 50vw, 32vw" alt="Le flacon dans un panier de feuilles de thé, sous une ombre tressée" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/04-1600.jpg" srcset="/assets/teastorm/04-800.jpg 800w, /assets/teastorm/04-1600.jpg 1600w" sizes="(max-width:760px) 100vw, 58vw" alt="Le flacon parmi les feuilles de lotus, un bouton de fleur rouge derrière" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/05-1600.jpg" srcset="/assets/teastorm/05-800.jpg 800w, /assets/teastorm/05-1600.jpg 1600w" sizes="(max-width:760px) 50vw, 58vw" alt="Le flacon sur une pierre, entre des feuilles de lotus mouillées" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/06-1600.jpg" srcset="/assets/teastorm/06-800.jpg 800w, /assets/teastorm/06-1600.jpg 1600w" sizes="(max-width:760px) 50vw, 32vw" alt="Le bas du flacon, gravé Tea Storm Louis Vuitton, sur des feuilles de thé" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/07-1600.jpg" srcset="/assets/teastorm/07-800.jpg 800w, /assets/teastorm/07-1600.jpg 1600w" sizes="(max-width:760px) 100vw, 32vw" alt="Le flacon couché sur une feuille de lotus, gravure Tea Storm" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/08-1600.jpg" srcset="/assets/teastorm/08-800.jpg 800w, /assets/teastorm/08-1600.jpg 1600w" sizes="(max-width:760px) 50vw, 58vw" alt="Le flacon sur une table de bois, dans la lumière d’une fenêtre à lamelles" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
+      <li><figure><div class="ph clip-in"><img src="/assets/teastorm/09-1600.jpg" srcset="/assets/teastorm/09-800.jpg 800w, /assets/teastorm/09-1600.jpg 1600w" sizes="(max-width:760px) 50vw, 100vw" alt="Le flacon sur une pierre, sous l’ombre d’une fenêtre ajourée" width="1600" height="901" loading="lazy" decoding="async"></div></figure></li>
     </ul>
   </section>
   <nav class="next wrap" aria-label="Suite">
