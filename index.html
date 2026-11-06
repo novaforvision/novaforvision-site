@@ -20,15 +20,17 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="NOVA For Vision, postproduction, VFX et création IA">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Geist+Mono:wght@400&display=swap">
+<link rel="preload" href="assets/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>
 (function(){var d=document.documentElement;d.classList.add('js');var skip=false;try{skip=sessionStorage.getItem('nova-intro')==='1'}catch(e){}
 if(skip||matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('no-intro');else d.classList.add('intro-run');
 if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('cursor-on');})();
 </script>
 <style>
+/* Polices hébergées sur le site (sous-ensemble latin, licence OFL dans assets/fonts) */
+@font-face{font-family:"Archivo";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/archivo-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Archivo";font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/archivo-latin-500-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Geist Mono";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/geist-mono-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* Layout: bande fixe en haut (logo centré), slider plein écran d'un projet par slide, puis sections sur une grille 12 colonnes ; l'étoile NOVA sert d'intro, de curseur, d'indicateur et de final */
 :root{
   --bg:#0b0c0e; --bg-2:#111215; --raised:#18191c;
