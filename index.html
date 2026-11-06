@@ -990,8 +990,9 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
       const k = i < N-1 ? clamp(pos - i, 0, 1) : 0, ek = easeIO(k);
       const xc = (HW + SL/2) - e*(HW + SL);
       if (i > 0) setV(sl, 'c'+e.toFixed(4)+'_'+HW+'_'+HH, e >= .9999 ? 'clip-path:inset(0 0 0 0)' : `clip-path:polygon(${(xc + SL/2).toFixed(1)}px 0,100% 0,100% 100%,${(xc - SL/2).toFixed(1)}px 100%)`);
-      const tx = (1-e)*14 - ek*10, sc = 1 + (1-e)*.06;
-      setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), tx === 0 && sc === 1 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
+      // la vidéo glisse un peu mais couvre toujours tout l'écran : l'échelle compense le décalage (sinon des coins noirs apparaissent le long de la jointure oblique)
+      const tx = (1-e)*10 - ek*8, sc = 1.004 + Math.abs(tx)/50 + (1-e)*.04;
+      setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), tx === 0 && e >= 1 && ek <= 0 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
       setV(shades[i], 's'+ek.toFixed(3), `opacity:${(ek*.55).toFixed(3)}`);
       if (i > 0 && t > 0 && t < 1) { seamX = xc; seamO = Math.sin(Math.PI*t); }
     });
