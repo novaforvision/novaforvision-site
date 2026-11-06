@@ -1059,43 +1059,73 @@
     });
   });
 
-  /* ---------- Studio : les métiers en pistes de montage, la tête de lecture avance avec le défilement ---------- */
-  const tl = $('#metiers');
-  let drawTl = null;
-  if (tl) {
-    const tracks = $$('.tk', tl), nows = $$('.tl-now>div', tl), ph = tl.querySelector('.tl-ph'), tcT = tl.querySelector('.tl-tc'), bandTc = $('#tc');
-    const R = tracks.map(t => [parseFloat(t.dataset.a), parseFloat(t.dataset.b)]);
-    const TL_TOTAL = 30;   // la timeline affiche 30 secondes, comme un spot
-    tracks.forEach((t, i) => { t.style.setProperty('--a', R[i][0]); t.style.setProperty('--b', R[i][1]); });
-    tl.classList.add('run');
-    nearIO.observe(tl);
-    let lastP = -1, readI = -1;
-    const span = () => Math.max(1, tl.offsetHeight - (window.innerHeight - bandH()));
-    drawTl = force => {
-      if (!force && !isNear(tl)) return;
-      const r = tl.getBoundingClientRect();
-      const p = clamp((bandH() - r.top) / span(), 0, 1);
-      if (!force && Math.abs(p - lastP) < .0003) return;
-      lastP = p;
-      ph.style.setProperty('--p', p.toFixed(4));
-      let cand = 0;
-      tracks.forEach((t, i) => {
-        const [a, b] = R[i];
-        t.classList.toggle('on', p >= a && p <= b); t.classList.toggle('done', p > b);
-        t.style.setProperty('--f', clamp((p - a) / (b - a), 0, 1).toFixed(3));
-        if (p >= a) cand = i;
+  /* ---------- Studio : les métiers en poussière ; le nom se défait et se recompose en défilant ---------- */
+  const mt = $('#metiers');
+  let drawMt = null, layoutMt = null;
+  if (mt) {
+    const cv = mt.querySelector('.mt-cv'), cx = cv.getContext('2d');
+    const mtItems = $$('.mt-i', mt), names = mtItems.map(li => li.querySelector('.mt-n').textContent.trim());
+    const nowPs = $$('.mt-now p', mt), cnt = mt.querySelector('.mt-cnt'), nM = names.length;
+    let PT = [], W = 0, H = 0, dpr = 1, lastKey = '', curM = -1, seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const ms = { x: -1e9, y: -1e9, on: false };
+    const span = () => Math.max(1, mt.offsetHeight - (window.innerHeight - bandH()));
+    // relevé des points de chaque nom (police du site), un nom long passe sur deux lignes
+    layoutMt = () => {
+      if (!cv.clientWidth || !cv.clientHeight) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 2); W = Math.round(cv.clientWidth * dpr); H = Math.round(cv.clientHeight * dpr); cv.width = W; cv.height = H;
+      const oc = document.createElement('canvas'); oc.width = W; oc.height = H; const ox = oc.getContext('2d');
+      const step = Math.max(2, Math.round(2 * dpr)), family = getComputedStyle(cv).fontFamily || 'sans-serif';
+      seed = 7;
+      const words = names.map(name => {
+        // le nom prend toute la largeur ; un nom en deux mots passe sur deux lignes si ça le rend nettement plus grand
+        ox.font = `400 100px ${family}`;
+        const wOf = l => ox.measureText(l).width / 100;
+        let lines = [name], fs = Math.min(H * .5, W * .94 / wOf(name));
+        if (name.includes(' ')) { const sp = name.indexOf(' '), ls = [name.slice(0, sp), name.slice(sp + 1)], fs2 = Math.min(H * .36, W * .94 / Math.max(...ls.map(wOf))); if (fs2 > fs * 1.25) { lines = ls; fs = fs2; } }
+        ox.font = `400 ${fs}px ${family}`; ox.textBaseline = 'middle'; ox.textAlign = 'left';
+        ox.clearRect(0, 0, W, H); ox.fillStyle = '#fff';
+        const lh = fs * 1.02, y0 = H / 2 - (lines.length - 1) * lh / 2;
+        lines.forEach((l, k) => ox.fillText(l, 0, y0 + k * lh));
+        let d; try { d = ox.getImageData(0, 0, W, H).data; } catch(e) { return []; }
+        const pts = [];
+        for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step) if (d[(y * W + x) * 4 + 3] > 128) pts.push(x + (rnd() - .5) * step, y + (rnd() - .5) * step);
+        for (let k = pts.length / 2 - 1; k > 0; k--) { const j = (rnd() * (k + 1)) | 0; [pts[2*k], pts[2*j]] = [pts[2*j], pts[2*k]]; [pts[2*k+1], pts[2*j+1]] = [pts[2*j+1], pts[2*k+1]]; }
+        return pts;
       });
-      if (cand !== readI) { readI = cand; nows.forEach((nw, k) => { nw.classList.toggle('on', k === cand); nw.classList.toggle('past', k < cand); }); }
-      const t = tc(p * TL_TOTAL); tcT.textContent = t;
-      // le timecode de la bande suit la tête de lecture tant que la timeline est à l'écran
-      if (bandTc && r.top < window.innerHeight && r.bottom > 0) bandTc.textContent = t;
+      if (words.some(w => !w.length)) return;
+      const m = Math.min(14000, Math.max(...words.map(w => w.length / 2)));
+      PT = []; for (let k = 0; k < m; k++) { const ang = rnd() * Math.PI * 2; PT.push({ t: words.map(w => { const q = (k % (w.length / 2)) * 2; return [w[q], w[q + 1]]; }), ax: Math.cos(ang), ay: Math.sin(ang), r: .4 + rnd(), s: (1.1 + rnd() * .8) * dpr, al: .7 + rnd() * .3 }); }
+      lastKey = '';
     };
-    // toucher une piste amène la tête de lecture sur son plan
-    tracks.forEach((t, i) => t.addEventListener('click', () => {
-      const p = R[i][0] + (R[i][1] - R[i][0]) * .3;
-      window.scrollTo({ top: tl.getBoundingClientRect().top + window.scrollY - bandH() + p * span(), behavior: motion ? 'smooth' : 'auto' });
+    cv.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const r = cv.getBoundingClientRect(); ms.x = (e.clientX - r.left) * dpr; ms.y = (e.clientY - r.top) * dpr; ms.on = true; });
+    cv.addEventListener('pointerleave', () => { ms.on = false; ms.x = ms.y = -1e9; });
+    const smooth = t => t * t * (3 - 2 * t);
+    drawMt = () => {
+      if (!PT.length || !isNear(mt)) return;
+      const r = mt.getBoundingClientRect(); if (r.bottom < 0 || r.top > window.innerHeight) return;
+      const f = clamp((bandH() - r.top) / span(), 0, 1) * (nM - 1);
+      const key = f.toFixed(4) + (ms.on && motion ? `|${ms.x | 0},${ms.y | 0}` : '');
+      if (key === lastKey) return; lastKey = key;
+      const i = Math.min(nM - 2, Math.floor(f)), t = f - i, e = smooth(clamp((t - .28) / .44, 0, 1)), b = Math.sin(Math.PI * e);
+      cx.clearRect(0, 0, W, H); cx.fillStyle = fgCol;
+      const R = 70 * dpr, spread = 70 * dpr, push = ms.on && motion;
+      for (let k = 0; k < PT.length; k++) {
+        const p = PT[k], a = p.t[i], c = p.t[i + 1];
+        let x = a[0] + (c[0] - a[0]) * e + p.ax * spread * p.r * b, y = a[1] + (c[1] - a[1]) * e + p.ay * spread * p.r * b * .6;
+        if (push) { const dx = x - ms.x, dy = y - ms.y, d2 = dx * dx + dy * dy; if (d2 < R * R) { const d = Math.sqrt(d2) || 1, kk = (1 - d / R) * 28 * dpr; x += dx / d * kk; y += dy / d * kk; } }
+        cx.globalAlpha = p.al * (1 - b * .35); cx.fillRect(x, y, p.s, p.s);
+      }
+      cx.globalAlpha = 1;
+      const k = Math.round(f);
+      if (k !== curM) { curM = k; nowPs.forEach((pp, j) => pp.classList.toggle('on', j === k)); mtItems.forEach((li, j) => li.classList.toggle('on', j === k)); if (cnt) cnt.textContent = `${pad(k + 1)} / ${pad(nM)}`; }
+    };
+    // un nom de la liste amène son métier à l'écran
+    mtItems.forEach((li, j) => li.querySelector('.mt-n').addEventListener('click', () => {
+      window.scrollTo({ top: mt.getBoundingClientRect().top + window.scrollY - bandH() + j / (nM - 1) * span(), behavior: motion ? 'smooth' : 'auto' });
     }));
-    drawTl(true);
+    mt.classList.add('run');
+    nearIO.observe(mt);
   }
 
   /* ---------- Liens internes : défilement doux, durée selon la distance ---------- */
@@ -1209,7 +1239,7 @@
     if (trVisible && trTick) trTick();
     if (drawLit) drawLit();
     if (drawCredits) drawCredits(false);
-    if (drawTl) drawTl(false);
+    if (drawMt) drawMt();
     for (let i = 0; i < viewers.length; i++) viewers[i](now);
     if (drawPeek) drawPeek(now);
     drawScrollFx(); drawSvc();
@@ -1241,7 +1271,7 @@
     requestAnimationFrame(frame);
   }
 
-  function relayout(){ if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); if (drawTl) drawTl(true); }
+  function relayout(){ if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); if (layoutMt) layoutMt(); }
   relayout();
   applyMotion();
   if (tabsInit) tabsInit();
