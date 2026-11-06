@@ -484,12 +484,12 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
         <h2 class="cap-t split">Oakley × Meta</h2>
         <div class="cap-row"><p class="cap-m">Création IA · VFX · Montage · Sound design · Motion design</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button><a class="link" href="#campagnes">L'étude de cas</a></div></div>
       </article>
-      <article class="cap" data-i="1">
+      <article class="cap" data-i="1" inert>
         <p class="cap-k"><span class="mono">02</span>Clip · RR · Réalisation Lyra Film</p>
         <h2 class="cap-t split">CRAMÉ</h2>
         <div class="cap-row"><p class="cap-m">Montage · VFX · IA · SFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button><a class="link" href="#avant-apres">L'avant / après</a></div></div>
       </article>
-      <article class="cap" data-i="2">
+      <article class="cap" data-i="2" inert>
         <p class="cap-k"><span class="mono">03</span>Clip · Thabiti · Réalisation Lyra Film</p>
         <h2 class="cap-t split">NDRANGETHA</h2>
         <div class="cap-row"><p class="cap-m">Montage · VFX · IA · SFX</p><div class="cap-a"><button class="btn" type="button" data-play>Voir le film</button></div></div>
@@ -900,7 +900,7 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
     if (i === cur0 && caps[i].classList.contains('on')) return;
     if (introOn && i === 0 && performance.now() < 2300) return;
     cur0 = i;
-    caps.forEach((c,k) => { c.classList.toggle('on', k === i && !(k === 0 && logoHold())); c.setAttribute('aria-hidden', String(k !== i)); });
+    caps.forEach((c,k) => { c.classList.toggle('on', k === i && !(k === 0 && logoHold())); c.setAttribute('aria-hidden', String(k !== i)); c.toggleAttribute('inert', k !== i); });
     slides.forEach((s,k) => s.classList.toggle('cur', k === i));
     $('#hcount').textContent = `${pad(i+1)} / ${pad(N)}`;
     ticks.forEach((t,k) => t.setAttribute('aria-current', String(k === i)));
