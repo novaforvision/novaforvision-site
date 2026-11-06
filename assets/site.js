@@ -1059,6 +1059,45 @@
     });
   });
 
+  /* ---------- Studio : les métiers en pistes de montage, la tête de lecture avance avec le défilement ---------- */
+  const tl = $('#metiers');
+  let drawTl = null;
+  if (tl) {
+    const tracks = $$('.tk', tl), nows = $$('.tl-now>div', tl), ph = tl.querySelector('.tl-ph'), tcT = tl.querySelector('.tl-tc'), bandTc = $('#tc');
+    const R = tracks.map(t => [parseFloat(t.dataset.a), parseFloat(t.dataset.b)]);
+    const TL_TOTAL = 30;   // la timeline affiche 30 secondes, comme un spot
+    tracks.forEach((t, i) => { t.style.setProperty('--a', R[i][0]); t.style.setProperty('--b', R[i][1]); });
+    tl.classList.add('run');
+    nearIO.observe(tl);
+    let lastP = -1, readI = -1;
+    const span = () => Math.max(1, tl.offsetHeight - (window.innerHeight - bandH()));
+    drawTl = force => {
+      if (!force && !isNear(tl)) return;
+      const r = tl.getBoundingClientRect();
+      const p = clamp((bandH() - r.top) / span(), 0, 1);
+      if (!force && Math.abs(p - lastP) < .0003) return;
+      lastP = p;
+      ph.style.setProperty('--p', p.toFixed(4));
+      let cand = 0;
+      tracks.forEach((t, i) => {
+        const [a, b] = R[i];
+        t.classList.toggle('on', p >= a && p <= b); t.classList.toggle('done', p > b);
+        t.style.setProperty('--f', clamp((p - a) / (b - a), 0, 1).toFixed(3));
+        if (p >= a) cand = i;
+      });
+      if (cand !== readI) { readI = cand; nows.forEach((nw, k) => { nw.classList.toggle('on', k === cand); nw.classList.toggle('past', k < cand); }); }
+      const t = tc(p * TL_TOTAL); tcT.textContent = t;
+      // le timecode de la bande suit la tête de lecture tant que la timeline est à l'écran
+      if (bandTc && r.top < window.innerHeight && r.bottom > 0) bandTc.textContent = t;
+    };
+    // toucher une piste amène la tête de lecture sur son plan
+    tracks.forEach((t, i) => t.addEventListener('click', () => {
+      const p = R[i][0] + (R[i][1] - R[i][0]) * .3;
+      window.scrollTo({ top: tl.getBoundingClientRect().top + window.scrollY - bandH() + p * span(), behavior: motion ? 'smooth' : 'auto' });
+    }));
+    drawTl(true);
+  }
+
   /* ---------- Liens internes : défilement doux, durée selon la distance ---------- */
   let glide = null;
   const easeGlide = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
@@ -1170,6 +1209,7 @@
     if (trVisible && trTick) trTick();
     if (drawLit) drawLit();
     if (drawCredits) drawCredits(false);
+    if (drawTl) drawTl(false);
     for (let i = 0; i < viewers.length; i++) viewers[i](now);
     if (drawPeek) drawPeek(now);
     drawScrollFx(); drawSvc();
@@ -1201,7 +1241,7 @@
     requestAnimationFrame(frame);
   }
 
-  function relayout(){ if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); }
+  function relayout(){ if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); if (drawTl) drawTl(true); }
   relayout();
   applyMotion();
   if (tabsInit) tabsInit();
