@@ -90,6 +90,10 @@
     const cxs = innerWidth/2, cys = innerHeight/2;
     const place = (el, sc, rot) => el.setAttribute('transform', `translate(${cxs} ${cys}) rotate(${rot}) scale(${sc}) translate(${-SW/2} ${-SH/2})`);
     const P2 = []; let ready = false, t0 = null, done = false, opened = false;
+    // le son de l'intro : celui du motion design Oakley × Meta, discret, dans une grande réverb.
+    // Son coup principal tombe sur l'ouverture de l'étoile. Le navigateur peut le bloquer tant que le visiteur n'a pas cliqué : rien ne se passe alors.
+    const SFX_AT = 1150; let sfx = null, sfxGo = false;
+    if (motion) { try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/intro.mp3?v=1'; } catch(e){ sfx = null; } }
     const img = new Image();
     img.onload = () => {
       const w = Math.round(SW*base*dpr), h = Math.round(SH*base*dpr);
@@ -113,6 +117,7 @@
       if (!ready) { requestAnimationFrame(stepI); return; }
       if (t0 === null) t0 = now;
       const t = now - t0, W = icv.width, H = icv.height;
+      if (sfx && !sfxGo && t >= SFX_AT) { sfxGo = true; try { const pr = sfx.play(); if (pr) pr.catch(() => {}); } catch(e){} }
       ix.clearRect(0,0,W,H);
       // l'ouverture : l'étoile devient une fenêtre qui tourne et grandit
       const o = clamp((t - 2150)/950, 0, 1), oe = ein(o);
@@ -136,7 +141,7 @@
       requestAnimationFrame(stepI);
     }
     requestAnimationFrame(stepI);
-    function skip(){ if (!introOn || done) return; done = true; intro.classList.add('fade'); setTimeout(endIntro, 360); }
+    function skip(){ if (!introOn || done) return; done = true; sfxGo = true; intro.classList.add('fade'); setTimeout(endIntro, 360); }
     intro.addEventListener('click', skip);
     window.addEventListener('keydown', skip, {once:true});
     window.addEventListener('wheel', skip, {once:true, passive:true});
