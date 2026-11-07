@@ -90,10 +90,10 @@
     const cxs = innerWidth/2, cys = innerHeight/2;
     const place = (el, sc, rot) => el.setAttribute('transform', `translate(${cxs} ${cys}) rotate(${rot}) scale(${sc}) translate(${-SW/2} ${-SH/2})`);
     const P2 = []; let ready = false, t0 = null, done = false, opened = false;
-    // le son de l'intro : celui du motion design Oakley × Meta, discret, dans une grande réverb.
-    // Son coup principal tombe sur l'ouverture de l'étoile. Le navigateur peut le bloquer tant que le visiteur n'a pas cliqué : rien ne se passe alors.
-    const SFX_AT = 1150; let sfx = null, sfxGo = false;
-    if (motion) { try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/intro.mp3?v=1'; } catch(e){ sfx = null; } }
+    // le son de l'intro : la poussière de la vidéo de présentation NOVA, puis sa petite note au fond quand l'étoile s'ouvre,
+    // très bas et noyés dans la réverb. Le navigateur peut le bloquer tant que le visiteur n'a pas cliqué : rien ne se passe alors.
+    const SFX_AT = 0; let sfx = null, sfxGo = false;
+    if (motion) { try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/nova-intro.mp3?v=1'; } catch(e){ sfx = null; } }
     const img = new Image();
     img.onload = () => {
       const w = Math.round(SW*base*dpr), h = Math.round(SH*base*dpr);
