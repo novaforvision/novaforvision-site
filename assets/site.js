@@ -884,6 +884,35 @@
     try { navigator.clipboard.writeText('contact@novaforvision.fr').then(() => { copyBtn.textContent = 'Copiée'; reset(); }, fallback); } catch(e){ fallback(); }
   });
 
+  /* ---------- Barre de défilement (ordinateur) : une poignée rectangulaire posée sur la page, à la place de celle du navigateur ---------- */
+  if (fine.matches) {
+    const sb = document.createElement('div'); sb.className = 'sbar'; sb.setAttribute('aria-hidden', 'true');
+    const th = document.createElement('i'); sb.appendChild(th); document.body.appendChild(sb);
+    let drag = null, sbRaf = 0;
+    const sbDraw = () => {
+      sbRaf = 0;
+      const vh = window.innerHeight, dh = document.documentElement.scrollHeight, max = dh - vh;
+      if (max < 2) { sb.hidden = true; return; }
+      sb.hidden = false;
+      const h = Math.max(40, Math.round(vh * vh / dh)), y = Math.round(window.scrollY / max * (vh - h));
+      th.style.height = h + 'px'; th.style.transform = `translate3d(0,${y}px,0)`;
+    };
+    const sbQueue = () => { if (!sbRaf) sbRaf = requestAnimationFrame(sbDraw); };
+    window.addEventListener('scroll', sbQueue, {passive:true});
+    window.addEventListener('resize', sbQueue);
+    new ResizeObserver(sbQueue).observe(document.body);
+    // on peut aussi attraper la poignée et la faire glisser
+    th.addEventListener('pointerdown', e => { e.preventDefault(); th.setPointerCapture(e.pointerId); drag = { y: e.clientY, s: window.scrollY }; sb.classList.add('drag'); });
+    th.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const vh = window.innerHeight, dh = document.documentElement.scrollHeight, h = th.offsetHeight;
+      window.scrollTo({ top: drag.s + (e.clientY - drag.y) * (dh - vh) / Math.max(1, vh - h), behavior: 'auto' });
+    });
+    const sbEnd = () => { drag = null; sb.classList.remove('drag'); };
+    th.addEventListener('pointerup', sbEnd); th.addEventListener('pointercancel', sbEnd);
+    sbDraw();
+  }
+
   /* ---------- Grands titres : une poussière discrète se détache des lettres sous le curseur ---------- */
   const hovC = document.createElement('canvas'); hovC.className = 'hov-dust'; hovC.setAttribute('aria-hidden','true'); document.body.appendChild(hovC);
   const hovX = hovC.getContext('2d'), hovP = []; let hovDirty = false;

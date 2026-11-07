@@ -642,12 +642,13 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 .p-studio .lit{color:var(--fg-3);--fc:var(--fg-3)}
 .p-studio .lit .k{--fc:var(--fg)}
 .p-studio .lit:not(.fp) .k{color:var(--fg)}
-/* Barre de défilement de la page : seule la poignée gris clair change de forme (un rectangle, sans arrondi) ; le fond reste transparent, sans bordure (Chrome, Edge, Safari ; Firefox garde sa forme et prend la couleur) */
-@supports selector(::-webkit-scrollbar){
-  html::-webkit-scrollbar{width:12px;height:12px;background:transparent}
-  html::-webkit-scrollbar-track{background:transparent;border:0}
-  html::-webkit-scrollbar-thumb{background:rgba(238,239,237,.34);background-clip:padding-box;border:2px solid transparent;border-radius:0}
-  html::-webkit-scrollbar-thumb:hover{background-color:rgba(238,239,237,.52)}
-  html::-webkit-scrollbar-corner{background:transparent}
+/* Barre de défilement (ordinateur) : la barre du navigateur est cachée, elle laissait une bande noire sur tout le côté droit ;
+   une poignée rectangulaire gris clair est posée par-dessus la page (site.js). Sur téléphone, la barre du système reste. */
+@media (hover:hover) and (pointer:fine){
+  html{scrollbar-width:none}
+  html::-webkit-scrollbar{display:none}
 }
-@supports not selector(::-webkit-scrollbar){html{scrollbar-color:rgba(238,239,237,.34) transparent}}
+.sbar{position:fixed;top:0;right:0;bottom:0;width:12px;z-index:90;pointer-events:none}
+.sbar i{position:absolute;top:0;right:3px;width:6px;height:40px;background:rgba(238,239,237,.34);pointer-events:auto;cursor:default;transition:background-color .2s}
+.sbar i:hover,.sbar.drag i{background:rgba(238,239,237,.56)}
+.sbar[hidden]{display:none}
