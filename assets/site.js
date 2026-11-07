@@ -1342,7 +1342,11 @@
   function applyMotion(){
     root.classList.toggle('motion-off', !motion);
     if (motionBtn) { motionBtn.setAttribute('aria-pressed', String(motion)); motionBtn.querySelector('span').textContent = motion ? 'Mouvement activé' : 'Mouvement en pause'; }
-    if (!motion) { $$('video').forEach(v => { if (v !== player.video) v.pause(); }); }
+    if (!motion) {
+      $$('video').forEach(v => { if (v !== player.video) v.pause(); });
+      // les projets du haut s'arrêtent sur leur belle image (chargée à ce moment-là seulement)
+      $$('.slide .still[data-src]').forEach(im => { im.src = im.dataset.src; im.removeAttribute('data-src'); });
+    }
     else {
       if (oak && oakVisible && player.ctx !== 'camp') playV(oak);
       if (ba && baVisible) playV(ba);

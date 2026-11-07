@@ -93,6 +93,10 @@ html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{op
 .slide+.slide{clip-path:inset(0 0 0 100%)}
 .slide video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
 .shade{position:absolute;inset:0;background:var(--black);opacity:0;pointer-events:none}
+/* mouvement en pause : une image choisie du projet remplace la vidéo arrêtée (pas pendant « Voir le film ») */
+.still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .4s var(--ease)}
+.motion-off .still[src]{opacity:1}
+.hero.playing .slide.cur .still{opacity:0}
 .seam{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.55);opacity:0;pointer-events:none;will-change:transform,opacity}
 /* la ligne du rideau, tracée en SVG pour pouvoir se courber légèrement au défilement ; #seam ne garde que l'étoile */
 .seam.curved{background:transparent}
