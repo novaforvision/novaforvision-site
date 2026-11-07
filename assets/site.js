@@ -93,7 +93,7 @@
     // le son de l'intro : la poussière de la vidéo de présentation NOVA, puis sa petite note au fond quand l'étoile s'ouvre,
     // très bas et noyés dans la réverb. Le navigateur peut le bloquer tant que le visiteur n'a pas cliqué : rien ne se passe alors.
     const SFX_AT = 0; let sfx = null, sfxGo = false;
-    if (motion) { try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/nova-intro.mp3?v=2'; } catch(e){ sfx = null; } }
+    if (motion) { try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/nova-intro.mp3?v=3'; } catch(e){ sfx = null; } }
     const img = new Image();
     img.onload = () => {
       const w = Math.round(SW*base*dpr), h = Math.round(SH*base*dpr);
