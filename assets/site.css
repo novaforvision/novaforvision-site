@@ -49,6 +49,14 @@ ul,ol{padding:0;list-style:none}
 .intro.fade{opacity:0}
 .no-intro .intro{display:none}
 html:not(.intro-run) .intro{display:none}
+/* « Entrer » : si le navigateur bloque le son, l'intro attend un clic ; la poussière flotte autour, l'étoile-curseur passe au-dessus */
+.intro.gate{cursor:pointer}
+.i-enter{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%);margin:0;padding:16px 24px;background:none;border:0;border-radius:4px;color:var(--fg-2);font:400 12px/1 var(--mono);letter-spacing:.06em;cursor:pointer;opacity:0;transition:opacity .9s var(--ease),color .3s var(--ease)}
+.i-enter.on{opacity:1;transition-delay:.2s,0s}
+.i-enter:hover{color:var(--fg)}
+.i-enter:focus{outline:none}
+.i-enter:focus-visible{outline:1px solid var(--line-2);outline-offset:2px;color:var(--fg)}
+.intro-gate .cur-star,.intro-gate .cur-l{z-index:101}
 /* sans JavaScript : le premier projet de l'accueil reste lisible */
 html:not(.js) .cap[data-i="0"]{visibility:visible}
 html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{opacity:1;transform:none}

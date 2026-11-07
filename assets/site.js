@@ -76,10 +76,10 @@
 
   /* ---------- Intro (accueil) : la poussière se rassemble en étoile, s'illumine, puis ouvre l'écran ---------- */
   const intro = $('#intro');
-  let introOn = !!intro && root.classList.contains('intro-run');
+  let introOn = !!intro && root.classList.contains('intro-run'), introCurOK = false;
   // l'intro n'accueille que la première arrivée sur l'accueil : venir d'une autre page du site ne la rejoue pas
   if (!intro) { try { sessionStorage.setItem('nova-intro','1'); } catch(e){} }
-  function endIntro(){ if (!introOn) return; introOn = false; intro.hidden = true; try { sessionStorage.setItem('nova-intro','1'); } catch(e){} if (setCurrent) setCurrent(0); }
+  function endIntro(){ if (!introOn) return; introOn = false; introCurOK = true; root.classList.remove('intro-gate'); intro.hidden = true; try { sessionStorage.setItem('nova-intro','1'); } catch(e){} if (setCurrent) setCurrent(0); }
   if (introOn) {
     const hole = $('#ihole'), draw = $('#idraw'), icv = $('#icv'), ix = icv.getContext('2d');
     draw.style.display = 'none';
@@ -91,9 +91,52 @@
     const place = (el, sc, rot) => el.setAttribute('transform', `translate(${cxs} ${cys}) rotate(${rot}) scale(${sc}) translate(${-SW/2} ${-SH/2})`);
     const P2 = []; let ready = false, t0 = null, done = false, opened = false;
     // le son de l'intro : la poussière de la vidéo de présentation NOVA, puis sa petite note au fond quand l'étoile s'ouvre,
-    // très bas et noyés dans la réverb. Le navigateur peut le bloquer tant que le visiteur n'a pas cliqué : rien ne se passe alors.
-    const SFX_AT = 0; let sfx = null, sfxGo = false;
-    if (motion) { try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/nova-intro.mp3?v=3'; } catch(e){ sfx = null; } }
+    // très bas et noyés dans la réverb. On essaie de le lancer tout de suite ; si le navigateur le bloque (cas courant sur ordinateur),
+    // l'intro attend un clic sur « Entrer » : la poussière flotte, puis se rassemble avec le son au clic.
+    let sfx = null, decided = true, gate = false, gateT = 0, fromGate = false, enterBtn = null;
+    if (motion) {
+      try { sfx = new Audio(); sfx.preload = 'auto'; sfx.src = '/media/sfx/nova-intro.mp3?v=3'; } catch(e){ sfx = null; }
+      if (sfx) {
+        decided = false;
+        let pr = null; try { pr = sfx.play(); } catch(e){}
+        if (pr && pr.then) pr.then(() => { decided = true; }, () => { if (!decided) openGate(); });
+        else decided = true;
+        // son lent à charger : l'intro part quand même, le son la rejoint
+        setTimeout(() => { if (!gate) decided = true; }, 1500);
+      }
+    }
+    function openGate(){
+      if (done || gate) return;
+      gate = true; gateT = performance.now();
+      intro.classList.add('gate'); root.classList.add('intro-gate'); intro.removeAttribute('aria-hidden');
+      enterBtn = document.createElement('button'); enterBtn.type = 'button'; enterBtn.className = 'i-enter'; enterBtn.textContent = 'Entrer';
+      intro.appendChild(enterBtn);
+      requestAnimationFrame(() => requestAnimationFrame(() => enterBtn && enterBtn.classList.add('on')));
+    }
+    // une partie de la poussière flotte déjà à l'écran (en laissant le mot lisible) ; le reste arrivera du bord au clic
+    let gateSet = false;
+    function spreadDust(){
+      gateSet = true;
+      const W = icv.width, H = icv.height, M = Math.max(W, H), clear = 110*dpr;
+      for (const p of P2) {
+        p.g = Math.random() < .42;
+        if (!p.g) continue;
+        const ang = Math.random()*Math.PI*2, r = Math.max(clear, (.05 + .55*Math.sqrt(Math.random())) * M);
+        p.sx = W/2 + Math.cos(ang)*r; p.sy = H/2 + Math.sin(ang)*r*.62;
+      }
+    }
+    function closeGate(){
+      intro.classList.remove('gate'); root.classList.remove('intro-gate');
+      if (enterBtn) { const b = enterBtn; enterBtn = null; b.classList.remove('on'); b.blur(); setTimeout(() => b.remove(), 700); }
+      intro.setAttribute('aria-hidden', 'true');
+    }
+    function enter(){
+      if (!gate || done) return;
+      gate = false; fromGate = true; decided = true;
+      try { sfx.currentTime = 0; const pr = sfx.play(); if (pr) pr.catch(() => {}); } catch(e){}
+      for (const p of P2) if (p.g && p.gx !== undefined) { p.sx = p.gx; p.sy = p.gy; }
+      t0 = null; closeGate();
+    }
     const img = new Image();
     img.onload = () => {
       const w = Math.round(SW*base*dpr), h = Math.round(SH*base*dpr);
@@ -114,10 +157,23 @@
     const eio = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2, ein = t => t*t*t*t;
     function stepI(now){
       if (done) return;
-      if (!ready) { requestAnimationFrame(stepI); return; }
+      if (!ready || (!decided && !gate)) { requestAnimationFrame(stepI); return; }
+      const W = icv.width, H = icv.height;
+      if (gate) {
+        // en attendant le clic : la poussière flotte doucement, à faible intensité
+        if (!gateSet) spreadDust();
+        ix.clearRect(0,0,W,H); ix.fillStyle = '#ffffff';
+        const k = clamp((now - gateT)/900, 0, 1), amp = reduce ? 0 : dpr;
+        for (const p of P2) {
+          if (!p.g) continue;
+          p.gx = p.sx + Math.sin(now*.00023 + p.sw*7) * 14*amp; p.gy = p.sy + Math.cos(now*.00019 + p.d) * 10*amp;
+          ix.globalAlpha = p.a * .3 * k; ix.fillRect(p.gx, p.gy, p.s, p.s);
+        }
+        ix.globalAlpha = 1; requestAnimationFrame(stepI); return;
+      }
       if (t0 === null) t0 = now;
-      const t = now - t0, W = icv.width, H = icv.height;
-      if (sfx && !sfxGo && t >= SFX_AT) { sfxGo = true; try { const pr = sfx.play(); if (pr) pr.catch(() => {}); } catch(e){} }
+      const t = now - t0;
+      if (t >= 2250 && !introCurOK) { introCurOK = true; if (setCurrent) setCurrent(0); }
       ix.clearRect(0,0,W,H);
       // l'ouverture : l'étoile devient une fenêtre qui tourne et grandit
       const o = clamp((t - 2150)/950, 0, 1), oe = ein(o);
@@ -130,7 +186,7 @@
         const ang = (1 - e) * p.sw * 2.2, cs = Math.cos(ang), sn = Math.sin(ang);
         const fx = p.sx + (p.tx - p.sx)*e, fy = p.sy + (p.ty - p.sy)*e;
         const rx = W/2 + (fx - W/2)*cs - (fy - H/2)*sn, ry = H/2 + (fx - W/2)*sn + (fy - H/2)*cs;
-        let x = rx, y = ry, a = p.a * clamp(t/300, 0, 1), sz = p.s;
+        let x = rx, y = ry, a = p.a * (fromGate && p.g ? .3 + .7*clamp(t/300, 0, 1) : clamp(t/300, 0, 1)), sz = p.s;
         if (sweep > 0 && sweep < 1.2) { const bx = (sweep - .1) * W, d = Math.abs(x - bx); if (d < W*.06) { const k = 1 - d/(W*.06); a = Math.min(1, a + k*.6); sz = p.s*(1 + k*.8); } }
         if (o > 0) { if (o > .42) continue; const f = 1 + oe*48, th = -oe*Math.PI/2, c2 = Math.cos(th), s2 = Math.sin(th); x = W/2 + (p.ox*c2 - p.oy*s2)*f; y = H/2 + (p.ox*s2 + p.oy*c2)*f; a *= 1 - o/.42; }
         ix.globalAlpha = a; ix.fillRect(x, y, sz, sz);
@@ -141,11 +197,13 @@
       requestAnimationFrame(stepI);
     }
     requestAnimationFrame(stepI);
-    function skip(){ if (!introOn || done) return; done = true; sfxGo = true; intro.classList.add('fade'); setTimeout(endIntro, 360); }
-    intro.addEventListener('click', skip);
-    window.addEventListener('keydown', skip, {once:true});
+    function skip(){ if (!introOn || done) return; done = true; decided = true; if (gate) { gate = false; closeGate(); } intro.classList.add('fade'); setTimeout(endIntro, 360); }
+    // un clic ou une touche : « Entrer » si l'intro attend, sinon on passe l'intro ; faire défiler passe l'intro (sans le son)
+    intro.addEventListener('click', () => { if (gate) enter(); else skip(); });
+    window.addEventListener('keydown', e => { if (done) return; if (gate) { if (e.key === 'Escape') skip(); else if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key !== 'Tab') { e.preventDefault(); enter(); } } else skip(); });
     window.addEventListener('wheel', skip, {once:true, passive:true});
-    window.addEventListener('touchstart', skip, {once:true, passive:true});
+    window.addEventListener('touchstart', () => { if (!gate) skip(); }, {passive:true});
+    window.addEventListener('scroll', () => { if (gate && window.scrollY > 30) skip(); }, {passive:true});
     setTimeout(() => { if (!ready) skip(); }, 2500);
   } else if (intro) intro.hidden = true;
 
@@ -265,14 +323,14 @@
     }
     setCurrent = i => {
       if (i === cur0 && caps[i].classList.contains('on')) return;
-      if (introOn && i === 0 && performance.now() < 2300) return;
+      if (introOn && i === 0 && !introCurOK) return;
       cur0 = i;
       caps.forEach((c,k) => { c.classList.toggle('on', k === i && !(k === 0 && logoHold())); c.setAttribute('aria-hidden', String(k !== i)); c.toggleAttribute('inert', k !== i); });
       slides.forEach((s,k) => s.classList.toggle('cur', k === i));
       $('#hcount').textContent = `${pad(i+1)} / ${pad(N)}`;
       ticks.forEach((t,k) => t.setAttribute('aria-current', String(k === i)));
     };
-    if (!introOn) setCurrent(0); else setTimeout(() => setCurrent(0), 2400);
+    if (!introOn) setCurrent(0);
     layoutHero = () => {
       heroStep = window.innerHeight * .7;
       heroTop = heroWrap.getBoundingClientRect().top + window.scrollY;
