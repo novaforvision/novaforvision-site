@@ -614,3 +614,9 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 .js .p-studio .lit:not(.fp),.js .p-studio .facts:not(.fp),.js .p-studio .m-name:not(.fp),.js .p-studio .m-txt:not(.fp){visibility:hidden;animation:fp-show 0s 2.5s forwards}
 @keyframes fp-show{to{visibility:visible}}
 .motion-off .fp .wd,.motion-off .fp .fl,.motion-off .member.fp .m-tag,.motion-off .member.fp .m-role,.motion-off .facts.fp>div{transition:none}
+/* Accueil : grain de pellicule moyen sur les vidéos du haut (au-dessus des images, sous le texte), qui bouge 12 fois par seconde.
+   Il s'efface pendant « Voir le film » : le film passe tel quel. */
+.stage::after{content:"";position:absolute;inset:-48px;pointer-events:none;background:url(grain.png) 0 0/256px 256px;mix-blend-mode:overlay;opacity:.3;animation:nova-grain .66s steps(1) infinite;transition:opacity .4s var(--ease)}
+@keyframes nova-grain{0%{transform:translate(0,0)}12%{transform:translate(-38px,22px)}25%{transform:translate(26px,-34px)}37%{transform:translate(-14px,-10px)}50%{transform:translate(34px,28px)}62%{transform:translate(-30px,-26px)}75%{transform:translate(12px,36px)}87%{transform:translate(-24px,8px)}100%{transform:translate(0,0)}}
+.hero.playing .stage::after{opacity:0}
+.motion-off .stage::after{animation:none}
