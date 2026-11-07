@@ -642,12 +642,12 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 .p-studio .lit{color:var(--fg-3);--fc:var(--fg-3)}
 .p-studio .lit .k{--fc:var(--fg)}
 .p-studio .lit:not(.fp) .k{color:var(--fg)}
-/* Barre de défilement de la page : un rectangle fin, sans arrondi, aux couleurs du site (Chrome, Edge, Safari ; Firefox garde sa forme et prend les couleurs) */
+/* Barre de défilement de la page : seule la poignée gris clair change de forme (un rectangle, sans arrondi) ; le fond reste transparent, sans bordure (Chrome, Edge, Safari ; Firefox garde sa forme et prend la couleur) */
 @supports selector(::-webkit-scrollbar){
-  html::-webkit-scrollbar{width:10px;height:10px}
-  html::-webkit-scrollbar-track{background:var(--bg);border-left:1px solid var(--line)}
-  html::-webkit-scrollbar-thumb{background:rgba(238,239,237,.28);background-clip:padding-box;border:2px solid transparent;border-left-width:3px;border-radius:0}
-  html::-webkit-scrollbar-thumb:hover{background-color:rgba(238,239,237,.5)}
-  html::-webkit-scrollbar-corner{background:var(--bg)}
+  html::-webkit-scrollbar{width:12px;height:12px;background:transparent}
+  html::-webkit-scrollbar-track{background:transparent;border:0}
+  html::-webkit-scrollbar-thumb{background:rgba(238,239,237,.34);background-clip:padding-box;border:2px solid transparent;border-radius:0}
+  html::-webkit-scrollbar-thumb:hover{background-color:rgba(238,239,237,.52)}
+  html::-webkit-scrollbar-corner{background:transparent}
 }
-@supports not selector(::-webkit-scrollbar){html{scrollbar-color:rgba(238,239,237,.3) var(--bg)}}
+@supports not selector(::-webkit-scrollbar){html{scrollbar-color:rgba(238,239,237,.34) transparent}}
