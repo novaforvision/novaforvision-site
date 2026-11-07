@@ -11,7 +11,7 @@
     back:{title:'BACK',artist:'LP2.0',roles:'Montage · VFX',dur:22.95,ig:'https://www.instagram.com/reel/DWozdhSj1l3/',dir:'Lyra Film'},
     demandeashh:{title:'DEMANDEASHH',artist:'Sheu',roles:'Teaser IA',dur:33.28,ig:'https://www.instagram.com/reel/DaArXcHsMV4/',dir:'NOVA'},
     jamaiquaine:{title:'JAMAÏQUAINE IS DEAD',artist:'LP Killer',roles:'VFX',dur:33.686,ig:'https://www.instagram.com/reel/DTZaV9mDPdE/',dir:'Lyra Film'},
-    bellodallas:{title:'REEL VFX',artist:'Bello & Dallas',roles:'VFX',dur:13.44,ig:null,dir:'Kespey'}
+    bellodallas:{title:'ZORO',artist:'Bello & Dallas',roles:'VFX',dur:13.44,ig:null,dir:'Kespey'}
   };
   const fullSrc = id => P[id].full || `/media/full/${id}.mp4`;
 
