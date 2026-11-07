@@ -321,14 +321,14 @@
     // le bord du rideau lâche une fine poussière de lumière pendant le passage
     const hdc = $('#hdust'), hdx = hdc.getContext('2d'), hp = [];
     let hdLastX = null, hdIdle = 0, hdAcc = 0;
-    function heroDust(xc, sl, seamO){
+    function heroDust(xc, sl, seamO, bend = 0){
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const W = Math.round(hero.clientWidth*dpr), H = Math.round(hero.clientHeight*dpr);
       if (hdc.width !== W || hdc.height !== H) { hdc.width = W; hdc.height = H; }
       const x = xc*dpr, moved = hdLastX === null ? 0 : Math.abs(x - hdLastX);
       if (motion && seamO > .05 && moved > .5) {
         hdAcc += Math.min(4, moved*.05);
-        for (; hdAcc >= 1 && hp.length < 140; hdAcc--) { const y = Math.random()*H; hp.push({ x: x + sl*dpr*(.5 - y/H) + (Math.random()-.5)*3*dpr, y, vx: (x < (hdLastX ?? x) ? -1 : 1)*(.3 + Math.random()*1.1)*dpr, vy: (Math.random()-.5)*.4*dpr, life: 1, dec: .016 + Math.random()*.022, s: (.6 + Math.random()*.9)*dpr }); }
+        for (; hdAcc >= 1 && hp.length < 140; hdAcc--) { const y = Math.random()*H, u = y/H; hp.push({ x: x + sl*dpr*(.5 - u) + 4*u*(1-u)*bend*dpr + (Math.random()-.5)*3*dpr, y, vx: (x < (hdLastX ?? x) ? -1 : 1)*(.3 + Math.random()*1.1)*dpr, vy: (Math.random()-.5)*.4*dpr, life: 1, dec: .016 + Math.random()*.022, s: (.6 + Math.random()*.9)*dpr }); }
       }
       hdLastX = x;
       if (!hp.length) { if (!hdIdle) { hdx.clearRect(0,0,W,H); hdIdle = 1; } return; }
@@ -338,6 +338,12 @@
       hdx.globalAlpha = 1;
     }
     const SLANT_DEG = 35.2, SLANT = Math.tan(SLANT_DEG*Math.PI/180);   // angle de la branche oblique de l'étoile NOVA
+    // courbure du rideau : le milieu de la ligne oblique traîne un peu derrière ses deux bouts quand on fait défiler,
+    // puis se redresse ; la ligne est tracée en SVG (elle peut se courber), l'élément #seam ne porte plus que l'étoile
+    const SVGN = 'http://www.w3.org/2000/svg';
+    const seamC = document.createElementNS(SVGN, 'svg'); seamC.setAttribute('class', 'seam-c'); seamC.setAttribute('aria-hidden', 'true');
+    const seamP = document.createElementNS(SVGN, 'path'); seamC.appendChild(seamP); seam.after(seamC); seam.classList.add('curved');
+    let bend = 0;
     const vfx = new WeakMap();
     const setV = (el, key, css) => { if (vfx.get(el) === key) return; vfx.set(el, key); el.style.cssText = css; };
     heroFrame = () => {
@@ -348,21 +354,27 @@
       // rideau : la slide suivante se découvre de droite à gauche, son film arrive en léger travelling ; la précédente recule dans l'ombre
       let seamX = 0, seamO = 0;
       const HW = hero.clientWidth, HH = hero.clientHeight, SL = HH*SLANT;
+      // retard du rideau sur le défilement (positif en descendant) : le milieu plie dans l'autre sens, au plus 2,2 % de la largeur
+      const lim = HW*.022, want = motion ? clamp((hTarget - pos)*HW*.06, -lim, lim) : 0;
+      bend = motion ? lerp(bend, want, .18) : 0; if (Math.abs(bend) < .05) bend = 0;
+      const b2 = (2*bend).toFixed(1);
       slides.forEach((sl,i) => {
         const v = SV[i];
         const t = i === 0 ? 1 : clamp(pos - (i-1), 0, 1), e = easeIO(t);
         const k = i < N-1 ? clamp(pos - i, 0, 1) : 0, ek = easeIO(k);
         const xc = (HW + SL/2) - e*(HW + SL);
-        if (i > 0) setV(sl, 'c'+e.toFixed(4)+'_'+HW+'_'+HH, e >= .9999 ? 'clip-path:inset(0 0 0 0)' : `clip-path:polygon(${(xc + SL/2).toFixed(1)}px 0,100% 0,100% 100%,${(xc - SL/2).toFixed(1)}px 100%)`);
+        if (i > 0) setV(sl, 'c'+e.toFixed(4)+'_'+HW+'_'+HH+'_'+b2, e >= .9999 ? 'clip-path:inset(0 0 0 0)' : e <= 0 ? `clip-path:polygon(${(xc + SL/2).toFixed(1)}px 0,100% 0,100% 100%,${(xc - SL/2).toFixed(1)}px 100%)` : `clip-path:path('M ${(xc + SL/2).toFixed(1)} 0 L ${HW} 0 L ${HW} ${HH} L ${(xc - SL/2).toFixed(1)} ${HH} Q ${(xc + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(xc + SL/2).toFixed(1)} 0 Z')`);
         // la vidéo glisse un peu mais couvre toujours tout l'écran : l'échelle compense le décalage (sinon des coins noirs apparaissent le long de la jointure oblique)
         const tx = (1-e)*10 - ek*8, sc = 1.004 + Math.abs(tx)/50 + (1-e)*.04;
         setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), tx === 0 && e >= 1 && ek <= 0 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
         setV(shades[i], 's'+ek.toFixed(3), `opacity:${(ek*.55).toFixed(3)}`);
         if (i > 0 && t > 0 && t < 1) { seamX = xc; seamO = Math.sin(Math.PI*t); }
       });
-      seam.style.transform = `translate3d(${seamX.toFixed(1)}px,0,0) rotate(${SLANT_DEG}deg) scaleY(${(1/Math.cos(SLANT_DEG*Math.PI/180)).toFixed(3)})`;
+      seam.style.transform = `translate3d(${(seamX + bend).toFixed(1)}px,0,0) rotate(${SLANT_DEG}deg) scaleY(${(1/Math.cos(SLANT_DEG*Math.PI/180)).toFixed(3)})`;
       seam.style.opacity = seamO.toFixed(3);
-      heroDust(seamX, SL, seamO);
+      seamC.style.opacity = seamO.toFixed(3);
+      if (seamO > 0) seamP.setAttribute('d', `M ${(seamX + SL/2).toFixed(1)} 0 Q ${(seamX + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(seamX - SL/2).toFixed(1)} ${HH}`);
+      heroDust(seamX, SL, seamO, bend);
       // boucle Oakley sans le logo
       if (oakV && oakLoopOwn() && oakV.duration && !oakV.paused && oakV.currentTime > oakV.duration - .09) oakV.currentTime = LOGO_END;
       if (cur0 === 0 && !introOn && caps[0].getAttribute('aria-hidden') === 'false' && !caps[0].classList.contains('on') && !logoHold()) caps[0].classList.add('on');

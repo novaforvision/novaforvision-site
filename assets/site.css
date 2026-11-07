@@ -94,6 +94,10 @@ html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{op
 .slide video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
 .shade{position:absolute;inset:0;background:var(--black);opacity:0;pointer-events:none}
 .seam{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.55);opacity:0;pointer-events:none;will-change:transform,opacity}
+/* la ligne du rideau, tracée en SVG pour pouvoir se courber légèrement au défilement ; #seam ne garde que l'étoile */
+.seam.curved{background:transparent}
+.seam-c{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:0}
+.seam-c path{fill:none;stroke:rgba(255,255,255,.55);stroke-width:1}
 .seam i{position:absolute;top:50%;left:0;width:46px;height:17px;margin:-8.5px 0 0 -23px;background:var(--white);transform:scaleY(.817) rotate(-35.2deg)}
 .hero.playing .slide.cur video{object-fit:contain;background:var(--black)}
 .hero.playing.fill .slide.cur video{object-fit:cover}
