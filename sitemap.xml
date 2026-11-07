@@ -1,91 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
-    <loc>https://novaforvision.fr/</loc>
+    <loc>https://novaforvision.com/</loc>
     <lastmod>2026-11-06</lastmod>
   </url>
   <url>
-    <loc>https://novaforvision.fr/projets/</loc>
+    <loc>https://novaforvision.com/projets/</loc>
     <lastmod>2026-11-06</lastmod>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/oakley/film.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
       <video:title>Oakley × Meta, campagne IA</video:title>
       <video:description>Campagne IA pour Oakley × Meta. Création IA, VFX, montage, sound design et motion design : NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/oakley/film.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
       <video:publication_date>2026-11-06</video:publication_date>
       <video:duration>29</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/ndrangetha.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/ndrangetha.jpg</video:thumbnail_loc>
       <video:title>NDRANGETHA, Thabiti</video:title>
       <video:description>Clip NDRANGETHA de Thabiti. Montage, VFX, IA et SFX : NOVA FOR VISION. Réalisation : Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/ndrangetha.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/ndrangetha.mp4</video:content_loc>
       <video:publication_date>2026-09-02</video:publication_date>
       <video:duration>35</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/killcam.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/killcam.jpg</video:thumbnail_loc>
       <video:title>KILLCAM, King Kifla</video:title>
       <video:description>Clip KILLCAM de King Kifla. Montage et VFX : NOVA FOR VISION. Réalisation : Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/killcam.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/killcam.mp4</video:content_loc>
       <video:publication_date>2026-07-01</video:publication_date>
       <video:duration>30</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/crame.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/crame.jpg</video:thumbnail_loc>
       <video:title>CRAMÉ, RR</video:title>
       <video:description>Clip CRAMÉ de RR. Montage, VFX, IA et SFX : NOVA FOR VISION. Réalisation : Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/crame.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/crame.mp4</video:content_loc>
       <video:publication_date>2026-11-06</video:publication_date>
       <video:duration>38</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/back.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/back.jpg</video:thumbnail_loc>
       <video:title>BACK, LP2.0</video:title>
       <video:description>Clip BACK de LP2.0. Montage et VFX : NOVA FOR VISION. Réalisation : Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/back.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/back.mp4</video:content_loc>
       <video:publication_date>2026-04-02</video:publication_date>
       <video:duration>23</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/demandeashh.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/demandeashh.jpg</video:thumbnail_loc>
       <video:title>DEMANDEASHH, Sheu</video:title>
       <video:description>Teaser IA DEMANDEASHH de Sheu, entièrement réalisé par NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/demandeashh.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/demandeashh.mp4</video:content_loc>
       <video:publication_date>2026-06-25</video:publication_date>
       <video:duration>33</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
       <video:title>JAMAÏQUAINE IS DEAD, LP Killer</video:title>
       <video:description>Clip JAMAÏQUAINE IS DEAD de LP Killer. VFX : NOVA FOR VISION. Réalisation : Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/jamaiquaine.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
       <video:publication_date>2026-01-12</video:publication_date>
       <video:duration>34</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.fr/media/poster/bellodallas.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
       <video:title>ZORO, Bello &amp; Dallas</video:title>
       <video:description>Clip ZORO de Bello &amp; Dallas. VFX : NOVA FOR VISION. Réalisation : Kespey.</video:description>
-      <video:content_loc>https://novaforvision.fr/media/full/bellodallas.mp4</video:content_loc>
+      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
       <video:publication_date>2026-11-06</video:publication_date>
       <video:duration>13</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
   </url>
   <url>
-    <loc>https://novaforvision.fr/studio/</loc>
+    <loc>https://novaforvision.com/studio/</loc>
     <lastmod>2026-11-06</lastmod>
   </url>
   <url>
-    <loc>https://novaforvision.fr/contact/</loc>
+    <loc>https://novaforvision.com/contact/</loc>
     <lastmod>2026-11-06</lastmod>
   </url>
 </urlset>
