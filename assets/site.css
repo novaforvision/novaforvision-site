@@ -86,7 +86,7 @@ html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{op
 .band-cta{min-height:44px;display:inline-flex;align-items:center;color:var(--fg);transition:color .16s var(--ease)}
 
 /* Slider d'accueil */
-.hero-wrap{--hstep:70vh;position:relative;height:calc(100vh + var(--hstep)*2);height:calc(100svh + var(--hstep)*2)}
+.hero-wrap{--hstep:70vh;position:relative;height:calc(100vh + var(--hstep)*3);height:calc(100svh + var(--hstep)*3)}
 .hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--black);user-select:none;-webkit-user-select:none}
 .stage{position:absolute;inset:0}
 .slide{position:absolute;inset:0;overflow:hidden}
