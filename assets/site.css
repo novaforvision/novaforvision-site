@@ -629,3 +629,6 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 .fp-l.go{opacity:1;transform:none}
 .js .p-home #brief-t:not(.fp),.js .p-home #nova .lit:not(.fp){visibility:hidden;animation:fp-show 0s 2.5s forwards}
 .motion-off .fp-l{transition:none}
+/* Contact : la phrase reste invisible jusqu'à ce qu'elle sorte de l'étoile (elle s'affiche quand même après 2,5 s sans le script) */
+.js .p-contact .sentence:not(.ready) .sen{opacity:0;transition:none;animation:fp-op 0s 2.5s forwards}
+@keyframes fp-op{to{opacity:1}}

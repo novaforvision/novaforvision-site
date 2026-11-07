@@ -49,7 +49,7 @@
   let ba = null, baVisible = false, baTick = null;
   let items = [], active = -1, worksVisible = false, layoutWorks = null, applyWorks = null, playPreview = null, openWork = null, scrollToItem = null;
   let hidePeek = () => {}, drawPeek = null, drawLit = null, layoutCredits = null, drawCredits = null, drawDust = null;
-  let parts = [], dc = null, dustBuilt = false, dustAwake = 0;
+  let parts = [], dc = null, dustBuilt = false, dustAwake = 0, ensureDust = null;
   let routeTo = null, tabsInit = null;
 
   /* ---------- Blocs proches de l'écran : on ne mesure (et on ne charge) rien de ce qui est loin ---------- */
@@ -810,6 +810,42 @@
         if (alive || t < 1200) requestAnimationFrame(step); else { cv.remove(); setTimeout(() => sentence.classList.remove('gone'), 600); }
       })(t0);
     };
+    // à l'arrivée sur la page, la phrase sort de l'étoile en poussière et vient se poser à sa place (l'inverse de l'envoi)
+    const assemble = () => {
+      const show = () => { sentence.classList.add('ready'); sentence.classList.remove('gone'); };
+      if (!motion || !ensureDust) { show(); return; }
+      sentence.classList.add('gone'); sentence.classList.add('ready');
+      let started = false;
+      const fail = setTimeout(() => { if (!started) { started = true; show(); } }, 1600);
+      ensureDust(() => {
+        if (started) return; started = true; clearTimeout(fail);
+        if (!parts.length || !dc) { show(); return; }
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const cv = document.createElement('canvas'); cv.className = 'fly'; cv.width = Math.round(innerWidth*dpr); cv.height = Math.round(innerHeight*dpr);
+        document.body.appendChild(cv); const cx = cv.getContext('2d');
+        const rects = [];
+        sen.childNodes.forEach(n => { if (n.nodeType === 3) { const rg = document.createRange(); rg.selectNodeContents(n); [...rg.getClientRects()].forEach(r => rects.push(r)); } else rects.push(n.getBoundingClientRect()); });
+        const area = rects.reduce((a,r) => a + r.width*r.height, 0) || 1;
+        const dr = dc.getBoundingClientRect(), k = dr.width / dc.width;
+        const fl = [], COUNT = 900;
+        rects.forEach(r => { const n = Math.round(COUNT * r.width*r.height/area); for (let i = 0; i < n; i++) { const t = parts[(Math.random()*parts.length)|0]; fl.push({ x0:(dr.left + t.hx*k)*dpr, y0:(dr.top + t.hy*k)*dpr, x1:(r.left + Math.random()*r.width)*dpr, y1:(r.top + r.height*.25 + Math.random()*r.height*.6)*dpr, d:Math.random()*350, du:900 + Math.random()*500, bx:(Math.random()-.5)*260*dpr, by:-(80 + Math.random()*160)*dpr, s:(.8 + Math.random()*1.2)*dpr }); } });
+        // l'étoile frémit en lâchant sa poussière
+        parts.forEach(pp => { pp.vx += (Math.random()-.5)*6; pp.vy += (Math.random()-.5)*6; }); dustAwake = 240;
+        const t0 = performance.now(); let shown = false;
+        (function step(now){
+          const t = now - t0; cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle = fgCol; let alive = 0;
+          for (const f of fl) {
+            const e = clamp((t - f.d)/f.du, 0, 1); if (e < 1) alive++;
+            const q = 1 - Math.pow(1-e, 3), mx = (f.x0 + f.x1)/2 + f.bx, my = (f.y0 + f.y1)/2 + f.by;
+            const x = (1-q)*(1-q)*f.x0 + 2*(1-q)*q*mx + q*q*f.x1, y = (1-q)*(1-q)*f.y0 + 2*(1-q)*q*my + q*q*f.y1;
+            cx.globalAlpha = e < 1 ? .9*(1 - Math.pow(e, 4)) : 0; cx.fillRect(x, y, f.s, f.s);
+          }
+          if (!shown && t > 1000) { shown = true; show(); }
+          if (alive || t < 1100) requestAnimationFrame(step); else cv.remove();
+        })(t0);
+      });
+    };
+    requestAnimationFrame(assemble);
     sentence.addEventListener('submit', e => {
       e.preventDefault();
       picks.forEach(pk => pk.close(false));
@@ -900,10 +936,12 @@
     dc = $('#dust-c'); const dctx = dc.getContext('2d');
     let dustVis = false, dustIn = false;
     const dm = { x:-9999, y:-9999, on:false };
+    const dustWait = []; let dustBuilding = false;
     const buildDust = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = dust.clientWidth, h = dust.clientHeight;
       if (!w || !h) return;
+      dustBuilding = true;
       dc.width = Math.round(w*dpr); dc.height = Math.round(h*dpr);
       const img = new Image();
       img.onload = () => {
@@ -919,8 +957,10 @@
           const a = data[((Math.round(jy)|0)*oc.width + (Math.round(jx)|0))*4 + 3];
           if (a > 110) parts.push({ hx:jx, hy:jy, x: dustIn ? jx : Math.random()*oc.width, y: dustIn ? jy : jy + (Math.random()-.5)*oc.height*.9, vx:0, vy:0, s:(.7 + Math.random()*.8)*dpr, a:.45 + Math.random()*.55 });
         }
-        dustBuilt = true; dustAwake = 240;
+        dustBuilt = true; dustAwake = 240; dustBuilding = false;
+        dustWait.splice(0).forEach(f => f());
       };
+      img.onerror = () => { dustBuilding = false; };
       img.src = '/assets/nova-star.svg';
     };
     dust.addEventListener('pointermove', e => { const r = dc.getBoundingClientRect(); const k = dc.width / r.width; dm.x = (e.clientX - r.left)*k; dm.y = (e.clientY - r.top)*k; dm.on = true; dustAwake = 240; });
@@ -954,6 +994,8 @@
       if (moving) dustAwake = Math.max(dustAwake, 20);
     };
     window.addEventListener('resize', () => { if (dustBuilt) { dustBuilt = false; dustIn = true; if (dustVis) buildDust(); } });
+    // construit l'étoile même hors de l'écran quand un autre bloc en a besoin (la phrase de Contact en sort à l'arrivée)
+    ensureDust = cb => { if (dustBuilt) { cb(); return; } dustWait.push(cb); if (!dustBuilding) buildDust(); };
   }
 
   /* ---------- Révélations ---------- */
