@@ -638,9 +638,45 @@
     };
   }
 
-  /* ---------- Texte qui s'allume (accueil, studio) ---------- */
+  /* ---------- Mise au point (studio) : les mots passent du flou au net, comme une caméra qui fait le point ---------- */
+  // découpe en mots ; les espaces insécables restent dans le mot (« final : » ne se coupe pas en fin de ligne)
+  const toWords = el => { const parts = el.textContent.split(/([ \t\r\n]+)/); el.textContent = ''; const out = []; parts.forEach(w => { if (!w) return; if (/^[ \t\r\n]+$/.test(w)) { el.appendChild(document.createTextNode(w)); return; } const s = document.createElement('span'); s.className = 'wd'; s.textContent = w; el.appendChild(s); out.push(s); }); return out; };
+  const focusIn = (el, units, step, wait) => {
+    if (!motion) { el.classList.add('go'); return; }
+    units.forEach((u,i) => { u.style.transitionDelay = (wait + i*step) + 'ms'; });
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('go')));
+  };
+  const studioPage = document.body.classList.contains('p-studio');
+
+  /* ---------- Texte qui s'allume (accueil) ; sur la page Studio, il fait sa mise au point à l'arrivée ---------- */
   const lit = $('#lit');
-  if (lit) {
+  if (lit && studioPage) {
+    const wds = toWords(lit); lit.classList.add('fp');
+    focusIn(lit, wds, 24, 250);
+    const facts = $('.studio .facts');
+    if (facts) { facts.classList.add('fp'); setTimeout(() => facts.classList.add('go'), motion ? 250 + wds.length*24 + 500 : 0); }
+  }
+  if (studioPage) $$('.member').forEach((m,k) => {
+    // le nom lettre par lettre, puis « Co-founder » et le métier, puis le texte mot à mot
+    const nm = m.querySelector('.m-name'), tx = m.querySelector('.m-txt'); if (!nm || !tx) return;
+    const name = nm.textContent.trim(), ls = [];
+    nm.setAttribute('aria-label', name); nm.textContent = '';
+    name.split(' ').forEach((w,i,a) => {
+      const ws = document.createElement('span'); ws.className = 'w'; ws.setAttribute('aria-hidden','true');
+      [...w].forEach(c => { const s = document.createElement('span'); s.className = 'fl'; s.textContent = c; ws.appendChild(s); ls.push(s); });
+      nm.appendChild(ws); if (i < a.length-1) nm.appendChild(document.createTextNode(' '));
+    });
+    const tw = toWords(tx);
+    [m, nm, tx].forEach(e => e.classList.add('fp'));
+    const io = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; io.disconnect();
+      const d = k*150;
+      focusIn(nm, ls, 30, d);
+      if (motion) setTimeout(() => m.classList.add('go'), d); else m.classList.add('go');
+      focusIn(tx, tw, 12, d + 600);
+    }, {threshold:.25});
+    io.observe(m);
+  });
+  if (lit && !studioPage) {
     const words = lit.textContent.split(/(\s+)/);
     lit.textContent = '';
     const wds = [];
