@@ -354,8 +354,8 @@
       // rideau : la slide suivante se découvre de droite à gauche, son film arrive en léger travelling ; la précédente recule dans l'ombre
       let seamX = 0, seamO = 0;
       const HW = hero.clientWidth, HH = hero.clientHeight, SL = HH*SLANT;
-      // retard du rideau sur le défilement (positif en descendant) : le milieu plie dans l'autre sens, au plus 2,2 % de la largeur
-      const lim = HW*.022, want = motion ? clamp((hTarget - pos)*HW*.06, -lim, lim) : 0;
+      // retard du rideau sur le défilement (positif en descendant) : le milieu plie dans l'autre sens, au plus 6 % de la largeur
+      const lim = HW*.06, want = motion ? clamp((hTarget - pos)*HW*.15, -lim, lim) : 0;
       bend = motion ? lerp(bend, want, .18) : 0; if (Math.abs(bend) < .05) bend = 0;
       const b2 = (2*bend).toFixed(1);
       slides.forEach((sl,i) => {
