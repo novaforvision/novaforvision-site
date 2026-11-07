@@ -621,3 +621,11 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 @keyframes nova-grain{0%{transform:translate(0,0)}12%{transform:translate(-38px,22px)}25%{transform:translate(26px,-34px)}37%{transform:translate(-14px,-10px)}50%{transform:translate(34px,28px)}62%{transform:translate(-30px,-26px)}75%{transform:translate(12px,36px)}87%{transform:translate(-24px,8px)}100%{transform:translate(0,0)}}
 .hero.playing .stage::after{opacity:0}
 .motion-off .stage::after{animation:none}
+/* Accueil, partie Studio : mise au point phrase par phrase (titre, puis texte), puis le lien */
+.h2{--fc:var(--fg)}
+.h2 .dim{--fc:var(--fg-3)}
+.h2.fp>span{overflow:visible}
+.fp-l{opacity:0;transform:translateY(8px);transition:opacity .7s var(--ease),transform .9s var(--ease)}
+.fp-l.go{opacity:1;transform:none}
+.js .p-home #brief-t:not(.fp),.js .p-home #nova .lit:not(.fp){visibility:hidden;animation:fp-show 0s 2.5s forwards}
+.motion-off .fp-l{transition:none}

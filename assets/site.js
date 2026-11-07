@@ -676,22 +676,22 @@
     }, {threshold:.25});
     io.observe(m);
   });
-  if (lit && !studioPage) {
-    const words = lit.textContent.split(/(\s+)/);
-    lit.textContent = '';
-    const wds = [];
-    words.forEach(w => { if (/^\s+$/.test(w)) { lit.appendChild(document.createTextNode(w)); return; } const s = document.createElement('span'); s.className = 'wd'; s.textContent = w; lit.appendChild(s); wds.push(s); });
-    let litLast = -1;
-    drawLit = () => {
-      if (!isNear(lit)) return;
-      const r = lit.getBoundingClientRect(), vh = window.innerHeight;
-      if (r.bottom < 0 || r.top > vh) return;
-      const p = clamp((vh*.85 - r.top) / (vh*.85 - vh*.35 + r.height*.5), 0, 1);
-      const n = Math.round(p * wds.length);
-      if (n === litLast) return; litLast = n;
-      wds.forEach((s,i) => s.style.setProperty('--o', i < n ? '1' : '.4'));
-    };
-    nearIO.observe(lit);
+  // Accueil, partie Studio : le titre et le texte font leur mise au point phrase par phrase quand la partie arrive à l'écran
+  const brief = $('#brief-t'), nova = $('#nova');
+  if (lit && !studioPage && brief && nova) {
+    brief.classList.remove('rv');   // le titre ne monte plus de sous sa ligne : il fait sa mise au point avec le texte
+    const phrases = [];
+    [...brief.children].forEach(s => phrases.push(toWords(s)));
+    // le texte se coupe en deux phrases aux deux-points (« Studio indépendant à Liège : » puis la suite)
+    const lw = toWords(lit), cut = lw.findIndex(w => /:$/.test(w.textContent)) + 1;
+    if (cut > 0 && cut < lw.length) phrases.push(lw.slice(0, cut), lw.slice(cut)); else phrases.push(lw);
+    const more = nova.querySelector('.studio-body>.link');
+    [brief, lit].forEach(e => e.classList.add('fp')); if (more) more.classList.add('fp-l');
+    let d = 0;
+    phrases.forEach(ws => { ws.forEach((w,i) => { w.style.transitionDelay = (d + i*40) + 'ms'; }); d += 420 + ws.length*40; });
+    const go = () => { [brief, lit].forEach(e => e.classList.add('go')); if (more) { more.style.transitionDelay = motion ? d + 'ms' : '0ms'; more.classList.add('go'); } };
+    if (!motion) go();
+    else { const io = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; io.disconnect(); go(); }, {threshold:.35}); io.observe(nova); }
   }
 
   /* ---------- Générique qui défile (projets, clips) ---------- */
