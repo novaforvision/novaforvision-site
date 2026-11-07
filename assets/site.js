@@ -640,7 +640,14 @@
 
   /* ---------- Mise au point (studio) : les mots passent du flou au net, comme une caméra qui fait le point ---------- */
   // découpe en mots ; les espaces insécables restent dans le mot (« final : » ne se coupe pas en fin de ligne)
-  const toWords = el => { const parts = el.textContent.split(/([ \t\r\n]+)/); el.textContent = ''; const out = []; parts.forEach(w => { if (!w) return; if (/^[ \t\r\n]+$/.test(w)) { el.appendChild(document.createTextNode(w)); return; } const s = document.createElement('span'); s.className = 'wd'; s.textContent = w; el.appendChild(s); out.push(s); }); return out; };
+  // les mots d'un passage clé (<span class="k">) gardent la marque « k » (ils restent en blanc sur la page Studio)
+  const toWords = el => {
+    const frags = [];
+    const walk = (node, k) => node.childNodes.forEach(n => { if (n.nodeType === 3) frags.push([n.textContent, k]); else if (n.nodeType === 1) walk(n, k || n.classList.contains('k')); });
+    walk(el, false); el.textContent = ''; const out = [];
+    frags.forEach(([txt, k]) => txt.split(/([ \t\r\n]+)/).forEach(w => { if (!w) return; if (/^[ \t\r\n]+$/.test(w)) { el.appendChild(document.createTextNode(w)); return; } const s = document.createElement('span'); s.className = k ? 'wd k' : 'wd'; s.textContent = w; el.appendChild(s); out.push(s); }));
+    return out;
+  };
   const focusIn = (el, units, step, wait) => {
     if (!motion) { el.classList.add('go'); return; }
     units.forEach((u,i) => { u.style.transitionDelay = (wait + i*step) + 'ms'; });
