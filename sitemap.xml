@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://novaforvision.com/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
     <lastmod>2026-11-06</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/projets/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
     <lastmod>2026-11-06</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
-      <video:title>Oakley × Meta, campagne IA</video:title>
-      <video:description>Campagne IA pour Oakley × Meta. Création IA, VFX, montage, sound design et motion design : NOVA FOR VISION.</video:description>
+      <video:title>Oakley × Meta, spec ad</video:title>
+      <video:description>Spec ad Oakley × Meta. Création IA, VFX, montage, sound design et motion design : NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
       <video:publication_date>2026-11-06</video:publication_date>
       <video:duration>29</video:duration>
@@ -82,10 +88,44 @@
   </url>
   <url>
     <loc>https://novaforvision.com/studio/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/studio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/studio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/studio/"/>
     <lastmod>2026-11-06</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/contact/"/>
     <lastmod>2026-11-06</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/studio/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/studio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/studio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/studio/"/>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/contact/"/>
+    <lastmod>2026-11-07</lastmod>
   </url>
 </urlset>
