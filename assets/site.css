@@ -665,3 +665,7 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 .sbar i{position:absolute;top:0;right:3px;width:6px;height:40px;background:rgba(238,239,237,.34);pointer-events:auto;cursor:default;transition:background-color .2s}
 .sbar i:hover,.sbar.drag i{background:rgba(238,239,237,.56)}
 .sbar[hidden]{display:none}
+
+/* Lien de langue FR / EN dans la bande du haut */
+.lang{min-height:44px;display:inline-flex;align-items:center;font-size:12px;letter-spacing:.04em;color:var(--fg-2);transition:color .16s var(--ease)}
+.lang:hover,.lang:focus-visible{color:var(--fg)}
