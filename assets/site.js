@@ -2,14 +2,18 @@
    Chaque bloc ne s'active que si sa section est présente sur la page. Pas de dépendance, pas d'étape de build. */
 (() => {
   'use strict';
+  // langue de la page : <html lang="en"> sur /en/, sinon français
+  const IS_EN = (document.documentElement.lang || '').slice(0, 2) === 'en';
+  const lng = (fr, en) => (IS_EN ? en : fr);
+  const MAIL = 'contact@novaforvision.com';
   const FPS = 25;
   const P = {
-    oakley:{title:'OAKLEY × META',artist:'Campagne IA',roles:'Création IA · VFX · Montage · Sound design · Motion design',dur:28.75,fps:24,ig:null,full:'/media/oakley/film.mp4'},
-    ndrangetha:{title:'NDRANGETHA',artist:'Thabiti',roles:'Montage · VFX · IA · SFX',dur:35.0,ig:'https://www.instagram.com/reel/Dcyn_7qtQiD/',dir:'Lyra Film'},
-    killcam:{title:'KILLCAM',artist:'King Kifla',roles:'Montage · VFX',dur:29.8,ig:'https://www.instagram.com/reel/DaQpBznNIB9/',dir:'Lyra Film'},
-    crame:{title:'CRAMÉ',artist:'RR',roles:'Montage · VFX · IA · SFX',dur:38.08,ig:null,dir:'Lyra Film'},
-    back:{title:'BACK',artist:'LP2.0',roles:'Montage · VFX',dur:22.95,ig:'https://www.instagram.com/reel/DWozdhSj1l3/',dir:'Lyra Film'},
-    demandeashh:{title:'DEMANDEASHH',artist:'Sheu',roles:'Teaser IA',dur:33.28,ig:'https://www.instagram.com/reel/DaArXcHsMV4/',dir:'NOVA'},
+    oakley:{title:'OAKLEY × META',artist:'Spec ad',roles:lng('Création IA · VFX · Montage · Sound design · Motion design','AI creation · VFX · Editing · Sound design · Motion design'),dur:28.75,fps:24,ig:null,full:'/media/oakley/film.mp4'},
+    ndrangetha:{title:'NDRANGETHA',artist:'Thabiti',roles:lng('Montage · VFX · IA · SFX','Editing · VFX · AI · SFX'),dur:35.0,ig:'https://www.instagram.com/reel/Dcyn_7qtQiD/',dir:'Lyra Film'},
+    killcam:{title:'KILLCAM',artist:'King Kifla',roles:lng('Montage · VFX','Editing · VFX'),dur:29.8,ig:'https://www.instagram.com/reel/DaQpBznNIB9/',dir:'Lyra Film'},
+    crame:{title:'CRAMÉ',artist:'RR',roles:lng('Montage · VFX · IA · SFX','Editing · VFX · AI · SFX'),dur:38.08,ig:null,dir:'Lyra Film'},
+    back:{title:'BACK',artist:'LP2.0',roles:lng('Montage · VFX','Editing · VFX'),dur:22.95,ig:'https://www.instagram.com/reel/DWozdhSj1l3/',dir:'Lyra Film'},
+    demandeashh:{title:'DEMANDEASHH',artist:'Sheu',roles:lng('Teaser IA','AI teaser'),dur:33.28,ig:'https://www.instagram.com/reel/DaArXcHsMV4/',dir:'NOVA'},
     jamaiquaine:{title:'JAMAÏQUAINE IS DEAD',artist:'LP Killer',roles:'VFX',dur:33.686,ig:'https://www.instagram.com/reel/DTZaV9mDPdE/',dir:'Lyra Film'},
     bellodallas:{title:'ZORO',artist:'Bello & Dallas',roles:'VFX',dur:13.44,ig:null,dir:'Kespey'}
   };
@@ -109,7 +113,7 @@
       if (done || gate) return;
       gate = true; gateT = performance.now();
       intro.classList.add('gate'); root.classList.add('intro-gate'); intro.removeAttribute('aria-hidden');
-      enterBtn = document.createElement('button'); enterBtn.type = 'button'; enterBtn.className = 'i-enter'; enterBtn.textContent = 'Entrer';
+      enterBtn = document.createElement('button'); enterBtn.type = 'button'; enterBtn.className = 'i-enter'; enterBtn.textContent = lng('Entrer', 'Enter');
       intro.appendChild(enterBtn);
       requestAnimationFrame(() => requestAnimationFrame(() => enterBtn && enterBtn.classList.add('on')));
     }
@@ -255,7 +259,7 @@
       const d = P[id];
       player.ctx = ctx; player.video = video; player.id = id; player.onClose = onClose || null; player.opener = document.activeElement;
       player.restore = { src: video.getAttribute('src') || '', time: video.currentTime || 0, muted: video.muted, loop: video.loop };
-      $('#pc-title').textContent = d.title; $('#pc-meta').textContent = `${d.artist} · ${d.roles}${d.dir ? ' · Réalisation ' + d.dir : ''}`;
+      $('#pc-title').textContent = d.title; $('#pc-meta').textContent = `${d.artist} · ${d.roles}${d.dir ? lng(' · Réalisation ', ' · Directed by ') + d.dir : ''}`;
       $('#pc-dur').textContent = tc(d.dur, d.fps); pcCur.textContent = tc(0, d.fps);
       const ig = $('#pc-ig'); ig.hidden = !d.ig; if (d.ig) ig.href = d.ig;
       const full = fullSrc(id);
@@ -282,11 +286,11 @@
     togglePlay = () => { const v = player.video; if (!v) return; if (v.paused) playV(v); else v.pause(); };
     $('#pc-close').addEventListener('click', e => { e.stopPropagation(); closePlayer(); });
     $('#pc-play').addEventListener('click', e => { e.stopPropagation(); togglePlay(); });
-    $('#pc-sound').addEventListener('click', e => { e.stopPropagation(); soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', String(soundOn)); e.currentTarget.textContent = soundOn ? 'Son activé' : 'Son coupé'; if (player.video) player.video.muted = !soundOn; });
+    $('#pc-sound').addEventListener('click', e => { e.stopPropagation(); soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', String(soundOn)); e.currentTarget.textContent = soundOn ? lng('Son activé', 'Sound on') : lng('Son coupé', 'Sound off'); if (player.video) player.video.muted = !soundOn; });
     ['play','pause','ended'].forEach(ev => document.addEventListener(ev, e => {
       if (e.target !== player.video) return;
       if (ev === 'ended') { closePlayer(); return; }
-      $('#pc-play').textContent = ev === 'play' ? 'Pause' : 'Lecture';
+      $('#pc-play').textContent = ev === 'play' ? 'Pause' : lng('Lecture', 'Play');
     }, true));
     seek.addEventListener('input', () => { seeking = true; const v = player.video; if (!v) return; const d = v.duration || P[player.id].dur; v.currentTime = seek.value/1000*d; seek.style.setProperty('--p', (seek.value/10)+'%'); });
     seek.addEventListener('change', () => { seeking = false; });
@@ -362,8 +366,8 @@
     heroClickable = () => !player.ctx && !introOn && Math.abs(pos - Math.round(pos)) < .04;
     hero.addEventListener('click', e => { if (!heroClickable() || e.target.closest('a,.hbar,.pc,.cap-a')) return; openHero(); });
     $$('#caps [data-play]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openHero(); }));
-    hero.setAttribute('data-cursor', 'Lire');
-    if (!fine.matches) $('#hhint').textContent = 'Faites défiler pour changer de projet';
+    hero.setAttribute('data-cursor', lng('Lire', 'Play'));
+    if (!fine.matches) $('#hhint').textContent = lng('Faites défiler pour changer de projet', 'Scroll to change project');
     function openHero(){
       if (player.ctx === 'hero') return;
       hero.classList.add('playing');
@@ -471,7 +475,7 @@
     oakSound.addEventListener('click', e => {
       e.stopPropagation();
       const on = oakSound.getAttribute('aria-pressed') !== 'true';
-      oakSound.setAttribute('aria-pressed', String(on)); oakSound.textContent = on ? 'Son coupé' : 'Son';
+      oakSound.setAttribute('aria-pressed', String(on)); oakSound.textContent = on ? lng('Son coupé', 'Sound off') : lng('Son', 'Sound');
       oak.muted = !on; if (on) playV(oak);
     });
     const openOak = () => { if (player.ctx === 'camp') return; oakFilm.classList.add('playing'); openPlayer('camp', oak, 'oakley', $('#pslot-camp'), () => { oakFilm.classList.remove('playing'); if (motion && oakVisible) playV(oak); }); };
@@ -491,7 +495,7 @@
     const trSeek = t => { trWant = clamp(t, 0, TR_DUR - .04); };
     trTick = () => {
       if (trWant !== null && !tr.seeking && tr.readyState >= 1) { tr.currentTime = trWant; trWant = null; }
-      const t = tr.currentTime || 0, k = t >= TR_CUT ? 'Noir et blanc' : 'Couleur';
+      const t = tr.currentTime || 0, k = t >= TR_CUT ? lng('Noir et blanc', 'Black and white') : lng('Couleur', 'Colour');
       if (k !== trLast) { trLast = k; trState.textContent = k; }
       trHead.style.transform = `translate3d(${(t/TR_DUR*trTl.clientWidth).toFixed(1)}px,0,0)`;
       if (document.activeElement !== trRange) trRange.value = Math.round(t/TR_DUR*1000);
@@ -504,7 +508,7 @@
     wipe.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') trResume(); });
     trRange.addEventListener('input', () => { tr.pause(); trSeek(trRange.value/1000*TR_DUR); });
     new IntersectionObserver(es => es.forEach(en => { trVisible = en.isIntersecting; if (trVisible && motion && !trHover) { tr.playbackRate = .5; playV(tr); } else if (!trVisible) tr.pause(); }), {threshold:.2}).observe(wipe);
-    if (!fine.matches) $('#wipe-hint').textContent = "Glissez sur l’image pour parcourir la transition";
+    if (!fine.matches) $('#wipe-hint').textContent = lng('Glissez sur l’image pour parcourir la transition', 'Drag across the image to scrub through the transition');
     new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) warmV(tr); }), {rootMargin:'900px 0px'}).observe(wipe);
   }
   const motionClip = $('#oak-motion');
@@ -527,7 +531,7 @@
       let ci = 0, after = false;
       BA.forEach(([s0,s1],i) => { if (t >= s0 - .001) { ci = i; after = t >= s1; } });
       const key = ci + (after ? 'a' : 'b');
-      if (key !== baLastKey) { baLastKey = key; baState.textContent = after ? 'Après' : 'Avant'; chBtns.forEach((b,i) => { b.setAttribute('aria-current', String(i === ci)); b.querySelector('.st').textContent = i === ci ? (after ? 'Après' : 'Avant') : ''; }); }
+      if (key !== baLastKey) { baLastKey = key; baState.textContent = after ? lng('Après', 'After') : lng('Avant', 'Before'); chBtns.forEach((b,i) => { b.setAttribute('aria-current', String(i === ci)); b.querySelector('.st').textContent = i === ci ? (after ? lng('Après', 'After') : lng('Avant', 'Before')) : ''; }); }
       baHead.style.transform = `translate3d(${(t/BA_DUR*baTl.clientWidth).toFixed(1)}px,0,0)`;
       if (document.activeElement !== baRange) baRange.value = Math.round(t/BA_DUR*1000);
     };
@@ -542,7 +546,7 @@
     baRange.addEventListener('input', () => { ba.pause(); baSeek(baRange.value/1000*BA_DUR); });
     baRange.addEventListener('change', () => { if (motion) playV(ba); });
     chBtns.forEach((b,i) => b.addEventListener('click', () => { baSeek(BA[i][0]); if (motion) playV(ba); }));
-    if (!fine.matches) $('#ba-hint').textContent = "Glissez sur l’image pour parcourir le film";
+    if (!fine.matches) $('#ba-hint').textContent = lng('Glissez sur l’image pour parcourir le film', 'Drag across the image to scrub through the film');
     new IntersectionObserver(es => es.forEach(en => { baVisible = en.isIntersecting; if (baVisible && motion && !baHover) playV(ba); else if (!baVisible) ba.pause(); }), {threshold:.2}).observe(baBox);
   }
 
@@ -551,7 +555,7 @@
   if (works && track) {
     items = $$('#track .work');
     let horiz = false, centers = [], pitch = 1, stepPx = 1, pShown = 0, pPrev = 0, wVel = 0;
-    items.forEach(el => el.querySelector('.work-media').setAttribute('data-cursor', 'Lire'));
+    items.forEach(el => el.querySelector('.work-media').setAttribute('data-cursor', lng('Lire', 'Play')));
     layoutWorks = () => {
       if (player.ctx === 'works') closePlayer(true);
       horiz = desk.matches;
@@ -678,7 +682,7 @@
       if (e.key === 'ArrowRight' && active < items.length-1) { e.preventDefault(); scrollToItem(active+1); }
       if (e.key === 'ArrowLeft' && active > 0) { e.preventDefault(); scrollToItem(active-1); }
     });
-    if (!fine.matches) $('#works-hint').textContent = 'Défilez ; touchez un film pour le lire';
+    if (!fine.matches) $('#works-hint').textContent = lng('Défilez ; touchez un film pour le lire', 'Scroll; tap a film to play it');
     new IntersectionObserver(es => es.forEach(en => {
       worksVisible = en.isIntersecting;
       const el = items[active]; if (!el) return;
@@ -862,8 +866,10 @@
     document.addEventListener('click', e => picks.forEach(pk => { if (!pk.wrap.contains(e.target)) pk.close(false); }));
     const compose = () => {
       const name = $('#s-name').value.trim(), type = $('#s-type').value, when = $('#s-when').value, idea = $('#s-idea').value.trim();
-      const sentenceTxt = `Je m’appelle ${name || '…'}, je prépare ${type} pour ${when}.${idea ? ' L’idée : ' + idea + '.' : ''}`;
-      return { subject: `Projet : ${type}${name ? ' · ' + name : ''}`, body: `Bonjour NOVA,\n\n${sentenceTxt}\n\n${name}`.trim() };
+      const sentenceTxt = IS_EN
+        ? `My name is ${name || '…'}, I’m preparing ${type} for ${when}.${idea ? ' The idea: ' + idea + '.' : ''}`
+        : `Je m’appelle ${name || '…'}, je prépare ${type} pour ${when}.${idea ? ' L’idée : ' + idea + '.' : ''}`;
+      return { subject: `${lng('Projet : ', 'Project: ')}${type}${name ? ' · ' + name : ''}`, body: `${lng('Bonjour NOVA,', 'Hello NOVA,')}\n\n${sentenceTxt}\n\n${name}`.trim() };
     };
     // l'envoi : la phrase se défait en poussière qui rejoint l'étoile du bas
     const dissolve = done => {
@@ -933,18 +939,18 @@
       picks.forEach(pk => pk.close(false));
       const m = compose();
       slMsg.textContent = '';
-      dissolve(() => { slMsg.textContent = 'Votre messagerie s’ouvre avec le message prêt'; window.location.href = `mailto:contact@novaforvision.fr?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`; });
+      dissolve(() => { slMsg.textContent = lng('Votre messagerie s’ouvre avec le message prêt', 'Your email app opens with the message ready'); window.location.href = `mailto:${MAIL}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`; });
     });
     $('#sl-ig').addEventListener('click', () => {
       const m = compose();
-      try { navigator.clipboard.writeText(m.body).then(() => { slMsg.textContent = 'Message copié : collez-le dans la conversation Instagram'; }, () => { slMsg.textContent = 'Instagram s’ouvre : écrivez votre message dans la conversation'; }); } catch(_) { slMsg.textContent = 'Instagram s’ouvre : écrivez votre message dans la conversation'; }
+      try { navigator.clipboard.writeText(m.body).then(() => { slMsg.textContent = lng('Message copié : collez-le dans la conversation Instagram', 'Message copied: paste it into the Instagram conversation'); }, () => { slMsg.textContent = lng('Instagram s’ouvre : écrivez votre message dans la conversation', 'Instagram opens: write your message in the conversation'); }); } catch(_) { slMsg.textContent = lng('Instagram s’ouvre : écrivez votre message dans la conversation', 'Instagram opens: write your message in the conversation'); }
     });
   }
   const copyBtn = $('#copy');
   if (copyBtn) copyBtn.addEventListener('click', () => {
-    const reset = () => setTimeout(() => copyBtn.textContent = 'Copier', 2000);
-    const fallback = () => { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($('#mail')); s.removeAllRanges(); s.addRange(rg); copyBtn.textContent = 'Sélectionnée'; reset(); };
-    try { navigator.clipboard.writeText('contact@novaforvision.fr').then(() => { copyBtn.textContent = 'Copiée'; reset(); }, fallback); } catch(e){ fallback(); }
+    const reset = () => setTimeout(() => copyBtn.textContent = lng('Copier', 'Copy'), 2000);
+    const fallback = () => { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($('#mail')); s.removeAllRanges(); s.addRange(rg); copyBtn.textContent = lng('Sélectionnée', 'Selected'); reset(); };
+    try { navigator.clipboard.writeText(MAIL).then(() => { copyBtn.textContent = lng('Copiée', 'Copied'); reset(); }, fallback); } catch(e){ fallback(); }
   });
 
   /* ---------- Barre de défilement (ordinateur) : une poignée rectangulaire posée sur la page, à la place de celle du navigateur ---------- */
@@ -1404,7 +1410,7 @@
   /* ---------- Mouvement (bouton de l'accueil) ---------- */
   function applyMotion(){
     root.classList.toggle('motion-off', !motion);
-    if (motionBtn) { motionBtn.setAttribute('aria-pressed', String(motion)); motionBtn.querySelector('span').textContent = motion ? 'Mouvement activé' : 'Mouvement en pause'; }
+    if (motionBtn) { motionBtn.setAttribute('aria-pressed', String(motion)); motionBtn.querySelector('span').textContent = motion ? lng('Mouvement activé', 'Motion on') : lng('Mouvement en pause', 'Motion paused'); }
     if (!motion) {
       $$('video').forEach(v => { if (v !== player.video) v.pause(); });
       // les projets du haut s'arrêtent sur leur belle image (chargée à ce moment-là seulement)

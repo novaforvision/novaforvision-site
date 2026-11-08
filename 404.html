@@ -35,6 +35,8 @@ p{margin:0;color:var(--fg-2);font-size:clamp(16px,1.4vw,18px);max-width:34rem}
 footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));font-size:13px;color:var(--fg-3);width:100%;max-width:1200px;margin:0 auto}
 footer a{color:var(--fg-2);text-decoration:none}
 footer a:hover{color:var(--fg)}
+.link-en{color:var(--fg-2);font-size:14px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+.link-en:hover{color:var(--fg)}
 </style>
 </head>
 <body>
@@ -43,8 +45,10 @@ footer a:hover{color:var(--fg)}
   <p class="tc"><i aria-hidden="true"></i>00:00:04:04 · Erreur 404</p>
   <h1>Page introuvable</h1>
   <p>La page demandée n’existe pas ou a été déplacée.</p>
+  <p lang="en">This page does not exist or has moved.</p>
   <a class="btn" href="/">Revenir au site</a>
+  <a class="link-en" href="/en/" lang="en">English version</a>
 </main>
-<footer><span>© 2026 NOVA FOR VISION · Liège, Belgique</span><a href="mailto:contact@novaforvision.fr">contact@novaforvision.fr</a><a href="/mentions-legales/">Mentions légales</a></footer>
+<footer><span>© 2026 NOVA FOR VISION · Liège, Belgique</span><a href="mailto:contact@novaforvision.com">contact@novaforvision.com</a><a href="/mentions-legales/">Mentions légales</a></footer>
 </body>
 </html>
