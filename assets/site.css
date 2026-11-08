@@ -407,10 +407,15 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 .dust canvas{position:absolute;inset:0;width:100%;height:100%}
 
 /* Pied de page */
-.foot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:16px;min-height:64px;margin-top:64px;border-top:1px solid var(--line);font-size:13px;color:var(--fg-3);padding-bottom:env(safe-area-inset-bottom,0px)}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:8px 40px;min-height:64px;margin-top:64px;border-top:1px solid var(--line);font-size:13px;color:var(--fg-3);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* à gauche qui nous sommes, à droite les liens ; chaque morceau reste entier s'il passe à la ligne */
+.foot-id{margin:0;min-width:0;line-height:1.5}
+.foot-id>span:not(.foot-sep){white-space:nowrap}
+.foot-links{display:flex;align-items:center;gap:0 24px;flex-shrink:0}
 .foot a{min-height:44px;display:inline-flex;align-items:center;transition:color .16s var(--ease)}
 .foot a:hover{color:var(--fg)}
-.foot>:last-child{justify-self:end}
+/* écran moyen : les liens passent sous la ligne d'identité plutôt que de la couper */
+@media (max-width:1000px){.foot{flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding-block:16px 8px}.foot-links{flex-wrap:wrap;gap:0 24px}}
 
 @media (max-width:1100px){.band-nav .opt2{display:none}}
 /* tablette : les infos du film et de la bobine passent sur une ligne entière au lieu de colonnes serrées */
@@ -455,7 +460,10 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
   .contact{padding-top:96px}
   .ct-grid{grid-template-columns:1fr}
   .sentence,.ct-side{grid-column:auto}
-  .foot{grid-template-columns:1fr 1fr;padding-block:12px}
+  .foot{flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;padding-block:20px 12px}
+  .foot-id{display:flex;flex-direction:column}
+  .foot-sep{display:none}
+  .foot-links{flex-wrap:wrap;gap:0 20px}
   .peek{display:none}
 }
 @media (max-width:760px){.hcount{white-space:nowrap}.hbar .motion{display:none}.ticks{gap:0}.tick{width:24px}.tick::before,.tick i{left:3px;right:3px}.hbar{gap:12px}}
