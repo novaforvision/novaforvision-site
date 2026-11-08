@@ -569,6 +569,9 @@ section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
 /* les sections en grille gardent la largeur de l'écran, même si un navigateur (celui d'Instagram par exemple) refuse de couper un titre */
 .contact,.cta,.pj-head,.studio-body,.camp,.wipe,.door,.member{grid-template-columns:minmax(0,1fr)}
 @media (max-width:760px){.tabs{gap:4px 20px}.tab-t{font-size:clamp(32px,10.4vw,64px)}}
+/* version anglaise : « Music videos » est plus long que « Clips » ; les deux onglets restent sur une seule ligne, comme en français */
+html[lang="en"] .tab-t{font-size:clamp(32px,7.8vw,132px)}
+@media (max-width:760px){html[lang="en"] .tab-t{font-size:clamp(24px,7.2vw,46px)}}
 /* Projets : deuxième campagne (Tea Storm), séparée de la première par un filet */
 .camp.ts{padding-top:64px;border-top:1px solid var(--line)}
 @media (max-width:760px){.camp.ts{padding-top:48px}}
