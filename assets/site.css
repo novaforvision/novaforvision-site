@@ -686,3 +686,22 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 /* zones de toucher élargies, invisibles : « EN / FR » (15 px) et « Son » (23 px) étaient trop étroits pour le doigt */
 .lang,.camp-ui #oak-sound{position:relative}
 .lang::before,.camp-ui #oak-sound::before{content:"";position:absolute;inset:0 -10px}
+
+/* ---------- Projets : image en grand (clic sur une image des visionneuses), zoom et déplacement ---------- */
+html.lb-on{overflow:hidden}
+.lb{position:fixed;inset:0;z-index:92;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;background:var(--bg);opacity:0;transition:opacity .25s var(--ease);touch-action:none;overscroll-behavior:contain}
+.lb.on{opacity:1}
+.lb-top,.lb-bot{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--fg-2)}
+.lb-top{height:calc(var(--band) + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px)}
+.lb-bot{height:calc(56px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);justify-content:space-between}
+.lb-cap{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--fg)}
+.lb-n,.lb-hint{font-size:12px;color:var(--fg-3)}
+.lb-hint{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center}
+.lb button{height:44px;padding:0 4px;color:var(--fg-2);transition:color .16s var(--ease)}
+.lb button:hover,.lb button:focus-visible{color:var(--fg)}
+.lb-view{position:relative;overflow:hidden;cursor:zoom-in;touch-action:none}
+.lb-view.zoomed{cursor:grab}
+.lb-media{position:absolute;left:0;top:0;max-width:none;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;background:var(--bg-2)}
+.lb-media.ease{transition:transform .32s var(--ease)}
+@media (max-width:520px){.lb-hint{font-size:11px}}
+
