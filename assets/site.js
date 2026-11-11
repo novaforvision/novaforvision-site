@@ -31,8 +31,26 @@
   // le réglage « Réduire les animations » du téléphone n'éteint plus le site : le studio veut le même site pour tous
   const reduce = false;
   const playV = v => { if (v) { const p = v.play(); if (p && p.catch) p.catch(e => { if (e && e.name === 'NotAllowedError') v._blocked = true; }); } };
-  const bandH = () => parseFloat(getComputedStyle(root).getPropertyValue('--band')) || 56;
+  // hauteur de la bande, relue seulement quand la fenêtre change de taille (la lire à chaque image forçait un recalcul des styles)
+  let BAND = 56;
+  const readBand = () => { BAND = parseFloat(getComputedStyle(root).getPropertyValue('--band')) || 56; };
+  readBand();
+  const bandH = () => BAND;
   const fgCol = getComputedStyle(root).getPropertyValue('--fg').trim() || '#eeefed';
+
+  /* ---------- Performance : lire d'abord, écrire ensuite ----------
+     La boucle d'animation lit toutes ses mesures au début de chaque image (défilement, taille de la fenêtre, positions),
+     puis écrit. Avant, lectures et écritures alternaient : le navigateur recalculait la page plusieurs fois par image. */
+  const F = { sy: 0, sx: 0, vw: 0, vh: 0, docH: 0 };
+  const snapF = () => { F.sy = window.scrollY; F.sx = window.scrollX; F.vw = window.innerWidth; F.vh = window.innerHeight; };
+  const readDoc = () => { F.docH = document.documentElement.scrollHeight; };
+  snapF();
+  // n'écrit une propriété de style que si sa valeur change (variables CSS comprises)
+  const setS = (el, prop, val) => { const c = el._st || (el._st = {}); if (c[prop] === val) return; c[prop] = val; if (prop.charCodeAt(0) === 45) el.style.setProperty(prop, val); else el.style[prop] = val; };
+  const clrS = (el, prop) => { if (el._st) delete el._st[prop]; };
+  // canevas hors écran dont on relit les pixels : le navigateur le garde en mémoire classique, la relecture est plus rapide
+  const ctxRead = c => c.getContext('2d', { willReadFrequently: true });
+  const dec = s => { try { return decodeURIComponent(s); } catch(e) { return s; } };
 
   /* ---------- Mouvement ---------- */
   // la pause des animations ne vaut que pour la visite en cours (l'ancien réglage gardé d'une visite à l'autre est effacé)
@@ -55,12 +73,16 @@
   let hidePeek = () => {}, drawPeek = null, drawLit = null, layoutCredits = null, drawCredits = null, drawDust = null;
   let parts = [], dc = null, dustBuilt = false, dustAwake = 0, ensureDust = null;
   let routeTo = null, tabsInit = null;
+  let measureWorks = null, measurePeek = null, measureCredits = null, measureMt = null, sbTick = null;
+  // hauteur de la page : relue quand le contenu change de taille, plus à chaque image
+  readDoc();
+  { const docRO = new ResizeObserver(readDoc); docRO.observe(document.body); docRO.observe(root); }
 
   /* ---------- Blocs proches de l'écran : on ne mesure (et on ne charge) rien de ce qui est loin ---------- */
   const nearMap = new WeakMap(), isNear = el => nearMap.get(el) === true;
   const nearIO = new IntersectionObserver(es => es.forEach(en => nearMap.set(en.target, en.isIntersecting)), {rootMargin:'300px 0px'});
   const lazyIO = new IntersectionObserver(es => es.forEach(en => { if (!en.isIntersecting) return; const v = en.target; if (v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } if (v.dataset.preload) { v.preload = v.dataset.preload; v.removeAttribute('data-preload'); } lazyIO.unobserve(v); }), {rootMargin:'1400px 0px'});
-  $$('video[data-poster]').forEach(v => { if (!v.closest('#stage')) lazyIO.observe(v); });
+  $$('video[data-poster],video[data-preload]').forEach(v => { if (!v.closest('#stage')) lazyIO.observe(v); });
   // vidéos différées : on les met en mémoire quand le réseau est libre ou quand on s'en approche
   const warmV = v => { if (v && v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } if (!v || v.preload === 'auto') return; v.preload = 'auto'; if (v.readyState === 0 && v.paused) { try { v.load(); } catch(e){} } };
   // préchargement en tâche de fond seulement sur ordinateur avec une bonne connexion ; sur mobile, les vidéos se chargent quand on commence à défiler
@@ -144,7 +166,7 @@
     const img = new Image();
     img.onload = () => {
       const w = Math.round(SW*base*dpr), h = Math.round(SH*base*dpr);
-      const oc = document.createElement('canvas'); oc.width = w; oc.height = h; const ox = oc.getContext('2d'); ox.drawImage(img, 0, 0, w, h);
+      const oc = document.createElement('canvas'); oc.width = w; oc.height = h; const ox = ctxRead(oc); ox.drawImage(img, 0, 0, w, h);
       let data; try { data = ox.getImageData(0,0,w,h).data; } catch(e) { skip(); return; }
       const step = Math.max(2, Math.round((innerWidth < 600 ? 2.2 : 2.6)*dpr));
       const ox0 = icv.width/2 - w/2, oy0 = icv.height/2 - h/2;
@@ -247,8 +269,8 @@
     cur.lx = lerp(cur.lx, cur.x, .18); cur.ly = lerp(cur.ly, cur.y, .18);
     cur.rot = lerp(cur.rot, clamp(cur.vx*1.2, -30, 30), .12); cur.vxs = lerp(cur.vxs || 0, Math.abs(cur.vx), .2); cur.vx *= .85;
     const st = 1 + Math.min(cur.vxs/45, .9);
-    curS.style.transform = `translate3d(${cur.sx.toFixed(1)}px,${cur.sy.toFixed(1)}px,0) rotate(${cur.rot.toFixed(1)}deg) scale(${st.toFixed(3)},${(1/Math.sqrt(st)).toFixed(3)})`;
-    curL.style.transform = `translate3d(${cur.lx.toFixed(1)}px,${cur.ly.toFixed(1)}px,0)`;
+    setS(curS, 'transform', `translate3d(${cur.sx.toFixed(1)}px,${cur.sy.toFixed(1)}px,0) rotate(${cur.rot.toFixed(1)}deg) scale(${st.toFixed(3)},${(1/Math.sqrt(st)).toFixed(3)})`);
+    setS(curL, 'transform', `translate3d(${cur.lx.toFixed(1)}px,${cur.ly.toFixed(1)}px,0)`);
   }
 
   /* ---------- Lecteur intégré (accueil, projets) ---------- */
@@ -292,7 +314,7 @@
       if (ev === 'ended') { closePlayer(); return; }
       $('#pc-play').textContent = ev === 'play' ? 'Pause' : lng('Lecture', 'Play');
     }, true));
-    seek.addEventListener('input', () => { seeking = true; const v = player.video; if (!v) return; const d = v.duration || P[player.id].dur; v.currentTime = seek.value/1000*d; seek.style.setProperty('--p', (seek.value/10)+'%'); });
+    seek.addEventListener('input', () => { seeking = true; const v = player.video; if (!v) return; const d = v.duration || P[player.id].dur; v.currentTime = seek.value/1000*d; setS(seek, '--p', (seek.value/10)+'%'); });
     seek.addEventListener('change', () => { seeking = false; });
     pc.addEventListener('click', e => e.stopPropagation());
     document.addEventListener('keydown', e => {
@@ -335,9 +357,14 @@
       ticks.forEach((t,k) => t.setAttribute('aria-current', String(k === i)));
     };
     if (!introOn) setCurrent(0);
+    // taille de l'image du haut : relue quand elle change, plus à chaque image
+    let HW = hero.clientWidth, HH = hero.clientHeight;
+    const readHero = () => { HW = hero.clientWidth; HH = hero.clientHeight; };
+    new ResizeObserver(readHero).observe(hero);
     layoutHero = () => {
       heroStep = window.innerHeight * .7;
       heroTop = heroWrap.getBoundingClientRect().top + window.scrollY;
+      readHero();
     };
     const scrollForSlide = i => heroTop + i*heroStep;
     // un tiret mène au projet ; le recalage ci-dessous attend la fin de ce défilement
@@ -388,9 +415,11 @@
     // le bord du rideau lâche une fine poussière de lumière pendant le passage
     const hdc = $('#hdust'), hdx = hdc.getContext('2d'), hp = [];
     let hdLastX = null, hdIdle = 0, hdAcc = 0;
+    // le canevas vide est masqué : une couche transparente de la taille de l'écran ne coûte plus rien entre deux passages
+    setS(hdc, 'visibility', 'hidden');
     function heroDust(xc, sl, seamO, bend = 0){
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      const W = Math.round(hero.clientWidth*dpr), H = Math.round(hero.clientHeight*dpr);
+      const W = Math.round(HW*dpr), H = Math.round(HH*dpr);
       if (hdc.width !== W || hdc.height !== H) { hdc.width = W; hdc.height = H; }
       const x = xc*dpr, moved = hdLastX === null ? 0 : Math.abs(x - hdLastX);
       if (motion && seamO > .05 && moved > .5) {
@@ -398,8 +427,8 @@
         for (; hdAcc >= 1 && hp.length < 140; hdAcc--) { const y = Math.random()*H, u = y/H; hp.push({ x: x + sl*dpr*(.5 - u) + 4*u*(1-u)*bend*dpr + (Math.random()-.5)*3*dpr, y, vx: (x < (hdLastX ?? x) ? -1 : 1)*(.3 + Math.random()*1.1)*dpr, vy: (Math.random()-.5)*.4*dpr, life: 1, dec: .016 + Math.random()*.022, s: (.6 + Math.random()*.9)*dpr }); }
       }
       hdLastX = x;
-      if (!hp.length) { if (!hdIdle) { hdx.clearRect(0,0,W,H); hdIdle = 1; } return; }
-      hdIdle = 0;
+      if (!hp.length) { if (!hdIdle) { hdx.clearRect(0,0,W,H); hdIdle = 1; setS(hdc, 'visibility', 'hidden'); } return; }
+      hdIdle = 0; setS(hdc, 'visibility', 'visible');
       hdx.clearRect(0,0,W,H); hdx.fillStyle = '#ffffff';
       for (let i = hp.length - 1; i >= 0; i--) { const p = hp[i]; p.x += p.vx; p.y += p.vy; p.vx *= .97; p.life -= p.dec; if (p.life <= 0) { hp.splice(i,1); continue; } hdx.globalAlpha = p.life*.5; hdx.fillRect(p.x, p.y, p.s, p.s); }
       hdx.globalAlpha = 1;
@@ -413,14 +442,17 @@
     let bend = 0;
     const vfx = new WeakMap();
     const setV = (el, key, css) => { if (vfx.get(el) === key) return; vfx.set(el, key); el.style.cssText = css; };
+    const tickI = ticks.map(t => t.querySelector('i'));
+    const seamScale = (1/Math.cos(SLANT_DEG*Math.PI/180)).toFixed(3);
+    let seamD = '';
     heroFrame = () => {
-      hTarget = clamp((window.scrollY - heroTop) / heroStep, 0, N-1);
+      hTarget = clamp((F.sy - heroTop) / heroStep, 0, N-1);
       if (player.ctx === 'hero' && Math.abs(hTarget - cur0) > .25) closePlayer(true);
       pos = (!motion) ? hTarget : lerp(pos, hTarget, .1);
       if (Math.abs(pos - hTarget) < .0005) pos = hTarget;
       // rideau : la slide suivante se découvre de droite à gauche, son film arrive en léger travelling ; la précédente recule dans l'ombre
       let seamX = 0, seamO = 0;
-      const HW = hero.clientWidth, HH = hero.clientHeight, SL = HH*SLANT;
+      const SL = HH*SLANT;
       // retard du rideau sur le défilement (positif en descendant) : le milieu plie dans l'autre sens, au plus 4 % de la largeur
       const lim = HW*.04, want = motion ? clamp((hTarget - pos)*HW*.1, -lim, lim) : 0;
       bend = motion ? lerp(bend, want, .18) : 0; if (Math.abs(bend) < .05) bend = 0;
@@ -437,17 +469,17 @@
         setV(shades[i], 's'+ek.toFixed(3), `opacity:${(ek*.55).toFixed(3)}`);
         if (i > 0 && t > 0 && t < 1) { seamX = xc; seamO = Math.sin(Math.PI*t); }
       });
-      seam.style.transform = `translate3d(${(seamX + bend).toFixed(1)}px,0,0) rotate(${SLANT_DEG}deg) scaleY(${(1/Math.cos(SLANT_DEG*Math.PI/180)).toFixed(3)})`;
-      seam.style.opacity = seamO.toFixed(3);
-      seamC.style.opacity = seamO.toFixed(3);
-      if (seamO > 0) seamP.setAttribute('d', `M ${(seamX + SL/2).toFixed(1)} 0 Q ${(seamX + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(seamX - SL/2).toFixed(1)} ${HH}`);
+      setS(seam, 'transform', `translate3d(${(seamX + bend).toFixed(1)}px,0,0) rotate(${SLANT_DEG}deg) scaleY(${seamScale})`);
+      setS(seam, 'opacity', seamO.toFixed(3));
+      setS(seamC, 'opacity', seamO.toFixed(3));
+      if (seamO > 0) { const d = `M ${(seamX + SL/2).toFixed(1)} 0 Q ${(seamX + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(seamX - SL/2).toFixed(1)} ${HH}`; if (d !== seamD) { seamD = d; seamP.setAttribute('d', d); } }
       heroDust(seamX, SL, seamO, bend);
       // boucle Oakley sans le logo
       if (oakV && oakLoopOwn() && oakV.duration && !oakV.paused && oakV.currentTime > oakV.duration - .09) oakV.currentTime = LOGO_END;
       if (cur0 === 0 && !introOn && caps[0].getAttribute('aria-hidden') === 'false' && !caps[0].classList.contains('on') && !logoHold()) caps[0].classList.add('on');
       const ci = clamp(Math.round(pos), 0, N-1);
       if (ci !== cur0 && !introOn) setCurrent(ci);
-      ticks.forEach((tk,i) => { const f = i === 0 ? 1 : clamp(pos - (i-1), 0, 1); tk.querySelector('i').style.transform = `scaleX(${f.toFixed(3)})`; });
+      tickI.forEach((ti,i) => { const f = i === 0 ? 1 : clamp(pos - (i-1), 0, 1); setS(ti, 'transform', `scaleX(${f.toFixed(3)})`); });
       // seuls les films visibles jouent
       SV.forEach((v,i) => {
         if (player.ctx === 'hero' && i === cur0) return;
@@ -493,12 +525,15 @@
     const TR_DUR = 2.4, TR_CUT = .86;
     let trHover = false, trWant = null, trLast = '';
     const trSeek = t => { trWant = clamp(t, 0, TR_DUR - .04); };
+    let trW = trTl.clientWidth;
+    new ResizeObserver(() => { trW = trTl.clientWidth; }).observe(trTl);
     trTick = () => {
       if (trWant !== null && !tr.seeking && tr.readyState >= 1) { tr.currentTime = trWant; trWant = null; }
       const t = tr.currentTime || 0, k = t >= TR_CUT ? lng('Noir et blanc', 'Black and white') : lng('Couleur', 'Colour');
       if (k !== trLast) { trLast = k; trState.textContent = k; }
-      trHead.style.transform = `translate3d(${(t/TR_DUR*trTl.clientWidth).toFixed(1)}px,0,0)`;
-      if (document.activeElement !== trRange) trRange.value = Math.round(t/TR_DUR*1000);
+      setS(trHead, 'transform', `translate3d(${(t/TR_DUR*trW).toFixed(1)}px,0,0)`);
+      const rv = Math.round(t/TR_DUR*1000);
+      if (document.activeElement !== trRange && +trRange.value !== rv) trRange.value = rv;
     };
     wipe.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; trHover = true; tr.pause(); });
     wipe.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || e.buttons) { if (!trHover) { trHover = true; tr.pause(); } const r = wipe.getBoundingClientRect(); trSeek(clamp((e.clientX - r.left)/r.width, 0, 1)*TR_DUR); } });
@@ -524,6 +559,8 @@
     BA.forEach(([s0,s1,s2]) => { [[s0,s1,''],[s1,s2,' a']].forEach(([x,y,c]) => { const el = document.createElement('span'); el.className = 'seg' + c; el.style.left = (x/BA_DUR*100) + '%'; el.style.width = `calc(${((y-x)/BA_DUR*100).toFixed(3)}% - 2px)`; baTl.insertBefore(el, baHead); }); });
     let baHover = false, baWanted = null, baSeeking = false, baSeekAt = 0, baLastKey = '';
     const baSeek = t => { baWanted = clamp(t, 0, BA_DUR - .04); };
+    let baW = baTl.clientWidth;
+    new ResizeObserver(() => { baW = baTl.clientWidth; }).observe(baTl);
     baTick = () => {
       if (baSeeking && performance.now() - baSeekAt > 300) baSeeking = false;
       if (baWanted !== null && !baSeeking && ba.readyState >= 1) { baSeeking = true; baSeekAt = performance.now(); ba.currentTime = baWanted; baWanted = null; }
@@ -532,8 +569,9 @@
       BA.forEach(([s0,s1],i) => { if (t >= s0 - .001) { ci = i; after = t >= s1; } });
       const key = ci + (after ? 'a' : 'b');
       if (key !== baLastKey) { baLastKey = key; baState.textContent = after ? lng('Après', 'After') : lng('Avant', 'Before'); chBtns.forEach((b,i) => { b.setAttribute('aria-current', String(i === ci)); b.querySelector('.st').textContent = i === ci ? (after ? lng('Après', 'After') : lng('Avant', 'Before')) : ''; }); }
-      baHead.style.transform = `translate3d(${(t/BA_DUR*baTl.clientWidth).toFixed(1)}px,0,0)`;
-      if (document.activeElement !== baRange) baRange.value = Math.round(t/BA_DUR*1000);
+      setS(baHead, 'transform', `translate3d(${(t/BA_DUR*baW).toFixed(1)}px,0,0)`);
+      const rv = Math.round(t/BA_DUR*1000);
+      if (document.activeElement !== baRange && +baRange.value !== rv) baRange.value = rv;
     };
     ba.addEventListener('seeked', () => { baSeeking = false; });
     const fromX = (e, el) => { const r = el.getBoundingClientRect(); return clamp((e.clientX - r.left)/r.width, 0, 1); };
@@ -567,35 +605,41 @@
         works.style.setProperty('--ih', clamp(vh*.56, 240, 640) + 'px');
         stepPx = Math.round(window.innerHeight*.62);
         works.style.setProperty('--h-total', (window.innerHeight + stepPx*(items.length-1)) + 'px');
-        track.style.transform = 'none';
+        setS(track, 'transform', 'none');
         centers = items.map(el => el.offsetLeft + el.offsetWidth/2);
         pitch = (centers[centers.length-1] - centers[0]) / (items.length-1) || 1;
       } else {
-        works.style.removeProperty('--h-total'); track.style.transform = '';
-        items.forEach(el => { const m = el.querySelector('.work-media'); m.style.transform = ''; el.style.opacity = ''; });
+        works.style.removeProperty('--h-total'); setS(track, 'transform', '');
+        items.forEach(el => { const m = el.querySelector('.work-media'); m.style.transform = ''; el.style.opacity = ''; fx.delete(el); });
       }
       applyWorks(true);
     };
     const targetP = () => clamp(-(works.getBoundingClientRect().top - bandH()) / stepPx, 0, items.length-1);
+    // mesures de la bobine prises au début de l'image (voir la boucle)
+    const wMedia = items.map(el => el.querySelector('.work-media'));
+    let mTop = null, mBest = -1;
+    const bestMid = () => { const mid = F.vh/2; let best = 0, bd = 1e9; wMedia.forEach((m,i) => { const r = m.getBoundingClientRect(); const d = Math.abs((r.top + r.height/2) - mid); if (d < bd) { bd = d; best = i; } }); return best; };
+    measureWorks = () => { if (horiz) mTop = works.getBoundingClientRect().top; else mBest = bestMid(); };
     const centerAt = p => { const i = Math.floor(p), j = Math.min(i+1, centers.length-1); return lerp(centers[i], centers[j], p - i); };
     const fx = new WeakMap();
     const setFx = (el, o, s) => { const key = `${o.toFixed(2)}|${s.toFixed(3)}`; if (fx.get(el) === key) return; fx.set(el, key); el.style.opacity = o > .995 ? '' : o.toFixed(2); el.querySelector('.work-media').style.transform = s > .999 ? '' : `scale(${s.toFixed(3)})`; };
     applyWorks = snap => {
       if (!centers.length && horiz) return;
       if (horiz) {
-        const tp = targetP();
+        const top = (!snap && mTop !== null) ? mTop : works.getBoundingClientRect().top; mTop = null;
+        const tp = clamp(-(top - bandH()) / stepPx, 0, items.length-1);
         pPrev = pShown;
         pShown = (snap || !motion) ? tp : lerp(pShown, tp, .14);
         if (Math.abs(pShown - tp) < .0005) pShown = tp;
         wVel = lerp(wVel, pShown - pPrev, .3);
-        const x = window.innerWidth/2 - centerAt(pShown);
+        if (Math.abs(wVel) < 1e-5) wVel = 0;
+        const x = (snap ? window.innerWidth : F.vw)/2 - centerAt(pShown);
         const sk = motion ? clamp(-wVel*60, -6, 6) : 0, sy = motion ? 1 - Math.min(Math.abs(wVel)*1.2, .06) : 1;
-        track.style.transform = `translate3d(${x.toFixed(1)}px,0,0) skewX(${sk.toFixed(2)}deg) scaleY(${sy.toFixed(3)})`;
+        setS(track, 'transform', `translate3d(${x.toFixed(1)}px,0,0) skewX(${sk.toFixed(2)}deg) scaleY(${sy.toFixed(3)})`);
         if (player.ctx !== 'works') items.forEach((el,i) => { const d = Math.min(Math.abs(centers[i] - centerAt(pShown)) / pitch, 1); setFx(el, 1 - d*.62, 1 - d*.06); });
         setActive(Math.round(pShown));
       } else {
-        const mid = window.innerHeight/2; let best = 0, bd = 1e9;
-        items.forEach((el,i) => { const r = el.querySelector('.work-media').getBoundingClientRect(); const d = Math.abs((r.top + r.height/2) - mid); if (d < bd) { bd = d; best = i; } });
+        const best = (!snap && mBest >= 0) ? mBest : bestMid(); mBest = -1;
         setActive(best);
       }
     };
@@ -627,6 +671,9 @@
       if (!v.getAttribute('src')) v.src = v.dataset.src;
       let slot = $('#pslot-works');
       if (horiz) {
+        // la bobine glissait encore vers le film suivant : le lecteur s'ouvrait puis se refermait aussitôt.
+        // On l'arrête sur le film demandé (la page se cale sur sa position), le film reste ouvert.
+        if (Math.round(targetP()) !== i) window.scrollTo({ top: works.getBoundingClientRect().top + window.scrollY - bandH() + i*stepPx, behavior: 'auto' });
         works.classList.add('open'); el.classList.add('open');
         const m = el.querySelector('.work-media'), r = el.getBoundingClientRect();
         const avail = window.innerHeight - bandH() - 230, s = clamp(Math.min(avail / r.height, window.innerWidth*.9 / r.width), 1, 1.6);
@@ -707,12 +754,13 @@
     hidePeek = () => { pk.on = false; peek.classList.remove('on'); peekV.pause(); };
     $$('[data-peek],[data-peek-imgs]').forEach(el => { el.addEventListener('pointerenter', e => showPeek(el, e)); el.addEventListener('pointerleave', hidePeek); });
     window.addEventListener('pointermove', e => { pk.tx = e.clientX; pk.ty = e.clientY; }, {passive:true});
+    measurePeek = () => { if (pk.on) { pk.w = peek.offsetWidth; pk.h = peek.offsetHeight; } };
     drawPeek = now => {
       if (!pk.on) return;
       pk.x = lerp(pk.x, pk.tx, motion ? .16 : 1); pk.y = lerp(pk.y, pk.ty, motion ? .16 : 1);
-      const w = peek.offsetWidth, h = peek.offsetHeight;
-      const x = pk.x + 28 + w > window.innerWidth ? pk.x - 28 - w : pk.x + 28;
-      peek.style.transform = `translate3d(${x.toFixed(1)}px,${(pk.y - h/2).toFixed(1)}px,0)`;
+      const w = pk.w || 0, h = pk.h || 0;
+      const x = pk.x + 28 + w > F.vw ? pk.x - 28 - w : pk.x + 28;
+      setS(peek, 'transform', `translate3d(${x.toFixed(1)}px,${(pk.y - h/2).toFixed(1)}px,0)`);
       if (pk.imgs && now - pk.t > 420) { pk.t = now; pk.k = (pk.k + 1) % pk.imgs.length; peekI.src = pk.imgs[pk.k]; }
     };
   }
@@ -784,29 +832,41 @@
   const credits = $('#generique');
   if (credits) {
     const crWin = $('#cr-win'), crList = $('#cr-list'), crNames = $$('#cr-list .name');
-    let crOn = false, crLast = '';
+    let crOn = false, crLast = '', crRect = null;
+    // positions des noms dans la liste : relevées à la mise en page (le défilement ne les change pas)
+    const crG = { total: 0, winH: 0, cy: [], ok: false };
+    const crGeom = () => {
+      if (!credits.getClientRects().length) { crG.ok = false; return; }
+      crG.total = credits.offsetHeight; crG.winH = crWin.clientHeight;
+      crG.cy = crNames.map(n => { const li = n.parentElement; return li.offsetTop + li.offsetHeight/2; });
+      crG.ok = true;
+    };
+    const crRO = new ResizeObserver(() => { crGeom(); crLast = ''; }); crRO.observe(crList); crRO.observe(crWin);
     layoutCredits = () => {
       crOn = !reduce;
       credits.classList.toggle('roll', crOn);
-      if (!crOn) { crList.style.transform = ''; crNames.forEach(n => n.style.removeProperty('--o')); return; }
+      if (!crOn) { setS(crList, 'transform', ''); crNames.forEach(n => { n.style.removeProperty('--o'); clrS(n, '--o'); }); return; }
       if (!credits.getClientRects().length) return;
       const listH = crList.offsetHeight;
       credits.style.setProperty('--cr-h', Math.round(window.innerHeight + listH * 1.15) + 'px');
+      crGeom();
       drawCredits(true);
     };
+    measureCredits = () => { crRect = (crOn && isNear(credits)) ? credits.getBoundingClientRect() : null; };
     drawCredits = force => {
       if (!crOn || (!force && !isNear(credits))) return;
-      const r = credits.getBoundingClientRect(); const vh = window.innerHeight;
+      const r = (!force && crRect) ? crRect : credits.getBoundingClientRect(); crRect = null;
+      const vh = force ? window.innerHeight : F.vh;
       if (!force && (r.bottom < 0 || r.top > vh)) return;
-      const total = credits.offsetHeight - (vh - bandH());
+      if (!crG.ok) crGeom();
+      if (!crG.ok) return;
+      const total = crG.total - (vh - bandH());
       const p = clamp((bandH() - r.top) / Math.max(1,total), 0, 1);
-      const winH = crWin.clientHeight;
-      const first = crNames[0].parentElement, last = crNames[crNames.length-1].parentElement;
-      const c0 = first.offsetTop + first.offsetHeight/2, c1 = last.offsetTop + last.offsetHeight/2;
-      const y = winH/2 - lerp(c0, c1, p);
+      const winH = crG.winH, cy = crG.cy;
+      const y = winH/2 - lerp(cy[0], cy[cy.length-1], p);
       const key = y.toFixed(1); if (key === crLast && !force) return; crLast = key;
-      crList.style.transform = `translate3d(0,${key}px,0)`;
-      crNames.forEach(n => { const li = n.parentElement; const cy = li.offsetTop + li.offsetHeight/2 + y; const d = Math.abs(cy - winH/2) / (winH/2); n.style.setProperty('--o', clamp(1 - d*.85, .12, 1).toFixed(2)); });
+      setS(crList, 'transform', `translate3d(0,${key}px,0)`);
+      crNames.forEach((n,i) => { const d = Math.abs(cy[i] + y - winH/2) / (winH/2); setS(n, '--o', clamp(1 - d*.85, .12, 1).toFixed(2)); });
     };
     $$('#cr-list button.name').forEach(b => b.addEventListener('click', () => { hidePeek(); const i = items.findIndex(el => el.dataset.id === b.dataset.open); if (i < 0 || !scrollToItem) return; scrollToItem(i, () => openWork(i)); }));
     nearIO.observe(credits);
@@ -957,19 +1017,21 @@
   if (fine.matches) {
     const sb = document.createElement('div'); sb.className = 'sbar'; sb.setAttribute('aria-hidden', 'true');
     const th = document.createElement('i'); sb.appendChild(th); document.body.appendChild(sb);
-    let drag = null, sbRaf = 0;
-    const sbDraw = () => {
-      sbRaf = 0;
-      const vh = window.innerHeight, dh = document.documentElement.scrollHeight, max = dh - vh;
-      if (max < 2) { sb.hidden = true; return; }
-      sb.hidden = false;
-      const h = Math.max(40, Math.round(vh * vh / dh)), y = Math.round(window.scrollY / max * (vh - h));
-      th.style.height = h + 'px'; th.style.transform = `translate3d(0,${y}px,0)`;
+    let drag = null, sbDirty = true;
+    // dessinée dans la boucle d'animation, avec les mesures du début de l'image (live : lecture directe, hors boucle)
+    const sbDraw = live => {
+      sbDirty = false;
+      const vh = live ? window.innerHeight : F.vh, dh = live ? document.documentElement.scrollHeight : F.docH, sy = live ? window.scrollY : F.sy, max = dh - vh;
+      if (max < 2) { if (!sb.hidden) sb.hidden = true; return; }
+      if (sb.hidden) sb.hidden = false;
+      const h = Math.max(40, Math.round(vh * vh / dh)), y = Math.round(sy / max * (vh - h));
+      setS(th, 'height', h + 'px'); setS(th, 'transform', `translate3d(0,${y}px,0)`);
     };
-    const sbQueue = () => { if (!sbRaf) sbRaf = requestAnimationFrame(sbDraw); };
+    const sbQueue = () => { sbDirty = true; };
     window.addEventListener('scroll', sbQueue, {passive:true});
     window.addEventListener('resize', sbQueue);
     new ResizeObserver(sbQueue).observe(document.body);
+    sbTick = () => { if (sbDirty) sbDraw(false); };
     // on peut aussi attraper la poignée et la faire glisser
     th.addEventListener('pointerdown', e => { e.preventDefault(); th.setPointerCapture(e.pointerId); drag = { y: e.clientY, s: window.scrollY }; sb.classList.add('drag'); });
     th.addEventListener('pointermove', e => {
@@ -979,19 +1041,21 @@
     });
     const sbEnd = () => { drag = null; sb.classList.remove('drag'); };
     th.addEventListener('pointerup', sbEnd); th.addEventListener('pointercancel', sbEnd);
-    sbDraw();
+    sbDraw(true);
   }
 
   /* ---------- Grands titres : une poussière discrète se détache des lettres sous le curseur ---------- */
   const hovC = document.createElement('canvas'); hovC.className = 'hov-dust'; hovC.setAttribute('aria-hidden','true'); document.body.appendChild(hovC);
   const hovX = hovC.getContext('2d'), hovP = []; let hovDirty = false;
+  // masqué tant qu'aucune poussière ne vole (sur téléphone, il ne sert jamais) : une couche plein écran de moins à composer
+  setS(hovC, 'visibility', 'hidden');
   const hovEls = $$('.dhov');
   // relevé des pixels des lettres, caractère par caractère (gère les lignes, les lettres animées et la couleur de chaque ligne)
   function sampleGlyphs(el){
     const er = el.getBoundingClientRect(), pts = [];
     const oc = document.createElement('canvas'); oc.width = Math.ceil(er.width); oc.height = Math.ceil(er.height);
     if (!oc.width || !oc.height) return pts;
-    const ox = oc.getContext('2d'), rg = document.createRange(), cols = [];
+    const ox = ctxRead(oc), rg = document.createRange(), cols = [];
     const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     let n;
     while ((n = tw.nextNode())) {
@@ -1035,10 +1099,11 @@
   });
   window.addEventListener('resize', () => hovEls.forEach(el => { el._g = null; }));
   function drawHoverDust(){
-    if (!hovP.length) { if (hovDirty) { hovX.clearRect(0,0,hovC.width,hovC.height); hovDirty = false; } return; }
-    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = Math.round(innerWidth*dpr), H = Math.round(innerHeight*dpr);
+    if (!hovP.length) { if (hovDirty) { hovX.clearRect(0,0,hovC.width,hovC.height); hovDirty = false; setS(hovC, 'visibility', 'hidden'); } return; }
+    setS(hovC, 'visibility', 'visible');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = Math.round(F.vw*dpr), H = Math.round(F.vh*dpr);
     if (hovC.width !== W || hovC.height !== H) { hovC.width = W; hovC.height = H; }
-    hovX.setTransform(1,0,0,1,0,0); hovX.clearRect(0,0,W,H); hovX.setTransform(dpr,0,0,dpr,-scrollX*dpr,-scrollY*dpr);
+    hovX.setTransform(1,0,0,1,0,0); hovX.clearRect(0,0,W,H); hovX.setTransform(dpr,0,0,dpr,-F.sx*dpr,-F.sy*dpr);
     for (let i = hovP.length - 1; i >= 0; i--) {
       const p = hovP[i]; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.vy *= .985; p.life -= p.dec;
       if (p.life <= 0) { hovP.splice(i,1); continue; }
@@ -1051,19 +1116,19 @@
   const dust = $('#dust');
   if (dust) {
     dc = $('#dust-c'); const dctx = dc.getContext('2d');
-    let dustVis = false, dustIn = false;
+    let dustVis = false, dustIn = false, dustK = 1, dustW = 0, dustH = 0;
     const dm = { x:-9999, y:-9999, on:false };
     const dustWait = []; let dustBuilding = false;
     const buildDust = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = dust.clientWidth, h = dust.clientHeight;
+      const w = dust.clientWidth, h = dust.clientHeight; dustW = w; dustH = h;
       if (!w || !h) return;
       dustBuilding = true;
       dc.width = Math.round(w*dpr); dc.height = Math.round(h*dpr);
       const img = new Image();
       img.onload = () => {
         const oc = document.createElement('canvas'); oc.width = dc.width; oc.height = dc.height;
-        const ox = oc.getContext('2d');
+        const ox = ctxRead(oc);
         const sw = Math.min(dc.width, dc.height*2.7633), sh = sw/2.7633;
         ox.drawImage(img, (dc.width - sw)/2, (dc.height - sh)/2, sw, sh);
         let data; try { data = ox.getImageData(0, 0, oc.width, oc.height).data; } catch(e) { return; }
@@ -1072,8 +1137,12 @@
         for (let y = 0; y < oc.height; y += step) for (let x = 0; x < oc.width; x += step) {
           const jx = x + (Math.random()-.5)*step*.6, jy = y + (Math.random()-.5)*step*.6;
           const a = data[((Math.round(jy)|0)*oc.width + (Math.round(jx)|0))*4 + 3];
-          if (a > 110) parts.push({ hx:jx, hy:jy, x: dustIn ? jx : Math.random()*oc.width, y: dustIn ? jy : jy + (Math.random()-.5)*oc.height*.9, vx:0, vy:0, s:(.7 + Math.random()*.8)*dpr, a:.45 + Math.random()*.55 });
+          if (a > 110) parts.push({ hx:jx, hy:jy, x: dustIn ? jx : Math.random()*oc.width, y: dustIn ? jy : jy + (Math.random()-.5)*oc.height*.9, vx:0, vy:0, s:(.7 + Math.random()*.8)*dpr, a:Math.round((.45 + Math.random()*.55)*100)/100 });
         }
+        // grains rangés par opacité : le dessin ne change d'opacité qu'une cinquantaine de fois par image au lieu d'une fois par grain
+        // (même couleur pour tous les grains : l'ordre de dessin ne change pas le résultat)
+        parts.sort((p, q) => p.a - q.a);
+        dustK = dc.width / Math.max(1, w);
         dustBuilt = true; dustAwake = 240; dustBuilding = false;
         dustWait.splice(0).forEach(f => f());
       };
@@ -1088,11 +1157,11 @@
       if (!dustIn) { dustIn = true; dustAwake = 260; }
       if (dustAwake <= 0 && !dm.on) return;
       dustAwake--;
-      const R = 90 * (dc.width / Math.max(1, dust.clientWidth)), R2 = R*R;
+      const R = 90 * dustK, R2 = R*R;
       const still = !motion;
       dctx.clearRect(0, 0, dc.width, dc.height);
       dctx.fillStyle = fgCol;
-      let moving = 0;
+      let moving = 0, la = -1;
       for (let i = 0; i < parts.length; i++) {
         const p = parts[i];
         if (still) { p.x = p.hx; p.y = p.hy; }
@@ -1104,13 +1173,14 @@
           p.x += p.vx; p.y += p.vy;
           if (Math.abs(p.vx) + Math.abs(p.vy) > .05) moving++;
         }
-        dctx.globalAlpha = p.a;
+        if (p.a !== la) { la = p.a; dctx.globalAlpha = la; }
         dctx.fillRect(p.x, p.y, p.s, p.s);
       }
       dctx.globalAlpha = 1;
       if (moving) dustAwake = Math.max(dustAwake, 20);
     };
-    window.addEventListener('resize', () => { if (dustBuilt) { dustBuilt = false; dustIn = true; if (dustVis) buildDust(); } });
+    // reconstruite seulement si sa taille change (sur téléphone, la barre d'adresse qui se replie déclenchait une reconstruction en plein défilement)
+    window.addEventListener('resize', () => { if (dustBuilt && (dust.clientWidth !== dustW || dust.clientHeight !== dustH)) { dustBuilt = false; dustIn = true; if (dustVis) buildDust(); } });
     // construit l'étoile même hors de l'écran quand un autre bloc en a besoin (la phrase de Contact en sort à l'arrivée)
     ensureDust = cb => { if (dustBuilt) { cb(); return; } dustWait.push(cb); if (!dustBuilding) buildDust(); };
   }
@@ -1133,32 +1203,44 @@
   const pm = { x:0, y:0, on:false }, par = { x:0, y:0 };
   window.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; pm.x = e.clientX; pm.y = e.clientY; pm.on = true; }, {passive:true});
   document.documentElement.addEventListener('mouseleave', () => { pm.on = false; });
-  let railLast = '';
-  function drawScrollFx(){
-    const vh = window.innerHeight;
-    let eased = false;
-    stillSets.forEach(({box, phs, figs, lead}) => {
-      if (!isNear(box)) return;
-      const sb = box.getBoundingClientRect();
+  let railLast = '', railRect = null, railSW = rail ? rail.scrollWidth : 0;
+  if (rail) new ResizeObserver(() => { railSW = rail.scrollWidth; railLast = ''; }).observe(rail);
+  // lectures (début d'image) : positions des stills proches de l'écran et du bandeau
+  function measureScrollFx(){
+    const vh = F.vh;
+    stillSets.forEach(s => {
+      s.m = null;
+      if (!isNear(s.box)) return;
+      const sb = s.box.getBoundingClientRect();
       if (sb.bottom < -50 || sb.top > vh + 50) return;
+      s.m = s.phs.map(ph => ph.getBoundingClientRect());
+    });
+    railRect = railBox && isNear(railBox) ? railBox.getBoundingClientRect() : null;
+  }
+  // écritures
+  function drawScrollFx(){
+    const vh = F.vh;
+    let eased = false;
+    stillSets.forEach(({m, phs, figs, lead}) => {
+      if (!m) return;
       if (!eased) {
         eased = true;
-        const tx = motion && pm.on ? clamp((pm.x - innerWidth/2) / (innerWidth/2), -1, 1) : 0, ty = motion && pm.on ? clamp((pm.y - vh/2) / (vh/2), -1, 1) : 0;
+        const tx = motion && pm.on ? clamp((pm.x - F.vw/2) / (F.vw/2), -1, 1) : 0, ty = motion && pm.on ? clamp((pm.y - vh/2) / (vh/2), -1, 1) : 0;
         par.x += (tx - par.x) * .06; par.y += (ty - par.y) * .06;
       }
       phs.forEach((ph, i) => {
-        const r = ph.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
+        const r = m[i]; if (r.bottom < -50 || r.top > vh + 50) return;
         const d = motion ? ((r.top + r.height/2) - vh/2) / vh : 0, k = lead ? .6 : DEPTH[i % DEPTH.length];
-        ph.style.setProperty('--py', (d*(lead ? -5 : -7)).toFixed(2) + '%');
-        ph.style.setProperty('--mx', (-par.x*1.8*k).toFixed(2) + '%');
-        ph.style.setProperty('--my', (-par.y*.8*k).toFixed(2) + '%');
-        if (figs[i] && !lead) figs[i].style.transform = `translate3d(${(par.x*10*k).toFixed(1)}px,${(par.y*8*k).toFixed(1)}px,0)`;
+        setS(ph, '--py', (d*(lead ? -5 : -7)).toFixed(2) + '%');
+        setS(ph, '--mx', (-par.x*1.8*k).toFixed(2) + '%');
+        setS(ph, '--my', (-par.y*.8*k).toFixed(2) + '%');
+        if (figs[i] && !lead) setS(figs[i], 'transform', `translate3d(${(par.x*10*k).toFixed(1)}px,${(par.y*8*k).toFixed(1)}px,0)`);
       });
     });
-    const rr = railBox && isNear(railBox) ? railBox.getBoundingClientRect() : null;
+    const rr = railRect; railRect = null;
     if (rr && rr.bottom > 0 && rr.top < vh) {
       const p = clamp((vh - rr.top) / (vh + rr.height), 0, 1);
-      const x = -(p * (rail.scrollWidth - window.innerWidth*.6)).toFixed(1);
+      const x = -(p * (railSW - F.vw*.6)).toFixed(1);
       const key = x + '';
       if (key !== railLast) { railLast = key; rail.style.transform = `translate3d(${x}px,0,0)`; railStars.forEach((st,i) => st.style.transform = `rotate(${((p*540) + i*30).toFixed(1)}deg)`); }
     }
@@ -1187,14 +1269,21 @@
     nearIO.observe(svcList);
     showSvc(1);
   }
-  function drawSvc(){
+  // lecture (début d'image) : le métier le plus proche du centre de l'écran ; écriture ensuite
+  let svcBest = -1;
+  function measureSvc(){
+    svcBest = -1;
     if (!svcPv || !svcList || svcHover >= 0 || !isNear(svcList) || !svcPv.offsetParent) return;
-    if (!svcWarm) { svcWarm = true; svcRows.forEach(li => { const im = new Image(); im.src = li.dataset.pv; }); }
-    const mid = window.innerHeight * .5, lr = svcList.getBoundingClientRect();
-    if (lr.bottom < mid * .5 || lr.top > mid * 1.5) return;
+    const mid = F.vh * .5, lr = svcList.getBoundingClientRect();
+    if (lr.bottom < mid * .5 || lr.top > mid * 1.5) { svcBest = -2; return; }
     let best = -1, bd = 1e9;
     svcRows.forEach((li, k) => { const r = li.getBoundingClientRect(), d = Math.abs(r.top + r.height/2 - mid); if (d < bd) { bd = d; best = k; } });
-    showSvc(best);
+    svcBest = best;
+  }
+  function drawSvc(){
+    if (svcBest === -1) return;
+    if (!svcWarm) { svcWarm = true; svcRows.forEach(li => { const im = new Image(); im.src = li.dataset.pv; }); }
+    if (svcBest >= 0) showSvc(svcBest);
   }
 
   /* ---------- Vidéos des portes de l'accueil : elles jouent quand elles sont à l'écran ---------- */
@@ -1219,12 +1308,15 @@
   const VW_DUR = 3600, viewers = [];
   $$('[data-vw]').forEach(vw => {
     const figs = $$('.vw-f', vw), thumbs = $$('.vw-t', vw), stage = vw.querySelector('.vw-stage'), capEl = vw.querySelector('.vw-cap'), numEl = vw.querySelector('.vw-n');
-    const n = figs.length, st = { cur: -1, t0: 0, vis: false, hover: false, hold: 0 };
+    const n = figs.length, st = { cur: -1, t0: 0, vis: false, hover: false, hold: 0, wait: false, waitT: 0 };
+    figs.forEach(f => { const v = f.querySelector('video'); if (v) v.addEventListener('playing', () => { if (st.wait && figs[st.cur] === f) { st.wait = false; st.t0 = performance.now(); } }); });
     const load = i => { const m = figs[i].querySelector('img,video'); if (m && m.dataset.src) { if (m.dataset.srcset) m.srcset = m.dataset.srcset; m.src = m.dataset.src; m.removeAttribute('data-src'); m.removeAttribute('data-srcset'); } };
     const show = (i, user) => {
       i = (i + n) % n; if (i === st.cur) return;
       load(i); load((i + 1) % n);
-      figs.forEach((f, k) => { f.classList.toggle('on', k === i); const v = f.querySelector('video'); if (v) { if (k === i && motion) { if (f.dataset.dur) try { v.currentTime = 0; } catch(e) {} playV(v); } else v.pause(); } });
+      figs.forEach((f, k) => { f.classList.toggle('on', k === i); const v = f.querySelector('video'); if (v) { if (k === i && motion) { if (f.dataset.dur) try { v.currentTime = 0; } catch(e) {} if (st.vis) playV(v); } else v.pause(); } });
+      // un film pas encore chargé : le minuteur attend qu'il commence vraiment (au plus 4 s), sinon il était passé avant d'avoir été vu
+      const cv = figs[i].querySelector('video'); st.wait = !!(cv && figs[i].dataset.dur && cv.readyState < 3); st.waitT = 0;
       thumbs.forEach((t, k) => { t.classList.toggle('on', k === i); t.setAttribute('aria-current', String(k === i)); if (k !== i) t.style.removeProperty('--t'); });
       if (capEl) capEl.textContent = figs[i].dataset.cap || '';
       if (numEl) numEl.textContent = `${pad(i + 1)} / ${pad(n)}`;
@@ -1242,7 +1334,9 @@
     stage.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.hover = true; });
     stage.addEventListener('pointerleave', () => { st.hover = false; });
     vw.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show(st.cur + (e.key === 'ArrowRight' ? 1 : -1), true); const t = thumbs[st.cur]; if (t && vw.contains(document.activeElement)) t.focus({preventScroll:true}); } });
-    new IntersectionObserver(es => es.forEach(en => { st.vis = en.isIntersecting && en.intersectionRatio > .45; if (!st.vis) st.t0 = performance.now(); figs.forEach((f, k) => { const v = f.querySelector('video'); if (v) { if (st.vis && k === st.cur && motion) playV(v); else v.pause(); } }); }), {threshold:[0,.45,.7]}).observe(stage);
+    new IntersectionObserver(es => es.forEach(en => { const was = st.vis; st.vis = en.isIntersecting && en.intersectionRatio > .45; if (!st.vis) { st.t0 = performance.now(); st.waitT = 0; }
+      // de retour à l'écran : l'image reprend là où elle en était (avant, après un détour, elle était passée aussitôt)
+      else if (!was && st.cur >= 0) st.t0 = performance.now() - (parseFloat(thumbs[st.cur].style.getPropertyValue('--t')) || 0) * (parseFloat(figs[st.cur].dataset.dur) || VW_DUR); figs.forEach((f, k) => { const v = f.querySelector('video'); if (v) { if (st.vis && k === st.cur && motion) playV(v); else v.pause(); } }); }), {threshold:[0,.45,.7]}).observe(stage);
     show(0);
     viewers.push(now => {
       if (!st.vis) return;
@@ -1250,6 +1344,7 @@
       // une vidéo reste à l'écran le temps de sa durée (data-dur, en ms), une image 3,6 s
       const dur = parseFloat(figs[st.cur].dataset.dur) || VW_DUR;
       if (!motion || st.hover || now < st.hold) { st.t0 = now - (parseFloat(t.style.getPropertyValue('--t')) || 0) * dur; return; }
+      if (st.wait) { if (!st.waitT) st.waitT = now; if (now - st.waitT < 4000) { st.t0 = now; return; } st.wait = false; }
       const k = (now - st.t0) / dur;
       if (k >= 1) { show(st.cur + 1); return; }
       t.style.setProperty('--t', k.toFixed(3));
@@ -1263,15 +1358,20 @@
     const cv = mt.querySelector('.mt-cv'), cx = cv.getContext('2d');
     const mtItems = $$('.mt-i', mt), names = mtItems.map(li => li.querySelector('.mt-n').textContent.trim());
     const nowPs = $$('.mt-now p', mt), cnt = mt.querySelector('.mt-cnt'), nM = names.length;
-    let PT = [], W = 0, H = 0, dpr = 1, lastKey = '', curM = -1, seed = 7;
+    let NP = 0, PX = [], PY = [], PAX = null, PAY = null, PR = null, PS = null, PAL = null, W = 0, H = 0, dpr = 1, lastKey = '', curM = -1, seed = 7;
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
     const ms = { x: -1e9, y: -1e9, on: false };
     const span = () => Math.max(1, mt.offsetHeight - (window.innerHeight - bandH()));
     // relevé des points de chaque nom (police du site), un nom long passe sur deux lignes
-    layoutMt = () => {
+    layoutMt = force => {
       if (!cv.clientWidth || !cv.clientHeight) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2); W = Math.round(cv.clientWidth * dpr); H = Math.round(cv.clientHeight * dpr); cv.width = W; cv.height = H;
-      const oc = document.createElement('canvas'); oc.width = W; oc.height = H; const ox = oc.getContext('2d');
+      // même taille qu'avant : rien à reconstruire (le relevé des 14 000 points prenait plus de 100 ms sur téléphone)
+      const nd = Math.min(window.devicePixelRatio || 1, 2), nW = Math.round(cv.clientWidth * nd), nH = Math.round(cv.clientHeight * nd);
+      // appel « polices prêtes » : inutile si les polices étaient déjà là au premier relevé
+      if (NP && nW === W && nH === H && nd === dpr && (force !== true || mtFonts)) return;
+      mtFonts = !document.fonts || document.fonts.status === 'loaded';
+      dpr = nd; W = nW; H = nH; cv.width = W; cv.height = H;
+      const oc = document.createElement('canvas'); oc.width = W; oc.height = H; const ox = ctxRead(oc);
       const step = Math.max(2, Math.round(2 * dpr)), family = getComputedStyle(cv).fontFamily || 'sans-serif';
       seed = 7;
       const words = names.map(name => {
@@ -1292,26 +1392,44 @@
       });
       if (words.some(w => !w.length)) return;
       const m = Math.min(14000, Math.max(...words.map(w => w.length / 2)));
-      PT = []; for (let k = 0; k < m; k++) { const ang = rnd() * Math.PI * 2; PT.push({ t: words.map(w => { const q = (k % (w.length / 2)) * 2; return [w[q], w[q + 1]]; }), ax: Math.cos(ang), ay: Math.sin(ang), r: .4 + rnd(), s: (1.1 + rnd() * .8) * dpr, al: .7 + rnd() * .3 }); }
+      // les mêmes points qu'avant, rangés dans des tableaux de nombres contigus (lecture bien plus rapide à chaque image)
+      // et triés par opacité (une trentaine de valeurs) : l'opacité du dessin change 30 fois par image au lieu de 14 000
+      const ax = [], ay = [], pr = [], ps = [], al = [];
+      for (let k = 0; k < m; k++) { const ang = rnd() * Math.PI * 2; ax.push(Math.cos(ang)); ay.push(Math.sin(ang)); pr.push(.4 + rnd()); ps.push((1.1 + rnd() * .8) * dpr); al.push(Math.round((.7 + rnd() * .3) * 100) / 100); }
+      const ord = ax.map((_, k) => k).sort((a, b) => al[a] - al[b]);
+      PX = words.map(() => new Float64Array(m)); PY = words.map(() => new Float64Array(m));
+      PAX = new Float64Array(m); PAY = new Float64Array(m); PR = new Float64Array(m); PS = new Float64Array(m); PAL = new Float64Array(m);
+      ord.forEach((k, o) => {
+        words.forEach((w, wi) => { const q = (k % (w.length / 2)) * 2; PX[wi][o] = w[q]; PY[wi][o] = w[q + 1]; });
+        PAX[o] = ax[k]; PAY[o] = ay[k]; PR[o] = pr[k]; PS[o] = ps[k]; PAL[o] = al[k];
+      });
+      NP = m;
+      mtH = mt.offsetHeight;
       lastKey = '';
     };
+    let mtH = mt.offsetHeight, mtRect = null, mtFonts = false;
+    new ResizeObserver(() => { mtH = mt.offsetHeight; lastKey = ''; }).observe(mt);
+    measureMt = () => { mtRect = (NP && isNear(mt)) ? mt.getBoundingClientRect() : null; };
     cv.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const r = cv.getBoundingClientRect(); ms.x = (e.clientX - r.left) * dpr; ms.y = (e.clientY - r.top) * dpr; ms.on = true; });
     cv.addEventListener('pointerleave', () => { ms.on = false; ms.x = ms.y = -1e9; });
     const smooth = t => t * t * (3 - 2 * t);
     drawMt = () => {
-      if (!PT.length || !isNear(mt)) return;
-      const r = mt.getBoundingClientRect(); if (r.bottom < 0 || r.top > window.innerHeight) return;
-      const f = clamp((bandH() - r.top) / span(), 0, 1) * (nM - 1);
+      const r = mtRect; mtRect = null;
+      if (!r || !NP) return;
+      if (r.bottom < 0 || r.top > F.vh) return;
+      const f = clamp((bandH() - r.top) / Math.max(1, mtH - (F.vh - bandH())), 0, 1) * (nM - 1);
       const key = f.toFixed(4) + (ms.on && motion ? `|${ms.x | 0},${ms.y | 0}` : '');
       if (key === lastKey) return; lastKey = key;
       const i = Math.min(nM - 2, Math.floor(f)), t = f - i, e = smooth(clamp((t - .28) / .44, 0, 1)), b = Math.sin(Math.PI * e);
       cx.clearRect(0, 0, W, H); cx.fillStyle = fgCol;
-      const R = 70 * dpr, spread = 70 * dpr, push = ms.on && motion;
-      for (let k = 0; k < PT.length; k++) {
-        const p = PT[k], a = p.t[i], c = p.t[i + 1];
-        let x = a[0] + (c[0] - a[0]) * e + p.ax * spread * p.r * b, y = a[1] + (c[1] - a[1]) * e + p.ay * spread * p.r * b * .6;
+      const R = 70 * dpr, spread = 70 * dpr, push = ms.on && motion, fade = 1 - b * .35;
+      const XA = PX[i], XC = PX[i + 1], YA = PY[i], YC = PY[i + 1], sb = spread * b;
+      let la = -1;
+      for (let k = 0; k < NP; k++) {
+        let x = XA[k] + (XC[k] - XA[k]) * e + PAX[k] * sb * PR[k], y = YA[k] + (YC[k] - YA[k]) * e + PAY[k] * sb * PR[k] * .6;
         if (push) { const dx = x - ms.x, dy = y - ms.y, d2 = dx * dx + dy * dy; if (d2 < R * R) { const d = Math.sqrt(d2) || 1, kk = (1 - d / R) * 28 * dpr; x += dx / d * kk; y += dy / d * kk; } }
-        cx.globalAlpha = p.al * (1 - b * .35); cx.fillRect(x, y, p.s, p.s);
+        if (PAL[k] !== la) { la = PAL[k]; cx.globalAlpha = la * fade; }
+        cx.fillRect(x, y, PS[k], PS[k]);
       }
       cx.globalAlpha = 1;
       const k = Math.round(f);
@@ -1392,7 +1510,7 @@
         tabs[j].focus(); tabs[j].click();
       });
     });
-    const fromHash = initial => { const h = decodeURIComponent(location.hash.slice(1)); if (!h) { showTab(0); return; } if (!routeTo(h, initial) && curTab < 0) showTab(0); };
+    const fromHash = initial => { const h = dec(location.hash.slice(1)); if (!h) { showTab(0); return; } if (!routeTo(h, initial) && curTab < 0) showTab(0); };
     window.addEventListener('popstate', () => fromHash(false));
     window.addEventListener('hashchange', () => fromHash(false));
     tabsInit = () => fromHash(true);
@@ -1401,7 +1519,7 @@
   document.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href^="#"]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
-    const id = decodeURIComponent(a.getAttribute('href').slice(1)); if (!id) return;
+    const id = dec(a.getAttribute('href').slice(1)); if (!id) return;
     if (id === 'top') { e.preventDefault(); glideTo(0); return; }
     if (routeTo && routeTo(id, false)) { e.preventDefault(); history.pushState(null, '', '#' + id); return; }
     const el = document.getElementById(id); if (!el) return;
@@ -1433,6 +1551,14 @@
   const tcEl = $('#tc'), prog = $('#prog'), band = $('#band');
   let tcLast = '', progLast = '', bandSolid = null, bandMoved = null;
   function frame(now){
+    // 1) lectures, avant toute écriture : la page est déjà calculée, ces mesures ne coûtent rien
+    snapF();
+    if (worksVisible && measureWorks) measureWorks();
+    if (measureCredits) measureCredits();
+    if (measureMt) measureMt();
+    if (measurePeek) measurePeek();
+    measureScrollFx(); measureSvc();
+    // 2) écritures
     drawCursor();
     if (heroVisible && heroFrame) heroFrame(now);
     if (worksVisible && applyWorks) applyWorks(false);
@@ -1449,36 +1575,44 @@
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
-    else if (heroVisible && heroFrame && window.scrollY < heroTop + heroStep*(N-1) + window.innerHeight*.3) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
+    else if (heroVisible && heroFrame && F.sy < heroTop + heroStep*(N-1) + F.vh*.3) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
     else if (oakVisible) { src = oak; fps = 24; }
     else if (baVisible) src = ba;
     else if (worksVisible && items[active]) src = items[active].querySelector('video');
     if (src && tcEl) { const s = tc(src.currentTime, fps); if (s !== tcLast) { tcLast = s; tcEl.textContent = s; } }
     if (oakVisible && oakTc) { const s2 = tc(oak.currentTime, 24); if (s2 !== oakTcLast) { oakTcLast = s2; oakTc.textContent = s2; } }
     if (player.ctx) {
-      const v = player.video; pcCur.textContent = tc(v.currentTime, P[player.id].fps);
-      if (!seeking && v.duration) { const val = Math.round(v.currentTime/v.duration*1000); seek.value = val; seek.style.setProperty('--p', (val/10)+'%'); }
+      const v = player.video, s3 = tc(v.currentTime, P[player.id].fps); if (pcCur.textContent !== s3) pcCur.textContent = s3;
+      if (!seeking && v.duration) { const val = Math.round(v.currentTime/v.duration*1000); if (+seek.value !== val) seek.value = val; setS(seek, '--p', (val/10)+'%'); }
     }
     // la bande s'assombrit sous le contenu : après l'accueil en images, ou dès qu'on quitte le haut d'une autre page
-    const solid = heroFrame ? window.scrollY > heroTop + heroStep*(N-1) + window.innerHeight*.6 : window.scrollY > 8;
+    const solid = heroFrame ? F.sy > heroTop + heroStep*(N-1) + F.vh*.6 : F.sy > 8;
     if (band && solid !== bandSolid) { bandSolid = solid; band.classList.toggle('solid', solid); }
-    const moved = window.scrollY > 24;
+    const moved = F.sy > 24;
     if (band && moved !== bandMoved) { bandMoved = moved; band.classList.toggle('moved', moved); }
     if (prog) {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const pr = (window.scrollY / Math.max(1,max) * 180).toFixed(1);
+      const max = F.docH - F.vh;
+      const pr = (F.sy / Math.max(1,max) * 180).toFixed(1);
       if (pr !== progLast) { progLast = pr; prog.style.transform = `rotate(${pr}deg)`; }
     }
+    if (sbTick) sbTick();
     requestAnimationFrame(frame);
   }
 
-  function relayout(){ if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); if (layoutMt) layoutMt(); }
+  function relayout(force){ snapF(); readBand(); readDoc(); if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); if (layoutMt) layoutMt(force === true); }
   relayout();
   applyMotion();
   if (tabsInit) tabsInit();
-  let rz = 0;
-  window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(relayout); });
-  if (document.fonts) document.fonts.ready.then(relayout);
+  let rz = 0, lastW = window.innerWidth, lastH = window.innerHeight;
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth, h = window.innerHeight;
+    // téléphone : la barre d'adresse qui se replie en défilant ne change que la hauteur de quelques dizaines de pixels.
+    // On ne recalcule rien : avant, la hauteur du générique changeait (la page sautait sur iPhone) et les effets se reconstruisaient en plein geste.
+    if (!fine.matches && w === lastW && Math.abs(h - lastH) < 160) return;
+    lastW = w; lastH = h;
+    cancelAnimationFrame(rz); rz = requestAnimationFrame(relayout);
+  });
+  if (document.fonts) document.fonts.ready.then(() => relayout(true));
   if (layoutHero) window.addEventListener('load', layoutHero);
   requestAnimationFrame(frame);
 })();
