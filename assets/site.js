@@ -348,11 +348,23 @@
       oakV.addEventListener('error', () => { logoDone = true; });
       oakV.addEventListener('ended', () => { if (!oakLoopOwn()) return; oakV.currentTime = LOGO_END; playV(oakV); });
     }
+    // autres films avec un logo au début (data-logo = fin du logo, en secondes ; LOEWE) : le film repart du logo quand on arrive dessus,
+    // le titre attend que le logo soit parti, puis la boucle repart après le logo
+    const LG = slides.map((s,i) => i > 0 && s.dataset.logo ? { v: SV[i], end: parseFloat(s.dataset.logo) || 0, done: false, t0: performance.now() } : null);
+    const lgHold = i => { const L = LG[i]; return !!L && !L.done && motion && !L.v._blocked && !L.v.error && performance.now() - L.t0 < 8000; };
+    const lgOwn = L => !(player.ctx && player.video === L.v);
+    LG.forEach(L => {
+      if (!L) return;
+      L.v.loop = false;
+      L.v.addEventListener('timeupdate', () => { if (L.v.currentTime >= L.end + .05) L.done = true; });
+      L.v.addEventListener('error', () => { L.done = true; });
+      L.v.addEventListener('ended', () => { if (!lgOwn(L)) return; L.v.currentTime = L.end; playV(L.v); });
+    });
     setCurrent = i => {
       if (i === cur0 && caps[i].classList.contains('on')) return;
       if (introOn && i === 0 && !introCurOK) return;
       cur0 = i;
-      caps.forEach((c,k) => { c.classList.toggle('on', k === i && !(k === 0 && logoHold())); c.setAttribute('aria-hidden', String(k !== i)); c.toggleAttribute('inert', k !== i); });
+      caps.forEach((c,k) => { c.classList.toggle('on', k === i && !(k === 0 && logoHold()) && !lgHold(k)); c.setAttribute('aria-hidden', String(k !== i)); c.toggleAttribute('inert', k !== i); });
       slides.forEach((s,k) => s.classList.toggle('cur', k === i));
       $('#hcount').textContent = `${pad(i+1)} / ${pad(N)}`;
       ticks.forEach((t,k) => t.setAttribute('aria-current', String(k === i)));
@@ -478,6 +490,11 @@
       // boucle Oakley sans le logo
       if (oakV && oakLoopOwn() && oakV.duration && !oakV.paused && oakV.currentTime > oakV.duration - .09) oakV.currentTime = LOGO_END;
       if (cur0 === 0 && !introOn && caps[0].getAttribute('aria-hidden') === 'false' && !caps[0].classList.contains('on') && !logoHold()) caps[0].classList.add('on');
+      LG.forEach((L,i) => {
+        if (!L || !lgOwn(L)) return;
+        if (L.v.duration && !L.v.paused && L.v.currentTime > L.v.duration - .09) L.v.currentTime = L.end;
+        if (i === cur0 && caps[i].getAttribute('aria-hidden') === 'false' && !caps[i].classList.contains('on') && !lgHold(i)) caps[i].classList.add('on');
+      });
       const ci = clamp(Math.round(pos), 0, N-1);
       if (ci !== cur0 && !introOn) setCurrent(ci);
       tickI.forEach((ti,i) => { const f = i === 0 ? 1 : clamp(pos - (i-1), 0, 1); setS(ti, 'transform', `scaleX(${f.toFixed(3)})`); });
@@ -485,8 +502,10 @@
       SV.forEach((v,i) => {
         if (player.ctx === 'hero' && i === cur0) return;
         const vis = i === Math.floor(pos) || i === Math.ceil(pos);
-        const want = heroVisible && motion && vis;
-        if (want && v.paused) playV(v); else if (!want && !v.paused) v.pause();
+        const want = heroVisible && motion && vis, L = LG[i];
+        // film à logo sorti de l'écran : il reprendra au logo la prochaine fois
+        if (L && !vis && heroVisible && lgOwn(L) && (L.v.currentTime > 0 || L.done)) { if (!v.paused) v.pause(); try { v.currentTime = 0; } catch(e){} L.done = false; }
+        if (want && v.paused) { if (L && v.currentTime < L.end) L.t0 = performance.now(); playV(v); } else if (!want && !v.paused) v.pause();
       });
     };
     new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible) { if (player.ctx === 'hero') closePlayer(true); SV.forEach(v => { if (!v.paused) v.pause(); }); } }), {threshold:0}).observe(heroWrap);
