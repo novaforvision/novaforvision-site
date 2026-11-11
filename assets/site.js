@@ -75,6 +75,7 @@
   let parts = [], dc = null, dustBuilt = false, dustAwake = 0, ensureDust = null;
   let routeTo = null, tabsInit = null;
   let measureWorks = null, measurePeek = null, measureCredits = null, measureMt = null, sbTick = null;
+  let lbOpen = false, lbPop = null;
   // hauteur de la page : relue quand le contenu change de taille, plus à chaque image
   readDoc();
   { const docRO = new ResizeObserver(readDoc); docRO.observe(document.body); docRO.observe(root); }
@@ -1325,6 +1326,189 @@
   });
 
   /* ---------- Visionneuse de stills (projets) : défile seule à l'écran, vignettes, glissé sur téléphone ---------- */
+  /* ---------- Projets : image en grand, zoom et déplacement ----------
+     Un clic sur une image d'une visionneuse l'ouvre en plein écran.
+     Zoom : clic ou toucher (bascule), molette, pincement ; déplacement au glissé ; flèches, Échap ;
+     sur téléphone, glisser sur le côté change d'image, vers le bas ferme, et le bouton retour ferme aussi. */
+  const LB_MAX = 5;
+  let lbEl = null, lbView = null, lbImg = null, lbVid = null, lbCap = null, lbN = null, lbHint = null, lbX = null;
+  let lbItems = [], lbI = 0, lbOnClose = null, lbBack = null, lbPushed = false, lbIgnorePop = false;
+  const lbZ = { s: 1, tx: 0, ty: 0, bw: 0, bh: 0, ox: 0, oy: 0, W: 0, H: 0, nat: 0 };
+  // la meilleure version disponible d'une image : data-full, puis la plus grande du srcset, puis la source
+  const bestSrc = img => {
+    if (img.dataset.full) return img.dataset.full;
+    const set = img.getAttribute('srcset') || img.dataset.srcset || '';
+    let best = '', bw = 0;
+    set.split(',').forEach(c => { const m = c.trim().match(/^(\S+)\s+(\d+)w$/); if (m && +m[2] > bw) { bw = +m[2]; best = m[1]; } });
+    return best || img.dataset.src || img.getAttribute('src') || '';
+  };
+  const lbBuild = () => {
+    lbEl = document.createElement('div');
+    lbEl.className = 'lb'; lbEl.hidden = true;
+    lbEl.setAttribute('role', 'dialog'); lbEl.setAttribute('aria-modal', 'true');
+    lbEl.setAttribute('aria-label', lng('Image en grand', 'Full-size image'));
+    lbEl.innerHTML = `<div class="lb-top wrap"><span class="lb-cap"></span><span class="lb-n mono"></span><button class="lb-x" type="button">${lng('Fermer', 'Close')}</button></div>`
+      + `<div class="lb-view"><img class="lb-media" alt="" draggable="false"><video class="lb-media" muted loop playsinline preload="auto" hidden></video></div>`
+      + `<div class="lb-bot wrap"><button class="lb-prev" type="button">${lng('Précédente', 'Previous')}</button><span class="lb-hint mono"></span><button class="lb-next" type="button">${lng('Suivante', 'Next')}</button></div>`;
+    document.body.appendChild(lbEl);
+    lbView = lbEl.querySelector('.lb-view'); lbImg = lbEl.querySelector('img'); lbVid = lbEl.querySelector('video');
+    lbCap = lbEl.querySelector('.lb-cap'); lbN = lbEl.querySelector('.lb-n'); lbHint = lbEl.querySelector('.lb-hint'); lbX = lbEl.querySelector('.lb-x');
+    lbX.addEventListener('click', () => lbClose());
+    lbEl.querySelector('.lb-prev').addEventListener('click', () => lbGo(-1));
+    lbEl.querySelector('.lb-next').addEventListener('click', () => lbGo(1));
+    lbImg.addEventListener('load', () => { if (!lbImg.hidden) { lbZ.nat = lbImg.naturalWidth; lbFit(lbZ.s <= 1.001); } });
+    lbVid.addEventListener('loadedmetadata', () => { if (!lbVid.hidden) lbFit(true); });
+    // gestes : un ou deux doigts (ou la souris)
+    const pts = new Map(); let g = null;
+    const vxy = e => { const r = lbView.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    lbView.addEventListener('pointerdown', e => {
+      if (e.button > 0) return;
+      lbView.setPointerCapture(e.pointerId);
+      pts.set(e.pointerId, vxy(e));
+      lbEase(false);
+      if (pts.size === 1) { const [x, y] = pts.get(e.pointerId); g = { x0: x, y0: y, tx: lbZ.tx, ty: lbZ.ty, moved: false, pinch: false, t: performance.now() }; }
+      else if (pts.size === 2) { const [a, b] = [...pts.values()]; g = { pinch: true, d0: Math.hypot(a[0]-b[0], a[1]-b[1]) || 1, s0: lbZ.s, mx: (a[0]+b[0])/2, my: (a[1]+b[1])/2, tx: lbZ.tx, ty: lbZ.ty, moved: true }; }
+    });
+    lbView.addEventListener('pointermove', e => {
+      if (!pts.has(e.pointerId) || !g) return;
+      pts.set(e.pointerId, vxy(e));
+      if (g.pinch && pts.size >= 2) {
+        const [a, b] = [...pts.values()], d = Math.hypot(a[0]-b[0], a[1]-b[1]), mx = (a[0]+b[0])/2, my = (a[1]+b[1])/2;
+        // l'image suit les deux doigts : échelle autour du point de départ, puis déplacement du milieu
+        const s1 = clamp(g.s0 * d / g.d0, 1, LB_MAX), u = (g.mx - lbZ.ox - g.tx) / g.s0, v = (g.my - lbZ.oy - g.ty) / g.s0;
+        lbZ.s = s1; lbZ.tx = mx - lbZ.ox - u*s1; lbZ.ty = my - lbZ.oy - v*s1; lbClamp(); lbApply();
+        return;
+      }
+      const [x, y] = pts.get(e.pointerId), dx = x - g.x0, dy = y - g.y0;
+      if (!g.moved && Math.hypot(dx, dy) > 6) g.moved = true;
+      if (!g.moved) return;
+      if (lbZ.s > 1.001) { lbZ.tx = g.tx + dx; lbZ.ty = g.ty + dy; lbClamp(); lbApply(); }
+      else if (e.pointerType !== 'mouse') { lbZ.tx = dx * .9; lbZ.ty = Math.max(0, dy) * .9; lbApply(); }
+    });
+    const end = e => {
+      if (!pts.has(e.pointerId)) return;
+      const p = pts.get(e.pointerId); pts.delete(e.pointerId);
+      if (!g) return;
+      if (g.pinch) { if (pts.size === 0) { g = null; if (lbZ.s < 1.02) lbZoom(1); } else { const [x, y] = [...pts.values()][0]; g = { x0: x, y0: y, tx: lbZ.tx, ty: lbZ.ty, moved: true, pinch: false }; } return; }
+      const dx = p[0] - g.x0, dy = p[1] - g.y0, gg = g; g = null;
+      if (!gg.moved) { if (e.type === 'pointerup' && lbVid.hidden) lbToggle(p[0], p[1]); return; }
+      if (lbZ.s <= 1.001 && e.pointerType !== 'mouse') {
+        // sans zoom : glisser sur le côté change d'image, vers le bas ferme
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { lbGo(dx < 0 ? 1 : -1); return; }
+        if (dy > 90 && dy > Math.abs(dx)) { lbClose(); return; }
+        lbZoom(1);
+      }
+    };
+    lbView.addEventListener('pointerup', end); lbView.addEventListener('pointercancel', end);
+    lbView.addEventListener('wheel', e => {
+      e.preventDefault();
+      if (!lbVid.hidden) return;
+      const [x, y] = vxy(e), k = Math.exp(-e.deltaY * (e.ctrlKey ? .012 : .0025));
+      lbEase(false); lbZoomAt(lbZ.s * k, x, y);
+    }, {passive:false});
+    // la page derrière ne défile pas (iOS ignore parfois overflow:hidden)
+    lbEl.addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+    document.addEventListener('keydown', e => {
+      if (!lbOpen) return;
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); lbClose(); }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); lbGo(e.key === 'ArrowRight' ? 1 : -1); }
+      else if (e.key === '+' || e.key === '=') { e.preventDefault(); lbZoomAt(lbZ.s * 1.5, lbZ.W/2, lbZ.H/2, true); }
+      else if (e.key === '-' || e.key === '_') { e.preventDefault(); lbZoomAt(lbZ.s / 1.5, lbZ.W/2, lbZ.H/2, true); }
+      else if (e.key === '0') { e.preventDefault(); lbZoom(1); }
+      else if (e.key === 'Tab') {
+        // le focus reste dans la fenêtre
+        const f = [...lbEl.querySelectorAll('button')], i = f.indexOf(document.activeElement);
+        e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      }
+    }, true);
+    window.addEventListener('resize', () => { if (lbOpen) lbFit(false); });
+  };
+  const lbEase = on => { (lbVid.hidden ? lbImg : lbVid).classList.toggle('ease', !!on && motion); };
+  const lbApply = () => {
+    const m = lbVid.hidden ? lbImg : lbVid;
+    m.style.transform = `translate3d(${(lbZ.ox + lbZ.tx).toFixed(1)}px,${(lbZ.oy + lbZ.ty).toFixed(1)}px,0) scale(${lbZ.s.toFixed(4)})`;
+    lbView.dataset.cursor = !lbVid.hidden ? '' : lbZ.s > 1.001 ? lng('Dézoomer', 'Zoom out') : lng('Zoomer', 'Zoom in');
+    lbView.classList.toggle('zoomed', lbZ.s > 1.001);
+  };
+  // l'image zoomée couvre toujours la vue (pas de bord vide qui dérive)
+  const lbClamp = () => {
+    const w = lbZ.bw * lbZ.s, h = lbZ.bh * lbZ.s;
+    lbZ.tx = w <= lbZ.W ? (lbZ.W - w)/2 - lbZ.ox : clamp(lbZ.tx, lbZ.W - w - lbZ.ox, -lbZ.ox);
+    lbZ.ty = h <= lbZ.H ? (lbZ.H - h)/2 - lbZ.oy : clamp(lbZ.ty, lbZ.H - h - lbZ.oy, -lbZ.oy);
+  };
+  const lbZoomAt = (s1, x, y, ease) => {
+    s1 = clamp(s1, 1, LB_MAX);
+    const u = (x - lbZ.ox - lbZ.tx) / lbZ.s, v = (y - lbZ.oy - lbZ.ty) / lbZ.s;
+    lbZ.s = s1; lbZ.tx = x - lbZ.ox - u*s1; lbZ.ty = y - lbZ.oy - v*s1;
+    lbClamp(); lbEase(ease); lbApply();
+  };
+  const lbZoom = s1 => lbZoomAt(s1, lbZ.W/2, lbZ.H/2, true);
+  // clic : zoom sur le point visé (au moins x2,5, ou la taille réelle de l'image si elle est plus grande), re-clic : retour
+  const lbToggle = (x, y) => {
+    if (lbZ.s > 1.001) { lbZoomAt(1, x, y, true); return; }
+    const real = lbZ.nat ? lbZ.nat / (lbZ.bw * Math.min(window.devicePixelRatio || 1, 2)) : 0;
+    lbZoomAt(clamp(Math.max(2.5, real), 1, LB_MAX), x, y, true);
+  };
+  const lbFit = reset => {
+    const r = lbView.getBoundingClientRect(), it = lbItems[lbI]; if (!it) return;
+    const m = lbVid.hidden ? lbImg : lbVid;
+    const w = (lbVid.hidden ? lbImg.naturalWidth : lbVid.videoWidth) || it.w, h = (lbVid.hidden ? lbImg.naturalHeight : lbVid.videoHeight) || it.h;
+    lbZ.W = r.width; lbZ.H = r.height;
+    const k = Math.min(lbZ.W / w, lbZ.H / h);
+    lbZ.bw = w * k; lbZ.bh = h * k; lbZ.ox = (lbZ.W - lbZ.bw)/2; lbZ.oy = (lbZ.H - lbZ.bh)/2;
+    m.style.width = lbZ.bw.toFixed(1) + 'px'; m.style.height = lbZ.bh.toFixed(1) + 'px';
+    if (reset) { lbZ.s = 1; lbZ.tx = 0; lbZ.ty = 0; } else lbClamp();
+    lbEase(false); lbApply();
+  };
+  const lbShow = i => {
+    const n = lbItems.length; lbI = (i + n) % n;
+    const it = lbItems[lbI];
+    lbCap.textContent = it.cap; lbN.textContent = pad(lbI + 1) + ' / ' + pad(n);
+    lbZ.nat = 0;
+    if (it.video) {
+      lbImg.hidden = true; lbImg.removeAttribute('src');
+      lbVid.hidden = false; lbVid.poster = it.poster || '';
+      if (!lbVid.src.endsWith(it.video)) lbVid.src = it.video;
+      lbVid.defaultPlaybackRate = lbVid.playbackRate = it.rate || 1;
+      if (motion) playV(lbVid);
+      lbHint.textContent = '';
+    } else {
+      lbVid.pause(); lbVid.hidden = true; lbVid.removeAttribute('src'); try { lbVid.load(); } catch(e) {}
+      lbImg.hidden = false; lbImg.alt = it.alt || '';
+      // l'image déjà affichée d'abord (instantanée), puis la meilleure version
+      lbImg.src = it.now || it.full;
+      if (it.full && it.full !== it.now) { const hi = new Image(); hi.onload = () => { if (lbItems[lbI] === it && lbOpen) lbImg.src = it.full; }; hi.src = it.full; }
+      lbHint.textContent = fine.matches ? lng('Cliquez pour zoomer · molette · glissez pour vous déplacer', 'Click to zoom · scroll wheel · drag to move') : lng('Touchez pour zoomer', 'Tap to zoom');
+    }
+    lbFit(true);
+    // images voisines préparées
+    [lbI + 1, lbI - 1].forEach(j => { const nb = lbItems[(j + n) % n]; if (nb && nb.full) { const im = new Image(); im.src = nb.full; } });
+  };
+  const lbGo = d => { if (lbItems.length > 1) lbShow(lbI + d); };
+  function lbOpenAt(items, i, onClose){
+    if (!lbEl) lbBuild();
+    lbItems = items; lbOnClose = onClose; lbBack = document.activeElement;
+    lbOpen = true; lbEl.hidden = false; root.classList.add('lb-on');
+    lbShow(i);
+    requestAnimationFrame(() => lbEl.classList.add('on'));
+    lbX.focus({preventScroll:true});
+    // le bouton retour du téléphone ferme l'image au lieu de quitter la page
+    try { history.pushState({ lb: 1 }, ''); lbPushed = true; } catch(e) { lbPushed = false; }
+  }
+  function lbClose(fromPop){
+    if (!lbOpen) return;
+    lbOpen = false;
+    lbEl.classList.remove('on'); root.classList.remove('lb-on');
+    lbVid.pause();
+    setTimeout(() => { if (!lbOpen) { lbEl.hidden = true; lbImg.removeAttribute('src'); lbVid.removeAttribute('src'); try { lbVid.load(); } catch(e) {} } }, 260);
+    if (lbPushed && !fromPop) { lbIgnorePop = true; history.back(); }
+    lbPushed = false;
+    if (lbOnClose) lbOnClose(lbI);
+    if (lbBack && lbBack.focus && document.contains(lbBack)) lbBack.focus({preventScroll:true});
+  }
+  lbPop = () => { if (lbIgnorePop) { lbIgnorePop = false; return true; } if (lbOpen) { lbClose(true); return true; } return false; };
+  window.addEventListener('popstate', () => { if (!document.querySelector('[role="tab"]') && lbPop) lbPop(); });
+
   const VW_DUR = 3600, viewers = [];
   $$('[data-vw]').forEach(vw => {
     const figs = $$('.vw-f', vw), thumbs = $$('.vw-t', vw), stage = vw.querySelector('.vw-stage'), capEl = vw.querySelector('.vw-cap'), numEl = vw.querySelector('.vw-n');
@@ -1355,7 +1539,19 @@
     let sx = null, sy = 0, swiped = false;
     stage.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; swiped = false; });
     stage.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { swiped = true; show(st.cur + (dx < 0 ? 1 : -1), true); } });
-    stage.addEventListener('click', () => { if (swiped) { swiped = false; return; } show(st.cur + 1, true); });
+    // un clic ouvre la vue en grand ; en la fermant, la visionneuse reste sur la dernière image regardée
+    const title = (vw.closest('section') && vw.closest('section').querySelector('.camp-title')) ? vw.closest('section').querySelector('.camp-title').textContent.trim() : '';
+    const items = () => figs.map(f => {
+      const im = f.querySelector('img'), v = f.querySelector('video'), cap = f.dataset.cap || '';
+      const lab = title && cap ? title + ' · ' + cap : (cap || title);
+      if (v) return { video: v.getAttribute('src') || v.dataset.src, poster: v.getAttribute('poster') || v.dataset.poster || '', rate: parseFloat(v.dataset.rate || '1'), cap: lab, w: 16, h: 9 };
+      return { full: bestSrc(im), now: im.currentSrc || '', alt: im.alt, cap: lab, w: +im.getAttribute('width') || 16, h: +im.getAttribute('height') || 9 };
+    });
+    stage.addEventListener('click', () => {
+      if (swiped) { swiped = false; return; }
+      figs.forEach(f => { const v = f.querySelector('video'); if (v) v.pause(); });
+      lbOpenAt(items(), st.cur, i => { if (i !== st.cur) show(i, true); else { st.hold = performance.now() + 9000; const v = figs[st.cur].querySelector('video'); if (v && st.vis && motion) playV(v); } });
+    });
     stage.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.hover = true; });
     stage.addEventListener('pointerleave', () => { st.hover = false; });
     vw.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show(st.cur + (e.key === 'ArrowRight' ? 1 : -1), true); const t = thumbs[st.cur]; if (t && vw.contains(document.activeElement)) t.focus({preventScroll:true}); } });
@@ -1368,7 +1564,7 @@
       const t = thumbs[st.cur];
       // une vidéo reste à l'écran le temps de sa durée (data-dur, en ms), une image 3,6 s
       const dur = parseFloat(figs[st.cur].dataset.dur) || VW_DUR;
-      if (!motion || st.hover || now < st.hold) { st.t0 = now - (parseFloat(t.style.getPropertyValue('--t')) || 0) * dur; return; }
+      if (!motion || st.hover || now < st.hold || lbOpen) { st.t0 = now - (parseFloat(t.style.getPropertyValue('--t')) || 0) * dur; return; }
       if (st.wait) { if (!st.waitT) st.waitT = now; if (now - st.waitT < 4000) { st.t0 = now; return; } st.wait = false; }
       const k = (now - st.t0) / dur;
       if (k >= 1) { show(st.cur + 1); return; }
@@ -1536,7 +1732,7 @@
       });
     });
     const fromHash = initial => { const h = dec(location.hash.slice(1)); if (!h) { showTab(0); return; } if (!routeTo(h, initial) && curTab < 0) showTab(0); };
-    window.addEventListener('popstate', () => fromHash(false));
+    window.addEventListener('popstate', () => { if (lbPop && lbPop()) return; fromHash(false); });
     window.addEventListener('hashchange', () => fromHash(false));
     tabsInit = () => fromHash(true);
   }
