@@ -38,7 +38,7 @@
 d.setAttribute('data-tab',/^#(clips|bobine|avant-apres|generique)$/.test(location.hash)?'clips':'campagnes');
 if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('cursor-on');})();
 </script>
-<script defer src="/assets/site.js?v=37"></script>
+<script defer src="/assets/site.js?v=38"></script>
 </head>
 <body class="p-projets">
 <div class="cur-star" id="cur-star" aria-hidden="true"><i class="star-mask"></i></div>
@@ -91,35 +91,25 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('curso
       </dl>
       <div class="ci-act"><button class="btn" id="oak-play" type="button">Lire avec le son</button></div>
     </div>
-    <div class="wipe wrap">
-      <div class="wipe-box" id="wipe" data-cursor="Parcourir">
-        <video id="tr" src="/media/oakley/transition.mp4" data-poster="/media/oakley/transition.jpg" muted loop playsinline preload="none" aria-label="Le saut du coureur, de la couleur au noir et blanc"></video>
-        <span class="ba-state" id="tr-state" aria-live="polite">Couleur</span>
-      </div>
-      <div class="ba-tl" id="tr-tl">
-        <span class="seg" style="left:0;width:calc(35.9% - 2px)"></span><span class="seg a" style="left:35.9%;width:64.1%"></span>
-        <span class="head" id="tr-head" aria-hidden="true"></span>
-        <input id="tr-range" type="range" min="0" max="1000" value="0" aria-label="Parcourir la transition">
-      </div>
-      <p class="wipe-cap"><span>Le saut, de la couleur au noir et blanc · plans 00:00:09:14 à 00:00:12:00</span><span class="k" id="wipe-hint">Survolez l’image pour parcourir la transition à la souris</span></p>
-    </div>
-    <div class="vw wrap" data-vw role="group" aria-label="Stills Oakley × Meta">
+    <div class="vw wrap" data-vw role="group" aria-label="Stills et transition Oakley × Meta">
       <div class="vw-stage" data-cursor="Suivante">
         <figure class="vw-f on" data-cap="Macro, verre Prizm"><img src="/media/oakley/macro-prizm-led.jpg" alt="Gros plan sur le verre Prizm qui reflète le désert" width="1600" height="900" loading="lazy" decoding="async"></figure>
         <figure class="vw-f" data-cap="Téléobjectif 400 mm"><img data-src="/media/oakley/400mm-subject.jpg" alt="Le coureur au téléobjectif, fond de dunes" width="1600" height="900" loading="lazy" decoding="async"></figure>
+        <figure class="vw-f" data-cap="Le saut, de la couleur au noir et blanc" data-dur="4900"><video data-src="/media/oakley/transition.mp4" data-poster="/media/oakley/transition.jpg" data-rate=".5" muted loop playsinline preload="none" aria-label="Le saut du coureur, de la couleur au noir et blanc"></video></figure>
         <figure class="vw-f" data-cap="One vision. Every World."><img data-src="/media/oakley/rain-world-onevision.jpg" alt="Le coureur sur un rocher, titre One vision. Every World." width="1600" height="900" loading="lazy" decoding="async"></figure>
         <figure class="vw-f" data-cap="Les lunettes dans le sable"><img data-src="/media/oakley/unettes-sable-logo.jpg" alt="Une main pose les lunettes dans le sable" width="1600" height="900" loading="lazy" decoding="async"></figure>
         <figure class="vw-f" data-cap="Plan de fin"><img data-src="/media/oakley/end-oakley-meta.jpg" alt="Logos Oakley et Meta gravés dans le sable" width="1600" height="900" loading="lazy" decoding="async"></figure>
         <figure class="vw-f" data-cap="Motion design du logo"><video data-src="/media/oakley/motion.mp4" poster="/media/oakley/motion.jpg" muted loop playsinline preload="none" aria-label="Motion design du logo Oakley × Meta"></video></figure>
       </div>
-      <p class="vw-meta"><span class="vw-cap">Macro, verre Prizm</span><span class="vw-n mono">01 / 06</span></p>
+      <p class="vw-meta"><span class="vw-cap">Macro, verre Prizm</span><span class="vw-n mono">01 / 07</span></p>
       <div class="vw-strip">
         <button class="vw-t on" type="button" aria-label="Image 1 : Macro, verre Prizm"><img src="/assets/thumbs/oakley-macro-prizm-led.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
         <button class="vw-t" type="button" aria-label="Image 2 : Téléobjectif 400 mm"><img src="/assets/thumbs/oakley-400mm-subject.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
-        <button class="vw-t" type="button" aria-label="Image 3 : One vision. Every World."><img src="/assets/thumbs/oakley-rain-world-onevision.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
-        <button class="vw-t" type="button" aria-label="Image 4 : Les lunettes dans le sable"><img src="/assets/thumbs/oakley-unettes-sable-logo.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
-        <button class="vw-t" type="button" aria-label="Image 5 : Plan de fin"><img src="/assets/thumbs/oakley-end-oakley-meta.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
-        <button class="vw-t" type="button" aria-label="Image 6 : Motion design du logo"><img src="/assets/thumbs/oakley-motion.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
+        <button class="vw-t" type="button" aria-label="Image 3 : Le saut, de la couleur au noir et blanc"><img src="/assets/thumbs/oakley-transition.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
+        <button class="vw-t" type="button" aria-label="Image 4 : One vision. Every World."><img src="/assets/thumbs/oakley-rain-world-onevision.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
+        <button class="vw-t" type="button" aria-label="Image 5 : Les lunettes dans le sable"><img src="/assets/thumbs/oakley-unettes-sable-logo.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
+        <button class="vw-t" type="button" aria-label="Image 6 : Plan de fin"><img src="/assets/thumbs/oakley-end-oakley-meta.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
+        <button class="vw-t" type="button" aria-label="Image 7 : Motion design du logo"><img src="/assets/thumbs/oakley-motion.jpg" alt="" width="360" height="203" loading="lazy" decoding="async"><i></i></button>
       </div>
     </div>
   </section>
