@@ -96,7 +96,8 @@ html:not(.cursor-on) .cur-star,html:not(.cursor-on) .cur-l{display:none}
 .band-cta{min-height:44px;display:inline-flex;align-items:center;color:var(--fg);transition:color .16s var(--ease)}
 
 /* Slider d'accueil */
-.hero-wrap{--hstep:70vh;position:relative;height:calc(100vh + var(--hstep)*3);height:calc(100svh + var(--hstep)*3)}
+/* une hauteur d’écran par projet du haut, moins un : 5 projets → 4 pas */
+.hero-wrap{--hstep:70vh;position:relative;height:calc(100vh + var(--hstep)*4);height:calc(100svh + var(--hstep)*4)}
 .hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--black);user-select:none;-webkit-user-select:none}
 .stage{position:absolute;inset:0}
 .slide{position:absolute;inset:0;overflow:hidden}

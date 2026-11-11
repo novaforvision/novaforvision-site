@@ -15,6 +15,7 @@
     back:{title:'BACK',artist:'LP2.0',roles:lng('Montage · VFX','Editing · VFX'),dur:22.95,ig:'https://www.instagram.com/reel/DWozdhSj1l3/',dir:'Lyra Film'},
     demandeashh:{title:'DEMANDEASHH',artist:'Sheu',roles:lng('Teaser IA','AI teaser'),dur:33.28,ig:'https://www.instagram.com/reel/DaArXcHsMV4/',dir:'NOVA'},
     jamaiquaine:{title:'JAMAÏQUAINE IS DEAD',artist:'LP Killer',roles:'VFX',dur:33.686,ig:'https://www.instagram.com/reel/DTZaV9mDPdE/',dir:'Lyra Film'},
+    loewe:{title:'LOEWE',artist:'Spec ad',roles:lng('Création IA · Stills et film','AI creation · Stills and film'),dur:5.05,fps:24,ig:null,full:'/media/loewe/film.mp4?v=2'},
     bellodallas:{title:'ZORO',artist:'Bello & Dallas',roles:'VFX',dur:13.44,ig:null,dir:'Kespey'}
   };
   const fullSrc = id => P[id].full || `/media/full/${id}.mp4`;
@@ -324,7 +325,7 @@
     });
   }
 
-  /* ---------- Accueil : trois projets qui glissent avec le défilement ---------- */
+  /* ---------- Accueil : les projets phares qui glissent avec le défilement ---------- */
   const heroWrap = $('#top'), hero = $('#hero');
   if (hero && heroWrap) {
     const seam = $('#seam');
