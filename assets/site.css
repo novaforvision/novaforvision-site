@@ -705,3 +705,10 @@ html.lb-on{overflow:hidden}
 .lb-media.ease{transition:transform .32s var(--ease)}
 @media (max-width:520px){.lb-hint{font-size:11px}}
 
+/* ---------- Projets : loupe au survol des images (souris) ---------- */
+.loupe{position:fixed;left:0;top:0;z-index:44;width:clamp(180px,17vw,300px);aspect-ratio:1;pointer-events:none;will-change:transform}
+.loupe i{position:absolute;inset:0;border-radius:6px;border:1px solid var(--line-2);background-color:var(--bg-2);background-repeat:no-repeat;box-shadow:0 18px 48px rgba(0,0,0,.5);opacity:0;scale:.9;transition:opacity .18s var(--ease),scale .18s var(--ease)}
+.loupe.on i{opacity:1;scale:1}
+html.loupe-on .cur-l{visibility:hidden}
+@media (hover:none){.loupe{display:none}}
+
