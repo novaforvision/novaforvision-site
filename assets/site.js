@@ -75,7 +75,7 @@
   let parts = [], dc = null, dustBuilt = false, dustAwake = 0, ensureDust = null;
   let routeTo = null, tabsInit = null;
   let measureWorks = null, measurePeek = null, measureCredits = null, measureMt = null, sbTick = null;
-  let lbOpen = false, lbPop = null;
+  let lbOpen = false, lbPop = null, curOff = null;
   // hauteur de la page : relue quand le contenu change de taille, plus à chaque image
   readDoc();
   { const docRO = new ResizeObserver(readDoc); docRO.observe(document.body); docRO.observe(root); }
@@ -267,7 +267,8 @@
   function drawCursor(){
     if (!curS || !fine.matches) return;
     if ((cur.n = (cur.n || 0) + 1) % 6 === 0) updateCursor();
-    cur.sx = lerp(cur.sx, cur.x, .35); cur.sy = lerp(cur.sy, cur.y, .35);
+    // sur la loupe, l'étoile se range dans le coin bas droit du cadre (curOff), sinon elle suit la souris
+    cur.sx = lerp(cur.sx, cur.x + (curOff ? curOff[0] : 0), .35); cur.sy = lerp(cur.sy, cur.y + (curOff ? curOff[1] : 0), .35);
     cur.lx = lerp(cur.lx, cur.x, .18); cur.ly = lerp(cur.ly, cur.y, .18);
     cur.rot = lerp(cur.rot, clamp(cur.vx*1.2, -30, 30), .12); cur.vxs = lerp(cur.vxs || 0, Math.abs(cur.vx), .2); cur.vx *= .85;
     const st = 1 + Math.min(cur.vxs/45, .9);
@@ -1510,41 +1511,56 @@
   window.addEventListener('popstate', () => { if (!document.querySelector('[role="tab"]') && lbPop) lbPop(); });
 
   /* ---------- Projets : loupe au survol des images (souris) ----------
-     Un cadre moyen suit le curseur et montre, agrandi 2,5 fois, le détail de la photo sous la souris,
-     dans la meilleure version disponible du fichier (data-full, sinon la plus grande du srcset). */
-  const LOUPE_Z = 2.5;
-  let loupe = null, loupeI = null;
-  const lp = { on: false, x: 0, y: 0, img: null, stage: null, nat: [0, 0], L: 0, r: null, sr: null };
+     Un cadre 4:3 suit le curseur et montre, agrandi 2,5 fois, le détail de la photo sous la souris,
+     dans la meilleure version disponible du fichier (data-full, sinon la plus grande du srcset).
+     L'étoile NOVA du curseur glisse dans le coin bas droit du cadre pour laisser le détail dégagé.
+     Optimisé : le cadre et la photo agrandie ne bougent que par « transform » (composition seule, sans
+     repeindre la page), rien n'est écrit si la souris ne bouge pas, le fichier HD n'est chargé qu'au survol. */
+  const LOUPE_Z = 2.5, LOUPE_IN = 16;
+  let loupe = null, loupeImg = null;
+  const lp = { on: false, x: 0, y: 0, img: null, stage: null, nat: [0, 0], dn: [0, 0], W: 0, H: 0, r: null, sr: null, tx: 0, ty: 0, zw: 0 };
+  const loupeSize = () => { lp.W = loupe.offsetWidth; lp.H = loupe.offsetHeight; if (lp.on) curOff = [lp.W/2 - LOUPE_IN - 15, lp.H/2 - LOUPE_IN - 5.5]; };
   function loupeSet(img, x, y, stageEl){
     lp.x = x; lp.y = y; if (stageEl) lp.stage = stageEl;
     if (!img || !img.complete || !img.naturalWidth) { loupeHide(); return; }
     if (!loupe) {
-      loupe = document.createElement('div'); loupe.className = 'loupe'; loupe.setAttribute('aria-hidden', 'true'); loupe.innerHTML = '<i></i>';
-      document.body.appendChild(loupe); loupeI = loupe.firstChild;
-      window.addEventListener('resize', () => { lp.L = loupe.offsetWidth; });
+      loupe = document.createElement('div'); loupe.className = 'loupe'; loupe.setAttribute('aria-hidden', 'true');
+      loupeImg = document.createElement('img'); loupeImg.alt = ''; loupeImg.decoding = 'async'; loupeImg.draggable = false;
+      loupe.appendChild(loupeImg); document.body.appendChild(loupe);
+      // la photo agrandie garde sa taille naturelle ; l'échelle passe par transform, recalculée dès que le fichier change
+      loupeImg.addEventListener('load', loupeLoaded);
+      window.addEventListener('resize', () => { if (loupe) loupeSize(); });
     }
     if (img !== lp.img) {
       lp.img = img; lp.nat = [img.naturalWidth, img.naturalHeight];
       const best = bestSrc(img), now = img.currentSrc || best;
-      setS(loupeI, 'backgroundImage', `url("${now}")`);
-      // la version la plus grande remplace l'image affichée dès qu'elle est chargée
-      if (best && best !== now) { const hi = new Image(); hi.onload = () => { if (lp.img === img) setS(loupeI, 'backgroundImage', `url("${best}")`); }; hi.src = best; }
+      // nouvelle photo : masquée le temps de son chargement (pas d'image à la mauvaise taille)
+      if (loupeImg.src === new URL(now, location.href).href && loupeImg.complete && loupeImg.naturalWidth) loupeLoaded();
+      else { lp.dn = [0, 0]; setS(loupeImg, 'visibility', 'hidden'); loupeImg.src = now; }
+      // version plus grande : remplace la photo sans clignoter (déjà chargée en mémoire)
+      if (best && best !== now) { const hi = new Image(); hi.onload = () => { if (lp.img === img) loupeImg.src = best; }; hi.src = best; }
     }
-    if (!lp.on) { lp.on = true; lp.L = loupe.offsetWidth; loupe.classList.add('on'); root.classList.add('loupe-on'); }
+    if (!lp.on) { lp.on = true; loupe.classList.add('on'); root.classList.add('loupe-on'); loupeSize(); }
   }
-  function loupeHide(){ if (!lp.on) return; lp.on = false; lp.img = null; loupe.classList.remove('on'); root.classList.remove('loupe-on'); }
+  function loupeLoaded(){
+    lp.dn = [loupeImg.naturalWidth, loupeImg.naturalHeight];
+    setS(loupeImg, 'width', lp.dn[0] + 'px'); setS(loupeImg, 'height', lp.dn[1] + 'px');
+    if (lp.zw) setS(loupeImg, 'transform', `translate3d(${lp.tx.toFixed(1)}px,${lp.ty.toFixed(1)}px,0) scale(${(lp.zw/lp.dn[0]).toFixed(4)})`);
+    setS(loupeImg, 'visibility', 'visible');
+  }
+  function loupeHide(){ if (!lp.on) return; lp.on = false; lp.img = null; curOff = null; loupe.classList.remove('on'); root.classList.remove('loupe-on'); }
   // lecture en début d'image (voir la boucle), écriture ensuite : la loupe suit aussi pendant le défilement
   const measureLoupe = () => { lp.r = lp.on && lp.img ? lp.img.getBoundingClientRect() : null; lp.sr = lp.r && lp.stage ? lp.stage.getBoundingClientRect() : null; };
   const drawLoupe = () => {
     const r = lp.r, sr = lp.sr; lp.r = lp.sr = null;
-    if (!r || !lp.on) return;
+    if (!r || !lp.on || !lp.dn[0]) return;
     if (sr && (lp.x < sr.left || lp.x > sr.right || lp.y < sr.top || lp.y > sr.bottom)) { loupeHide(); return; }
     // image en « cover » : taille et décalage réels de la photo dans son cadre (le léger zoom lent compris)
     const [nw, nh] = lp.nat, k = Math.max(r.width / nw, r.height / nh), rw = nw * k, rh = nh * k;
-    const px = lp.x - (r.left + (r.width - rw) / 2), py = lp.y - (r.top + (r.height - rh) / 2), L = lp.L, Z = LOUPE_Z;
-    setS(loupe, 'transform', `translate3d(${(lp.x - L/2).toFixed(1)}px,${(lp.y - L/2).toFixed(1)}px,0)`);
-    setS(loupeI, 'backgroundSize', `${(rw*Z).toFixed(1)}px ${(rh*Z).toFixed(1)}px`);
-    setS(loupeI, 'backgroundPosition', `${(L/2 - px*Z).toFixed(1)}px ${(L/2 - py*Z).toFixed(1)}px`);
+    const px = lp.x - (r.left + (r.width - rw) / 2), py = lp.y - (r.top + (r.height - rh) / 2), Z = LOUPE_Z;
+    setS(loupe, 'transform', `translate3d(${(lp.x - lp.W/2).toFixed(1)}px,${(lp.y - lp.H/2).toFixed(1)}px,0)`);
+    lp.tx = lp.W/2 - px*Z; lp.ty = lp.H/2 - py*Z; lp.zw = rw*Z;
+    setS(loupeImg, 'transform', `translate3d(${lp.tx.toFixed(1)}px,${lp.ty.toFixed(1)}px,0) scale(${(lp.zw/lp.dn[0]).toFixed(4)})`);
   };
 
   const VW_DUR = 3600, viewers = [];
