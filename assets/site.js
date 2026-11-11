@@ -1329,7 +1329,12 @@
   $$('[data-vw]').forEach(vw => {
     const figs = $$('.vw-f', vw), thumbs = $$('.vw-t', vw), stage = vw.querySelector('.vw-stage'), capEl = vw.querySelector('.vw-cap'), numEl = vw.querySelector('.vw-n');
     const n = figs.length, st = { cur: -1, t0: 0, vis: false, hover: false, hold: 0, wait: false, waitT: 0 };
-    figs.forEach(f => { const v = f.querySelector('video'); if (v) v.addEventListener('playing', () => { if (st.wait && figs[st.cur] === f) { st.wait = false; st.t0 = performance.now(); } }); });
+    figs.forEach(f => {
+      const v = f.querySelector('video'); if (!v) return;
+      // data-rate : vidéo ralentie (le saut du coureur d'Oakley × Meta passe à mi-vitesse, comme sur l'accueil)
+      const r = parseFloat(v.dataset.rate || '1'); if (r !== 1) { v.defaultPlaybackRate = r; v.playbackRate = r; }
+      v.addEventListener('playing', () => { if (st.wait && figs[st.cur] === f) { st.wait = false; st.t0 = performance.now(); } });
+    });
     const load = i => { const m = figs[i].querySelector('img,video'); if (m && m.dataset.src) { if (m.dataset.srcset) m.srcset = m.dataset.srcset; m.src = m.dataset.src; m.removeAttribute('data-src'); m.removeAttribute('data-srcset'); } };
     const show = (i, user) => {
       i = (i + n) % n; if (i === st.cur) return;
@@ -1356,7 +1361,7 @@
     vw.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show(st.cur + (e.key === 'ArrowRight' ? 1 : -1), true); const t = thumbs[st.cur]; if (t && vw.contains(document.activeElement)) t.focus({preventScroll:true}); } });
     new IntersectionObserver(es => es.forEach(en => { const was = st.vis; st.vis = en.isIntersecting && en.intersectionRatio > .45; if (!st.vis) { st.t0 = performance.now(); st.waitT = 0; }
       // de retour à l'écran : l'image reprend là où elle en était (avant, après un détour, elle était passée aussitôt)
-      else if (!was && st.cur >= 0) st.t0 = performance.now() - (parseFloat(thumbs[st.cur].style.getPropertyValue('--t')) || 0) * (parseFloat(figs[st.cur].dataset.dur) || VW_DUR); figs.forEach((f, k) => { const v = f.querySelector('video'); if (v) { if (st.vis && k === st.cur && motion) playV(v); else v.pause(); } }); }), {threshold:[0,.45,.7]}).observe(stage);
+      else if (!was && st.cur >= 0) st.t0 = performance.now() - (parseFloat(thumbs[st.cur].style.getPropertyValue('--t')) || 0) * (parseFloat(figs[st.cur].dataset.dur) || VW_DUR); vw._vis = st.vis; figs.forEach((f, k) => { const v = f.querySelector('video'); if (v) { if (st.vis && k === st.cur && motion) playV(v); else v.pause(); } }); }), {threshold:[0,.45,.7]}).observe(stage);
     show(0);
     viewers.push(now => {
       if (!st.vis) return;
@@ -1562,7 +1567,7 @@
       if (tr && trVisible) playV(tr);
       if (playPreview && items[active]) playPreview(items[active]);
       inview.forEach(v => { if (v._in) playV(v); });
-      $$('.vw-f.on video').forEach(v => playV(v));
+      $$('.vw-f.on video').forEach(v => { const w = v.closest('[data-vw]'); if (w && w._vis) playV(v); });
     }
   }
   if (motionBtn) motionBtn.addEventListener('click', e => { e.stopPropagation(); motion = !motion; sessStore.set('nova-motion', motion ? 'on' : 'off'); applyMotion(); });
