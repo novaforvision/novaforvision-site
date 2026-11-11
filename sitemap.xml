@@ -12,7 +12,7 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-11</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
       <video:title>Oakley × Meta, spec ad</video:title>
@@ -20,6 +20,15 @@
       <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
       <video:publication_date>2026-11-06</video:publication_date>
       <video:duration>29</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
+      <video:title>LOEWE, spec ad</video:title>
+      <video:description>Spec ad LOEWE. Stills et film IA : NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
+      <video:publication_date>2026-11-11</video:publication_date>
+      <video:duration>5</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>

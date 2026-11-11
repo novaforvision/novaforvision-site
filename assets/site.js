@@ -1224,7 +1224,7 @@
     const show = (i, user) => {
       i = (i + n) % n; if (i === st.cur) return;
       load(i); load((i + 1) % n);
-      figs.forEach((f, k) => { f.classList.toggle('on', k === i); const v = f.querySelector('video'); if (v) { if (k === i && motion) playV(v); else v.pause(); } });
+      figs.forEach((f, k) => { f.classList.toggle('on', k === i); const v = f.querySelector('video'); if (v) { if (k === i && motion) { if (f.dataset.dur) try { v.currentTime = 0; } catch(e) {} playV(v); } else v.pause(); } });
       thumbs.forEach((t, k) => { t.classList.toggle('on', k === i); t.setAttribute('aria-current', String(k === i)); if (k !== i) t.style.removeProperty('--t'); });
       if (capEl) capEl.textContent = figs[i].dataset.cap || '';
       if (numEl) numEl.textContent = `${pad(i + 1)} / ${pad(n)}`;
@@ -1247,8 +1247,10 @@
     viewers.push(now => {
       if (!st.vis) return;
       const t = thumbs[st.cur];
-      if (!motion || st.hover || now < st.hold) { st.t0 = now - (parseFloat(t.style.getPropertyValue('--t')) || 0) * VW_DUR; return; }
-      const k = (now - st.t0) / VW_DUR;
+      // une vidéo reste à l'écran le temps de sa durée (data-dur, en ms), une image 3,6 s
+      const dur = parseFloat(figs[st.cur].dataset.dur) || VW_DUR;
+      if (!motion || st.hover || now < st.hold) { st.t0 = now - (parseFloat(t.style.getPropertyValue('--t')) || 0) * dur; return; }
+      const k = (now - st.t0) / dur;
       if (k >= 1) { show(st.cur + 1); return; }
       t.style.setProperty('--t', k.toFixed(3));
     });
