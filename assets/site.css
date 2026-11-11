@@ -64,6 +64,8 @@ html:not(.js) .cap[data-i="0"] .cap-k,html:not(.js) .cap[data-i="0"] .cap-row{op
 /* Curseur étoile */
 .cur-star,.cur-l{position:fixed;left:0;top:0;z-index:95;pointer-events:none;opacity:0;will-change:transform;mix-blend-mode:difference}
 .cursor-on .cur-star,.cursor-on .cur-l{opacity:1}
+/* sans souris (téléphone, tablette) : le curseur étoile n'existe pas, ses deux couches en mélange « différence » ne sont plus composées à chaque image */
+html:not(.cursor-on) .cur-star,html:not(.cursor-on) .cur-l{display:none}
 .cur-star{width:30px;height:11px;margin:-5.5px 0 0 -15px;transition:filter .4s var(--ease)}
 .cur-star i{display:block;width:100%;height:100%;background:var(--white);transition:transform .35s var(--ease)}
 .cur-star.link i{transform:scale(1.5)}
@@ -680,3 +682,6 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 /* Lien de langue FR / EN dans la bande du haut */
 .lang{min-height:44px;display:inline-flex;align-items:center;font-size:12px;letter-spacing:.04em;color:var(--fg-2);transition:color .16s var(--ease)}
 .lang:hover,.lang:focus-visible{color:var(--fg)}
+/* zones de toucher élargies, invisibles : « EN / FR » (15 px) et « Son » (23 px) étaient trop étroits pour le doigt */
+.lang,.camp-ui #oak-sound{position:relative}
+.lang::before,.camp-ui #oak-sound::before{content:"";position:absolute;inset:0 -10px}
