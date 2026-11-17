@@ -12,7 +12,16 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-17</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
+      <video:title>Beymen Home &amp; Decor, campagne</video:title>
+      <video:description>Campagne Beymen Home &amp; Decor pour Beymen.com. Création IA, blocking 3D, montage et motion design du logo : NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
+      <video:publication_date>2026-11-17</video:publication_date>
+      <video:duration>28</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
       <video:title>Oakley × Meta, spec ad</video:title>
