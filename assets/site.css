@@ -684,8 +684,8 @@ html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space
 .lang{min-height:44px;display:inline-flex;align-items:center;font-size:12px;letter-spacing:.04em;color:var(--fg-2);transition:color .16s var(--ease)}
 .lang:hover,.lang:focus-visible{color:var(--fg)}
 /* zones de toucher élargies, invisibles : « EN / FR » (15 px) et « Son » (23 px) étaient trop étroits pour le doigt */
-.lang,.camp-ui #oak-sound{position:relative}
-.lang::before,.camp-ui #oak-sound::before{content:"";position:absolute;inset:0 -10px}
+.lang,.camp-ui .camp-snd{position:relative}
+.lang::before,.camp-ui .camp-snd::before{content:"";position:absolute;inset:0 -10px}
 
 /* ---------- Projets : image en grand (clic sur une image des visionneuses), zoom et déplacement ---------- */
 html.lb-on{overflow:hidden}

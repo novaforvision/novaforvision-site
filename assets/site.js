@@ -15,6 +15,7 @@
     back:{title:'BACK',artist:'LP2.0',roles:lng('Montage · VFX','Editing · VFX'),dur:22.95,ig:'https://www.instagram.com/reel/DWozdhSj1l3/',dir:'Lyra Film'},
     demandeashh:{title:'DEMANDEASHH',artist:'Sheu',roles:lng('Teaser IA','AI teaser'),dur:33.28,ig:'https://www.instagram.com/reel/DaArXcHsMV4/',dir:'NOVA'},
     jamaiquaine:{title:'JAMAÏQUAINE IS DEAD',artist:'LP Killer',roles:'VFX',dur:33.686,ig:'https://www.instagram.com/reel/DTZaV9mDPdE/',dir:'Lyra Film'},
+    beymen:{title:'BEYMEN HOME & DECOR',artist:lng('Campagne','Campaign'),roles:lng('Création IA · Blocking 3D · Montage · Motion design du logo','AI creation · 3D blocking · Editing · Logo motion design'),dur:27.75,fps:24,ig:null,full:'/media/beymen/film.mp4'},
     loewe:{title:'LOEWE',artist:'Spec ad',roles:lng('Création IA · Stills et film','AI creation · Stills and film'),dur:5.05,fps:24,ig:null,full:'/media/loewe/film.mp4?v=2'},
     bellodallas:{title:'ZORO',artist:'Bello & Dallas',roles:'VFX',dur:13.44,ig:null,dir:'Kespey'}
   };
@@ -68,7 +69,7 @@
   const LOGO_END = 1.92;
   let heroVisible = false, heroTop = 0, heroStep = 1, N = 0, cur0 = 0, SV = [], SID = [], oakV = null;
   let heroFrame = null, layoutHero = null, setCurrent = null, onIntroOpen = null, heroClickable = () => false;
-  let oak = null, oakVisible = false, oakTc = null, oakTcLast = '', tr = null, trVisible = false, trTick = null;
+  let CF = [], tr = null, trVisible = false, trTick = null;
   let ba = null, baVisible = false, baTick = null;
   let items = [], active = -1, worksVisible = false, layoutWorks = null, applyWorks = null, playPreview = null, openWork = null, scrollToItem = null;
   let hidePeek = () => {}, drawPeek = null, drawLit = null, layoutCredits = null, drawCredits = null, drawDust = null;
@@ -515,30 +516,33 @@
     window.addEventListener('scroll', () => { if (window.scrollY > heroTop + 8) warmV(SV[1]); if (window.scrollY > heroTop + heroStep*.6) warmV(SV[2]); }, {passive:true});
   }
 
-  /* ---------- Campagne (projets) ---------- */
-  oak = $('#oak');
-  if (oak) {
-    const oakFilm = $('#camp-film'), oakSound = $('#oak-sound');
-    oakTc = $('#oak-tc');
+  /* ---------- Campagnes (projets) : films en grand (Oakley × Meta, Beymen) ---------- */
+  // chaque .camp-film porte data-id (clé de P) ; son, timecode et bouton « Lire avec le son » sont cherchés dans sa section
+  CF = $$('.camp-film').map(film => {
+    const v = film.querySelector('video'), id = film.dataset.id;
+    if (!v || !P[id]) return null;
+    const sec = film.closest('.camp') || film.parentNode, snd = film.querySelector('.camp-snd'), slot = sec.querySelector('.pslot'), btn = sec.querySelector('.camp-play');
+    const c = { film, v, id, ctx: 'camp-' + id, fps: P[id].fps || FPS, vis: false, tcEl: film.querySelector('.camp-tc'), last: '' };
     new IntersectionObserver(es => es.forEach(en => {
-      oakVisible = en.isIntersecting && en.intersectionRatio > .25;
-      if (player.ctx === 'camp') { if (!en.isIntersecting) closePlayer(true); return; }
-      if (oakVisible && motion) playV(oak); else if (!oakVisible) oak.pause();
-    }), {threshold:[0,.25,.6]}).observe(oakFilm);
-    oakSound.addEventListener('click', e => {
+      c.vis = en.isIntersecting && en.intersectionRatio > .25;
+      if (player.ctx === c.ctx) { if (!en.isIntersecting) closePlayer(true); return; }
+      if (c.vis && motion) playV(v); else if (!c.vis) v.pause();
+    }), {threshold:[0,.25,.6]}).observe(film);
+    if (snd) snd.addEventListener('click', e => {
       e.stopPropagation();
-      const on = oakSound.getAttribute('aria-pressed') !== 'true';
-      oakSound.setAttribute('aria-pressed', String(on)); oakSound.textContent = on ? lng('Son coupé', 'Sound off') : lng('Son', 'Sound');
-      oak.muted = !on; if (on) playV(oak);
+      const on = snd.getAttribute('aria-pressed') !== 'true';
+      snd.setAttribute('aria-pressed', String(on)); snd.textContent = on ? lng('Son coupé', 'Sound off') : lng('Son', 'Sound');
+      v.muted = !on; if (on) playV(v);
     });
-    const openOak = () => { if (player.ctx === 'camp') return; oakFilm.classList.add('playing'); openPlayer('camp', oak, 'oakley', $('#pslot-camp'), () => { oakFilm.classList.remove('playing'); if (motion && oakVisible) playV(oak); }); };
-    $('#oak-play').addEventListener('click', () => {
-      const r = oakFilm.getBoundingClientRect(), top = bandH() + 8;
+    const open = () => { if (player.ctx === c.ctx) return; film.classList.add('playing'); openPlayer(c.ctx, v, id, slot, () => { film.classList.remove('playing'); if (motion && c.vis) playV(v); }); };
+    if (btn) btn.addEventListener('click', () => {
+      const r = film.getBoundingClientRect(), top = bandH() + 8;
       if (r.top < top - 1 || r.bottom > window.innerHeight) window.scrollTo({top: r.top + window.scrollY - top, behavior: motion ? 'smooth' : 'auto'});
-      openOak();
+      open();
     });
-    oakFilm.addEventListener('click', () => { if (player.ctx === 'camp') { togglePlay(); return; } openOak(); });
-  }
+    film.addEventListener('click', () => { if (player.ctx === c.ctx) { togglePlay(); return; } open(); });
+    return c;
+  }).filter(Boolean);
   // transition couleur → noir et blanc, parcourue à la souris
   tr = $('#tr');
   if (tr) {
@@ -1767,7 +1771,7 @@
       $$('.slide .still[data-src]').forEach(im => { im.src = im.dataset.src; im.removeAttribute('data-src'); });
     }
     else {
-      if (oak && oakVisible && player.ctx !== 'camp') playV(oak);
+      CF.forEach(c => { if (c.vis && player.ctx !== c.ctx) playV(c.v); });
       if (ba && baVisible) playV(ba);
       if (tr && trVisible) playV(tr);
       if (playPreview && items[active]) playPreview(items[active]);
@@ -1806,11 +1810,11 @@
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
     else if (heroVisible && heroFrame && F.sy < heroTop + heroStep*(N-1) + F.vh*.3) { src = SV[cur0]; fps = SID[cur0] === 'oakley' ? 24 : FPS; }
-    else if (oakVisible) { src = oak; fps = 24; }
+    else if (CF.some(c => c.vis)) { const c = CF.find(c => c.vis); src = c.v; fps = c.fps; }
     else if (baVisible) src = ba;
     else if (worksVisible && items[active]) src = items[active].querySelector('video');
     if (src && tcEl) { const s = tc(src.currentTime, fps); if (s !== tcLast) { tcLast = s; tcEl.textContent = s; } }
-    if (oakVisible && oakTc) { const s2 = tc(oak.currentTime, 24); if (s2 !== oakTcLast) { oakTcLast = s2; oakTc.textContent = s2; } }
+    for (let i = 0; i < CF.length; i++) { const c = CF[i]; if (c.vis && c.tcEl) { const s2 = tc(c.v.currentTime, c.fps); if (s2 !== c.last) { c.last = s2; c.tcEl.textContent = s2; } } }
     if (player.ctx) {
       const v = player.video, s3 = tc(v.currentTime, P[player.id].fps); if (pcCur.textContent !== s3) pcCur.textContent = s3;
       if (!seeking && v.duration) { const val = Math.round(v.currentTime/v.duration*1000); if (+seek.value !== val) seek.value = val; setS(seek, '--p', (val/10)+'%'); }
