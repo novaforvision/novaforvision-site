@@ -700,16 +700,10 @@ html.lb-on{overflow:hidden}
 .lb button{height:44px;padding:0 4px;color:var(--fg-2);transition:color .16s var(--ease)}
 .lb button:hover,.lb button:focus-visible{color:var(--fg)}
 .lb-view{position:relative;overflow:hidden;cursor:zoom-in;touch-action:none}
+@media (hover:hover) and (pointer:fine){.lb-view{cursor:default}}
 .lb-view.zoomed{cursor:grab}
 .lb-media{position:absolute;left:0;top:0;max-width:none;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;background:var(--bg-2)}
 .lb-media.ease{transition:transform .32s var(--ease)}
 @media (max-width:520px){.lb-hint{font-size:11px}}
 
-/* ---------- Projets : loupe au survol des images (souris), cadre 4:3 ---------- */
-.loupe{position:fixed;left:0;top:0;z-index:44;width:clamp(260px,24vw,420px);aspect-ratio:4/3;overflow:hidden;border-radius:6px;background:var(--bg-2);box-shadow:0 18px 48px rgba(0,0,0,.5);pointer-events:none;opacity:0;transition:opacity .18s var(--ease);will-change:transform,opacity}
-.loupe::after{content:"";position:absolute;inset:0;border-radius:inherit;border:1px solid var(--line-2)}
-.loupe.on{opacity:1}
-.loupe img{position:absolute;left:0;top:0;max-width:none;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-drag:none}
-html.loupe-on .cur-l{visibility:hidden}
-@media (hover:none){.loupe{display:none}}
 

@@ -75,7 +75,7 @@
   let parts = [], dc = null, dustBuilt = false, dustAwake = 0, ensureDust = null;
   let routeTo = null, tabsInit = null;
   let measureWorks = null, measurePeek = null, measureCredits = null, measureMt = null, sbTick = null;
-  let lbOpen = false, lbPop = null, curOff = null;
+  let lbOpen = false, lbPop = null;
   // hauteur de la page : relue quand le contenu change de taille, plus à chaque image
   readDoc();
   { const docRO = new ResizeObserver(readDoc); docRO.observe(document.body); docRO.observe(root); }
@@ -267,8 +267,7 @@
   function drawCursor(){
     if (!curS || !fine.matches) return;
     if ((cur.n = (cur.n || 0) + 1) % 6 === 0) updateCursor();
-    // sur la loupe, l'étoile se range dans le coin bas droit du cadre (curOff), sinon elle suit la souris
-    cur.sx = lerp(cur.sx, cur.x + (curOff ? curOff[0] : 0), .35); cur.sy = lerp(cur.sy, cur.y + (curOff ? curOff[1] : 0), .35);
+    cur.sx = lerp(cur.sx, cur.x, .35); cur.sy = lerp(cur.sy, cur.y, .35);
     cur.lx = lerp(cur.lx, cur.x, .18); cur.ly = lerp(cur.ly, cur.y, .18);
     cur.rot = lerp(cur.rot, clamp(cur.vx*1.2, -30, 30), .12); cur.vxs = lerp(cur.vxs || 0, Math.abs(cur.vx), .2); cur.vx *= .85;
     const st = 1 + Math.min(cur.vxs/45, .9);
@@ -1327,10 +1326,12 @@
   });
 
   /* ---------- Visionneuse de stills (projets) : défile seule à l'écran, vignettes, glissé sur téléphone ---------- */
-  /* ---------- Projets : image en grand, zoom et déplacement ----------
-     Un clic sur une image d'une visionneuse l'ouvre en plein écran.
-     Zoom : clic ou toucher (bascule), molette, pincement ; déplacement au glissé ; flèches, Échap ;
-     sur téléphone, glisser sur le côté change d'image, vers le bas ferme, et le bouton retour ferme aussi. */
+  /* ---------- Projets : image en grand ----------
+     Un clic sur une image d'une visionneuse l'ouvre en plein écran, entière, sans défilement automatique.
+     Ordinateur : pas de zoom (vue d'ensemble ; pour le détail, on télécharge la photo), flèches, Échap,
+     clic à côté de l'image pour fermer.
+     Téléphone : toucher ou pincement pour zoomer, glisser sur le côté change d'image, vers le bas ferme,
+     et le bouton retour ferme aussi. */
   const LB_MAX = 5;
   let lbEl = null, lbView = null, lbImg = null, lbVid = null, lbCap = null, lbN = null, lbHint = null, lbX = null;
   let lbItems = [], lbI = 0, lbOnClose = null, lbBack = null, lbPushed = false, lbIgnorePop = false;
@@ -1392,7 +1393,13 @@
       if (!g) return;
       if (g.pinch) { if (pts.size === 0) { g = null; if (lbZ.s < 1.02) lbZoom(1); } else { const [x, y] = [...pts.values()][0]; g = { x0: x, y0: y, tx: lbZ.tx, ty: lbZ.ty, moved: true, pinch: false }; } return; }
       const dx = p[0] - g.x0, dy = p[1] - g.y0, gg = g; g = null;
-      if (!gg.moved) { if (e.type === 'pointerup' && lbVid.hidden) lbToggle(p[0], p[1]); return; }
+      if (!gg.moved) {
+        if (e.type !== 'pointerup') return;
+        // ordinateur : pas de zoom ; un clic à côté de l'image ferme
+        if (e.pointerType === 'mouse') { const out = p[0] < lbZ.ox || p[0] > lbZ.ox + lbZ.bw || p[1] < lbZ.oy || p[1] > lbZ.oy + lbZ.bh; if (out) lbClose(); return; }
+        if (lbVid.hidden) lbToggle(p[0], p[1]);
+        return;
+      }
       if (lbZ.s <= 1.001 && e.pointerType !== 'mouse') {
         // sans zoom : glisser sur le côté change d'image, vers le bas ferme
         if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { lbGo(dx < 0 ? 1 : -1); return; }
@@ -1403,7 +1410,7 @@
     lbView.addEventListener('pointerup', end); lbView.addEventListener('pointercancel', end);
     lbView.addEventListener('wheel', e => {
       e.preventDefault();
-      if (!lbVid.hidden) return;
+      if (!lbVid.hidden || fine.matches) return;
       const [x, y] = vxy(e), k = Math.exp(-e.deltaY * (e.ctrlKey ? .012 : .0025));
       lbEase(false); lbZoomAt(lbZ.s * k, x, y);
     }, {passive:false});
@@ -1413,14 +1420,15 @@
       if (!lbOpen) return;
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); lbClose(); }
       else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); lbGo(e.key === 'ArrowRight' ? 1 : -1); }
-      else if (e.key === '+' || e.key === '=') { e.preventDefault(); lbZoomAt(lbZ.s * 1.5, lbZ.W/2, lbZ.H/2, true); }
-      else if (e.key === '-' || e.key === '_') { e.preventDefault(); lbZoomAt(lbZ.s / 1.5, lbZ.W/2, lbZ.H/2, true); }
-      else if (e.key === '0') { e.preventDefault(); lbZoom(1); }
       else if (e.key === 'Tab') {
         // le focus reste dans la fenêtre
         const f = [...lbEl.querySelectorAll('button')], i = f.indexOf(document.activeElement);
         e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
       }
+      else if (fine.matches) return;
+      else if (e.key === '+' || e.key === '=') { e.preventDefault(); lbZoomAt(lbZ.s * 1.5, lbZ.W/2, lbZ.H/2, true); }
+      else if (e.key === '-' || e.key === '_') { e.preventDefault(); lbZoomAt(lbZ.s / 1.5, lbZ.W/2, lbZ.H/2, true); }
+      else if (e.key === '0') { e.preventDefault(); lbZoom(1); }
     }, true);
     window.addEventListener('resize', () => { if (lbOpen) lbFit(false); });
   };
@@ -1428,7 +1436,7 @@
   const lbApply = () => {
     const m = lbVid.hidden ? lbImg : lbVid;
     m.style.transform = `translate3d(${(lbZ.ox + lbZ.tx).toFixed(1)}px,${(lbZ.oy + lbZ.ty).toFixed(1)}px,0) scale(${lbZ.s.toFixed(4)})`;
-    lbView.dataset.cursor = !lbVid.hidden ? '' : lbZ.s > 1.001 ? lng('Dézoomer', 'Zoom out') : lng('Zoomer', 'Zoom in');
+    lbView.dataset.cursor = !lbVid.hidden || fine.matches ? '' : lbZ.s > 1.001 ? lng('Dézoomer', 'Zoom out') : lng('Zoomer', 'Zoom in');
     lbView.classList.toggle('zoomed', lbZ.s > 1.001);
   };
   // l'image zoomée couvre toujours la vue (pas de bord vide qui dérive)
@@ -1479,7 +1487,7 @@
       // l'image déjà affichée d'abord (instantanée), puis la meilleure version
       lbImg.src = it.now || it.full;
       if (it.full && it.full !== it.now) { const hi = new Image(); hi.onload = () => { if (lbItems[lbI] === it && lbOpen) lbImg.src = it.full; }; hi.src = it.full; }
-      lbHint.textContent = fine.matches ? lng('Cliquez pour zoomer · molette · glissez pour vous déplacer', 'Click to zoom · scroll wheel · drag to move') : lng('Touchez pour zoomer', 'Tap to zoom');
+      lbHint.textContent = fine.matches ? lng('← → pour changer d\'image · Échap pour fermer', '← → to browse · Esc to close') : lng('Touchez pour zoomer', 'Tap to zoom');
     }
     lbFit(true);
     // images voisines préparées
@@ -1510,59 +1518,6 @@
   lbPop = () => { if (lbIgnorePop) { lbIgnorePop = false; return true; } if (lbOpen) { lbClose(true); return true; } return false; };
   window.addEventListener('popstate', () => { if (!document.querySelector('[role="tab"]') && lbPop) lbPop(); });
 
-  /* ---------- Projets : loupe au survol des images (souris) ----------
-     Un cadre 4:3 suit le curseur et montre, agrandi 2,5 fois, le détail de la photo sous la souris,
-     dans la meilleure version disponible du fichier (data-full, sinon la plus grande du srcset).
-     L'étoile NOVA du curseur glisse dans le coin bas droit du cadre pour laisser le détail dégagé.
-     Optimisé : le cadre et la photo agrandie ne bougent que par « transform » (composition seule, sans
-     repeindre la page), rien n'est écrit si la souris ne bouge pas, le fichier HD n'est chargé qu'au survol. */
-  const LOUPE_Z = 2.5, LOUPE_IN = 16;
-  let loupe = null, loupeImg = null;
-  const lp = { on: false, x: 0, y: 0, img: null, stage: null, nat: [0, 0], dn: [0, 0], W: 0, H: 0, r: null, sr: null, tx: 0, ty: 0, zw: 0 };
-  const loupeSize = () => { lp.W = loupe.offsetWidth; lp.H = loupe.offsetHeight; if (lp.on) curOff = [lp.W/2 - LOUPE_IN - 15, lp.H/2 - LOUPE_IN - 5.5]; };
-  function loupeSet(img, x, y, stageEl){
-    lp.x = x; lp.y = y; if (stageEl) lp.stage = stageEl;
-    if (!img || !img.complete || !img.naturalWidth) { loupeHide(); return; }
-    if (!loupe) {
-      loupe = document.createElement('div'); loupe.className = 'loupe'; loupe.setAttribute('aria-hidden', 'true');
-      loupeImg = document.createElement('img'); loupeImg.alt = ''; loupeImg.decoding = 'async'; loupeImg.draggable = false;
-      loupe.appendChild(loupeImg); document.body.appendChild(loupe);
-      // la photo agrandie garde sa taille naturelle ; l'échelle passe par transform, recalculée dès que le fichier change
-      loupeImg.addEventListener('load', loupeLoaded);
-      window.addEventListener('resize', () => { if (loupe) loupeSize(); });
-    }
-    if (img !== lp.img) {
-      lp.img = img; lp.nat = [img.naturalWidth, img.naturalHeight];
-      const best = bestSrc(img), now = img.currentSrc || best;
-      // nouvelle photo : masquée le temps de son chargement (pas d'image à la mauvaise taille)
-      if (loupeImg.src === new URL(now, location.href).href && loupeImg.complete && loupeImg.naturalWidth) loupeLoaded();
-      else { lp.dn = [0, 0]; setS(loupeImg, 'visibility', 'hidden'); loupeImg.src = now; }
-      // version plus grande : remplace la photo sans clignoter (déjà chargée en mémoire)
-      if (best && best !== now) { const hi = new Image(); hi.onload = () => { if (lp.img === img) loupeImg.src = best; }; hi.src = best; }
-    }
-    if (!lp.on) { lp.on = true; loupe.classList.add('on'); root.classList.add('loupe-on'); loupeSize(); }
-  }
-  function loupeLoaded(){
-    lp.dn = [loupeImg.naturalWidth, loupeImg.naturalHeight];
-    setS(loupeImg, 'width', lp.dn[0] + 'px'); setS(loupeImg, 'height', lp.dn[1] + 'px');
-    if (lp.zw) setS(loupeImg, 'transform', `translate3d(${lp.tx.toFixed(1)}px,${lp.ty.toFixed(1)}px,0) scale(${(lp.zw/lp.dn[0]).toFixed(4)})`);
-    setS(loupeImg, 'visibility', 'visible');
-  }
-  function loupeHide(){ if (!lp.on) return; lp.on = false; lp.img = null; curOff = null; loupe.classList.remove('on'); root.classList.remove('loupe-on'); }
-  // lecture en début d'image (voir la boucle), écriture ensuite : la loupe suit aussi pendant le défilement
-  const measureLoupe = () => { lp.r = lp.on && lp.img ? lp.img.getBoundingClientRect() : null; lp.sr = lp.r && lp.stage ? lp.stage.getBoundingClientRect() : null; };
-  const drawLoupe = () => {
-    const r = lp.r, sr = lp.sr; lp.r = lp.sr = null;
-    if (!r || !lp.on || !lp.dn[0]) return;
-    if (sr && (lp.x < sr.left || lp.x > sr.right || lp.y < sr.top || lp.y > sr.bottom)) { loupeHide(); return; }
-    // image en « cover » : taille et décalage réels de la photo dans son cadre (le léger zoom lent compris)
-    const [nw, nh] = lp.nat, k = Math.max(r.width / nw, r.height / nh), rw = nw * k, rh = nh * k;
-    const px = lp.x - (r.left + (r.width - rw) / 2), py = lp.y - (r.top + (r.height - rh) / 2), Z = LOUPE_Z;
-    setS(loupe, 'transform', `translate3d(${(lp.x - lp.W/2).toFixed(1)}px,${(lp.y - lp.H/2).toFixed(1)}px,0)`);
-    lp.tx = lp.W/2 - px*Z; lp.ty = lp.H/2 - py*Z; lp.zw = rw*Z;
-    setS(loupeImg, 'transform', `translate3d(${lp.tx.toFixed(1)}px,${lp.ty.toFixed(1)}px,0) scale(${(lp.zw/lp.dn[0]).toFixed(4)})`);
-  };
-
   const VW_DUR = 3600, viewers = [];
   $$('[data-vw]').forEach(vw => {
     const figs = $$('.vw-f', vw), thumbs = $$('.vw-t', vw), stage = vw.querySelector('.vw-stage'), capEl = vw.querySelector('.vw-cap'), numEl = vw.querySelector('.vw-n');
@@ -1585,7 +1540,6 @@
       if (numEl) numEl.textContent = `${pad(i + 1)} / ${pad(n)}`;
       st.cur = i; st.t0 = performance.now();
       if (user) st.hold = performance.now() + 9000;
-      if (st.hover && fine.matches) { const im = figs[i].querySelector('img'); loupeSet(im, lp.x, lp.y, stage); if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', () => { if (st.hover && figs[st.cur].contains(im)) loupeSet(im, lp.x, lp.y, stage); }, {once:true}); }
       // la vignette en cours reste visible dans la planche (téléphone)
       const strip = thumbs[i].parentElement;
       if (strip.scrollWidth > strip.clientWidth + 2) { const tl = thumbs[i].offsetLeft - strip.clientWidth/2 + thumbs[i].offsetWidth/2; strip.scrollTo({ left: tl, behavior: motion ? 'smooth' : 'auto' }); }
@@ -1604,14 +1558,11 @@
     });
     stage.addEventListener('click', () => {
       if (swiped) { swiped = false; return; }
-      if (fine.matches) { show(st.cur + 1, true); return; }
       figs.forEach(f => { const v = f.querySelector('video'); if (v) v.pause(); });
       lbOpenAt(items(), st.cur, i => { if (i !== st.cur) show(i, true); else { st.hold = performance.now() + 9000; const v = figs[st.cur].querySelector('video'); if (v && st.vis && motion) playV(v); } });
     });
     stage.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.hover = true; });
-    stage.addEventListener('pointerleave', () => { st.hover = false; loupeHide(); });
-    // la loupe suit la souris sur les photos (pas sur les vidéos)
-    stage.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse' || !fine.matches) return; loupeSet(figs[st.cur].querySelector('img'), e.clientX, e.clientY, stage); });
+    stage.addEventListener('pointerleave', () => { st.hover = false; });
     vw.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show(st.cur + (e.key === 'ArrowRight' ? 1 : -1), true); const t = thumbs[st.cur]; if (t && vw.contains(document.activeElement)) t.focus({preventScroll:true}); } });
     new IntersectionObserver(es => es.forEach(en => { const was = st.vis; st.vis = en.isIntersecting && en.intersectionRatio > .45; if (!st.vis) { st.t0 = performance.now(); st.waitT = 0; }
       // de retour à l'écran : l'image reprend là où elle en était (avant, après un détour, elle était passée aussitôt)
@@ -1837,10 +1788,8 @@
     if (measureMt) measureMt();
     if (measurePeek) measurePeek();
     measureScrollFx(); measureSvc();
-    if (lp.on) measureLoupe();
     // 2) écritures
     drawCursor();
-    drawLoupe();
     if (heroVisible && heroFrame) heroFrame(now);
     if (worksVisible && applyWorks) applyWorks(false);
     if (baVisible && baTick) baTick();
