@@ -5,7 +5,7 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/projets/</loc>
@@ -105,6 +105,13 @@
     </video:video>
   </url>
   <url>
+    <loc>https://novaforvision.com/services/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/services/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/services/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/services/"/>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://novaforvision.com/studio/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/studio/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/studio/"/>
@@ -116,14 +123,14 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/contact/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/contact/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/contact/"/>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/en/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/en/projects/</loc>
@@ -131,6 +138,13 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
     <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/services/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/services/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/services/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/services/"/>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/en/studio/</loc>
@@ -144,6 +158,6 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/contact/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/contact/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/contact/"/>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
 </urlset>
