@@ -1214,53 +1214,102 @@
   $$('.h2.rv>span').forEach(s => { const li = document.createElement('span'); li.className = 'li'; while (s.firstChild) li.appendChild(s.firstChild); s.appendChild(li); });
   // les éléments masqués (clip-path) sont observés via leur parent, sinon ils ne croisent jamais l'écran
   const revIO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { (en.target._rv || en.target).classList.add('in'); revIO.unobserve(en.target); } }), {threshold:.2, rootMargin:'0px 0px -5% 0px'});
-  $$('.rv,.svc,.rise,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
+  $$('.rv,.svc,.rise,.up,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
   $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
 
-  /* ---------- Services : prestations en accordéon, déroulé qui s'allume étape par étape ---------- */
-  const acc = $('#acc');
-  if (acc) {
-    const accItems = $$('.acc-i', acc);
-    const setAcc = (it, on) => { it.classList.toggle('open', on); it.querySelector('.acc-b').setAttribute('aria-expanded', String(on)); };
-    // une seule prestation ouverte à la fois ; recliquer sur celle qui est ouverte la referme
-    accItems.forEach(it => it.querySelector('.acc-b').addEventListener('click', () => {
-      const on = !it.classList.contains('open');
-      accItems.forEach(o => { if (o !== it) setAcc(o, false); });
-      setAcc(it, on);
-    }));
-    // une adresse mène à sa prestation (services/#clips-vfx) : elle s'ouvre, les autres se referment
-    const accHash = () => { const id = dec(location.hash.slice(1)), it = id && accItems.find(o => o.id === id); if (it) accItems.forEach(o => setAcc(o, o === it)); return it; };
-    const accFirst = accHash();
-    // à l'arrivée, la page se cale sur la prestation une fois les panneaux en place (ils changent de hauteur en s'ouvrant)
-    if (accFirst) { const go = () => window.scrollTo(0, Math.max(0, accFirst.getBoundingClientRect().top + window.scrollY - bandH())); go(); setTimeout(go, 700); }
-    window.addEventListener('hashchange', accHash);
+  /* ---------- Services : index des prestations, déroulé en une ligne ---------- */
+  // Index : une prestation affichée à la fois, choisie au survol (après un court arrêt, pour qu'un passage en diagonale
+  // vers le volet ne change rien), au clic, au toucher ou au clavier (flèches, Début, Fin).
+  // Sans JavaScript, les titres sont des liens vers leur volet et tous les volets sont affichés.
+  const ix = $('#ix');
+  if (ix) {
+    const tabs = $$('.ix-b', ix), panels = tabs.map(t => document.getElementById(t.getAttribute('href').slice(1))), list = ix.querySelector('.ix-tabs'), ixStar = ix.querySelector('.ix-star');
+    let ixCur = -1, ixHov = 0, ixRot = 0;
+    const lab = ix.closest('section').querySelector('h2');
+    list.setAttribute('role', 'tablist'); list.setAttribute('aria-orientation', 'vertical');
+    if (lab && lab.id) list.setAttribute('aria-labelledby', lab.id);
+    $$('li', list).forEach(li => li.setAttribute('role', 'presentation'));
+    tabs.forEach((t, i) => { t.setAttribute('role', 'tab'); t.setAttribute('aria-controls', panels[i].id); panels[i].setAttribute('role', 'tabpanel'); panels[i].setAttribute('aria-labelledby', t.id); });
+    // l'étoile se pose au milieu de la ligne du titre affiché (position de mise en page, sans les décalages des apparitions)
+    const placeIxStar = () => {
+      if (ixCur < 0 || !ixStar) return;
+      const t = tabs[ixCur]; let y = t.offsetHeight/2, el = t;
+      while (el && el !== ix) { y += el.offsetTop; el = el.offsetParent; }
+      setS(ixStar, '--y', y.toFixed(1) + 'px'); setS(ixStar, '--r', ixRot + 'deg');
+    };
+    const showIx = (i, focus) => {
+      if (focus) tabs[i].focus();
+      if (i === ixCur) return;
+      // un demi-tour par changement, dans le sens du déplacement
+      if (ixCur >= 0) ixRot += i > ixCur ? 180 : -180;
+      ixCur = i;
+      tabs.forEach((t, k) => { const on = k === i; t.classList.toggle('on', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; panels[k].classList.toggle('on', on); });
+      placeIxStar();
+    };
+    const KEYS = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', e => { e.preventDefault(); clearTimeout(ixHov); showIx(i); try { history.replaceState(null, '', '#' + panels[i].id); } catch(_){} });
+      t.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; clearTimeout(ixHov); ixHov = setTimeout(() => showIx(i), 90); });
+      t.addEventListener('pointerleave', () => clearTimeout(ixHov));
+      t.addEventListener('keydown', e => {
+        const n = tabs.length, d = KEYS[e.key], k = d ? (i + d + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
+        if (k < 0) return;
+        e.preventDefault(); showIx(k, true);
+      });
+    });
+    // une adresse mène à sa prestation (services/#clips-vfx, depuis l'accueil) : son volet s'affiche
+    const ixHash = () => { const id = dec(location.hash.slice(1)), k = panels.findIndex(p => p.id === id); if (k >= 0) showIx(k); return k; };
+    // à l'arrivée sur une prestation, la page se cale sur le haut de la section (libellé et liste visibles)
+    if (ixHash() < 0) showIx(0);
+    else { const sec = ix.closest('section'), go = () => window.scrollTo(0, Math.max(0, sec.getBoundingClientRect().top + window.scrollY - bandH())); go(); setTimeout(go, 700); }
+    window.addEventListener('hashchange', ixHash);
+    revIO.observe(ix);
+    // les titres apparaissent décalés de quelques pixels : l'étoile est replacée une fois qu'ils sont en place
+    setTimeout(placeIxStar, 1200);
+    new ResizeObserver(placeIxStar).observe(list);
+    if (document.fonts) document.fonts.ready.then(placeIxStar);
+    // l'étoile ne glisse qu'une fois posée (pas de trajet depuis le haut à l'arrivée)
+    requestAnimationFrame(() => requestAnimationFrame(() => ix.classList.add('ready')));
   }
-  const steps = $('#steps');
-  if (steps) {
-    const stEls = $$('.step', steps), stStar = steps.querySelector('.steps-star'), reached = stEls.map(() => false);
-    let stCur = -1;
-    steps.classList.add('run');
-    // l'étoile se pose à la hauteur du titre de l'étape en cours et tourne d'un cran à chaque étape
-    const placeStar = () => {
-      if (!stStar || stCur < 0) return;
-      const t = stEls[stCur].querySelector('.step-t'), r = t.getBoundingClientRect(), sr = steps.getBoundingClientRect();
-      stStar.style.setProperty('--y', (r.top - sr.top + Math.min(r.height, parseFloat(getComputedStyle(t).lineHeight) || r.height)/2).toFixed(1) + 'px');
-      stStar.style.setProperty('--r', (stCur*30) + 'deg');
+
+  // Déroulé : une ligne de montage. À l'arrivée à l'écran, l'étoile la parcourt comme une tête de lecture et allume
+  // les six étapes une à une ; au survol d'une étape, elle s'y pose et la suite repasse en gris. Verticale sur téléphone.
+  const tl = $('#tl');
+  if (tl) {
+    const st = $$('.tl-s', tl), tlBar = tl.querySelector('.tl-bar'), tlStar = tl.querySelector('.tl-star'), n = st.length, vq = matchMedia('(max-width:900px)');
+    let tp = 0, ta = 0, tb = 0, vert = false, played = false, sweeping = false;
+    tl.classList.add('run');
+    const drawTl = () => {
+      setS(tlBar, 'transform', (vert ? 'scaleY(' : 'scaleX(') + tp.toFixed(4) + ')');
+      if (tlStar && !vert) setS(tlStar, 'transform', 'translate3d(' + (ta + (tb - ta)*tp - 15).toFixed(1) + 'px,0,0)');
+      st.forEach((s, i) => s.classList.toggle('on', i <= tp*(n - 1) + 1e-3));
     };
-    const markSteps = () => {
-      let k = -1; reached.forEach((v,i) => { if (v) k = i; });
-      stEls.forEach((s,i) => s.classList.toggle('on', i <= k));
-      steps.classList.toggle('live', k >= 0);
-      if (k !== stCur) { stCur = k; placeStar(); }
+    // relevé : position des repères de la première et de la dernière étape (relu seulement si la taille change)
+    const measureTl = () => {
+      vert = vq.matches;
+      const s0 = st[0], s1 = st[n - 1];
+      ta = vert ? s0.offsetTop + 9 : s0.offsetLeft; tb = vert ? s1.offsetTop + 9 : s1.offsetLeft;
+      setS(tlBar, vert ? 'top' : 'left', ta + 'px'); setS(tlBar, vert ? 'height' : 'width', (tb - ta) + 'px');
+      setS(tlBar, vert ? 'left' : 'top', ''); setS(tlBar, vert ? 'width' : 'height', '');
+      clrS(tlBar, 'transform'); drawTl();
     };
-    // une étape est atteinte quand son haut passe au-dessus des deux tiers de l'écran ; elle s'éteint si on remonte au-dessus d'elle
-    const stIO = new IntersectionObserver(es => {
-      es.forEach(en => { const i = stEls.indexOf(en.target); if (en.isIntersecting) reached[i] = true; else if (en.rootBounds) reached[i] = en.boundingClientRect.top < en.rootBounds.bottom; });
-      markSteps();
-    }, {rootMargin:'0px 0px -34% 0px', threshold:0});
-    stEls.forEach(s => stIO.observe(s));
-    window.addEventListener('resize', placeStar);
-    if (document.fonts) document.fonts.ready.then(placeStar);
+    const easeIO = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3)/2;
+    const sweepTl = () => {
+      played = true; tl.classList.add('live');
+      if (!motion) { tp = 1; drawTl(); tl.classList.add('ease'); return; }
+      sweeping = true;
+      const T = 1500, t0 = performance.now();
+      const step = now => { const x = Math.min(1, (now - t0)/T); tp = easeIO(x); drawTl(); if (x < 1) requestAnimationFrame(step); else { sweeping = false; tl.classList.add('ease'); } };
+      requestAnimationFrame(step);
+    };
+    const tlTo = q => { if (!played || sweeping || vert) return; tp = q; drawTl(); };
+    const tlIO = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { tlIO.disconnect(); sweepTl(); } }, {threshold:.4});
+    tlIO.observe(tl);
+    st.forEach((s, i) => s.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') tlTo(i/(n - 1)); }));
+    tl.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') tlTo(1); });
+    new ResizeObserver(measureTl).observe(tl);
+    if (document.fonts) document.fonts.ready.then(measureTl);
+    measureTl();
   }
 
   /* ---------- Parallaxe des stills (projets) et bandeau des disciplines (accueil) ---------- */
@@ -1746,7 +1795,8 @@
   ['wheel','touchstart','keydown'].forEach(ev => window.addEventListener(ev, stopGlide, {passive:true}));
 
   /* ---------- Projets : deux onglets (Campagnes, Clips), chacun avec son adresse ---------- */
-  const tablist = $('[role="tablist"]');
+  // (l'index des prestations de la page Services est aussi une liste d'onglets : il garde son propre code)
+  const tablist = $('[role="tablist"]:not(.ix-tabs)');
   if (tablist) {
     const tabs = $$('[role="tab"]', tablist);
     const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
