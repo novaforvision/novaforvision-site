@@ -708,139 +708,159 @@ html.lb-on{overflow:hidden}
 
 
 
-/* ==================== Page Services : l'approche de l'IA, les prestations en accordéon, le déroulé d'un projet ==================== */
-/* Ouverture : l'accroche en très grand sur deux tons (même révélation que les autres grands titres), une phrase, puis quatre principes */
-.mf{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:128px 112px}
-.mf>*{grid-column:1/-1;min-width:0}
-.h2.xl{font-size:clamp(44px,9.4vw,152px);line-height:.98;letter-spacing:-.045em}
-.h2.xl>span{padding-bottom:.17em;margin-bottom:-.17em}
-.mf-t{margin-top:32px}
-.mf .mf-sub{grid-column:4/13;display:grid;gap:12px;justify-items:start;margin-top:16px}
-.mf-lead{max-width:30em;font-size:clamp(18px,1.7vw,24px);line-height:1.4;letter-spacing:-.01em;color:var(--fg-2)}
-.pr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:48px 24px;margin-top:88px}
-.pr li{display:grid;gap:12px;align-content:start;min-width:0;padding-top:20px;border-top:1px solid var(--line-2)}
-.pr-n,.acc-n,.step-n,.step-w{font-size:12px;color:var(--fg-3)}
-.pr-t{margin-top:40px;font-size:clamp(22px,2.1vw,30px);line-height:1.1;font-weight:400;letter-spacing:-.025em}
-.pr-d{max-width:34ch;font-size:15px;line-height:1.6;color:var(--fg-2)}
-/* apparition en cascade : chaque élément monte de quelques pixels, l'un après l'autre */
-.js .rise>*{opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease),transform .9s var(--ease)}
-.js .rise.in>*{opacity:1;transform:none}
-.js .rise.in>:nth-child(2){transition-delay:.08s}
-.js .rise.in>:nth-child(3){transition-delay:.16s}
-.js .rise.in>:nth-child(4){transition-delay:.24s}
-.js .rise.in>:nth-child(5){transition-delay:.32s}
-.js .rise.in>:nth-child(n+6){transition-delay:.4s}
-.motion-off .rise>*{transition:none}
-
-/* Une section : le libellé dans la colonne de gauche, le titre et sa phrase à droite, puis la liste sur toute la largeur */
-.sec{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:96px 128px;border-top:1px solid var(--line)}
-.sec>.label{grid-column:1/4}
-.sec-body{grid-column:4/13;display:grid;gap:24px;min-width:0}
+/* ==================== Page Services : l'accroche, l'index des prestations, le déroulé en une ligne ==================== */
+/* Une section : le libellé dans la colonne de gauche, le contenu à droite (page Services et accueil) */
+.sec{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:96px;border-top:1px solid var(--line)}
+.sec>.label{grid-column:1/4;align-self:start}
+.sec-body{grid-column:4/13;display:grid;gap:24px;justify-items:start;min-width:0}
+.sec-body>.h2{justify-self:stretch}
 .sec-lead{max-width:34em;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:var(--fg-2)}
-.sec>.acc,.sec>.steps,.sec>.sv-list{grid-column:1/-1;min-width:0;margin-top:48px}
+/* apparitions : un bloc (.up) ou ses enfants l'un après l'autre (.rise) montent de 12 px en apparaissant */
+.js .up,.js .rise>*{opacity:0;transform:translateY(12px);transition:opacity .7s var(--ease),transform .9s var(--ease)}
+.js .up.in,.js .rise.in>*{opacity:1;transform:none}
+.js .rise.in>:nth-child(2){transition-delay:.05s}
+.js .rise.in>:nth-child(3){transition-delay:.1s}
+.js .rise.in>:nth-child(4){transition-delay:.15s}
+.js .rise.in>:nth-child(5){transition-delay:.2s}
+.js .rise.in>:nth-child(n+6){transition-delay:.25s}
+.motion-off .up,.motion-off .rise>*{transition:none}
 
-/* Prestations en accordéon : une seule ouverte à la fois ; le panneau s'ouvre par sa hauteur de grille (pas de mesure en script).
-   Sans JavaScript, tous les panneaux restent ouverts. */
-.acc{border-top:1px solid var(--line-2)}
-.acc-i{position:relative;border-bottom:1px solid var(--line)}
-.acc-i::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);pointer-events:none}
-.acc-i:hover::after,.acc-i:focus-within::after{transform:scaleX(1)}
-.acc-h{font:inherit}
-.acc-b{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:baseline;width:100%;padding-block:28px;text-align:left}
-.acc-b:focus-visible{outline-offset:-2px}
-.acc-n{grid-column:1/4}
-.acc-t{grid-column:4/12;font-size:clamp(28px,3.4vw,48px);line-height:1.05;letter-spacing:-.025em;color:var(--fg-2);transition:transform .5s var(--ease),color .3s var(--ease)}
-.acc-i.open .acc-t,.acc-b:hover .acc-t,.acc-b:focus-visible .acc-t{color:var(--fg)}
-.acc-b:hover .acc-t{transform:translateX(12px)}
-.acc-x{grid-column:12/13;justify-self:end;align-self:center;position:relative;width:20px;height:20px;color:var(--fg-2);transition:transform .5s var(--ease),color .3s var(--ease)}
-.acc-x::before,.acc-x::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-.5px;background:currentColor}
-.acc-x::after{transform:rotate(90deg)}
-.acc-i.open .acc-x{transform:rotate(45deg);color:var(--fg)}
-.acc-p{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .6s var(--ease),visibility 0s .6s}
-.acc-i.open .acc-p{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .6s var(--ease),visibility 0s}
-.acc-in{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;min-height:0;overflow:hidden}
-.acc-c{grid-column:4/12;display:grid;gap:20px;justify-items:start;padding-bottom:36px;opacity:0;transform:translateY(8px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
-.acc-i.open .acc-c{opacity:1;transform:none;transition:opacity .6s var(--ease) .12s,transform .8s var(--ease) .12s}
-.acc-d{max-width:38em;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:var(--fg-2)}
-.acc-l{display:grid;gap:10px;font-size:15px;line-height:1.5;color:var(--fg-2)}
-.acc-l li{position:relative;padding-left:26px}
-/* la puce est l'étoile NOVA, comme entre les mots du bandeau de l'accueil */
-.acc-l li::before{content:"";position:absolute;left:0;top:.52em;width:14px;height:5px;background:var(--fg-3);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat}
-html:not(.js) .acc-p{grid-template-rows:1fr;visibility:visible}
-html:not(.js) .acc-c{opacity:1;transform:none}
-html:not(.js) .acc-x{display:none}
-.motion-off .acc-p,.motion-off .acc-c,.motion-off .acc-x{transition:none}
+/* Ouverture : l'accroche à gauche, sa phrase à droite sur la même ligne, puis les engagements en fiche */
+.sv-hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:120px 64px}
+.sv-hero>.label{grid-column:1/-1}
+.h2.xl{font-size:clamp(44px,8vw,136px);line-height:.98;letter-spacing:-.045em}
+.h2.xl>span{padding-bottom:.17em;margin-bottom:-.17em}
+html[lang|="en"] .h2.xl{font-size:clamp(44px,6.6vw,116px)}
+.sv-acc{grid-column:1/9;margin-top:28px}
+.sv-lead{grid-column:9/13;align-self:end;max-width:22em;padding-bottom:.55em;font-size:clamp(17px,1.45vw,21px);line-height:1.45;color:var(--fg-2)}
+.js .sv-lead.in{transition-delay:.3s}
+.sv-facts{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px;margin-top:64px;padding-top:20px;border-top:1px solid var(--line-2)}
+.sv-facts>div{display:grid;gap:6px;align-content:start}
+.sv-facts>div:nth-child(2){grid-column:2}
+.sv-facts dt{font-size:12px;color:var(--fg-3)}
+.sv-facts dd{font-size:15px}
+.js .sv-facts.in>:nth-child(1){transition-delay:.4s}
+.js .sv-facts.in>:nth-child(2){transition-delay:.46s}
+.js .sv-facts.in>:nth-child(3){transition-delay:.52s}
 
-/* Déroulé : six étapes ; celles déjà atteintes en défilant s'allument, l'étoile NOVA se pose devant l'étape en cours */
-.steps{position:relative}
-.steps-l{border-top:1px solid var(--line-2)}
-.step{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:baseline;padding-block:28px;border-bottom:1px solid var(--line)}
-.step-n{grid-column:1/4}
-.step-t{grid-column:4/8;font-size:clamp(28px,3.4vw,48px);line-height:1.05;font-weight:400;letter-spacing:-.025em}
-.step-d{grid-column:8/12;max-width:38ch;font-size:15px;line-height:1.6;color:var(--fg-2)}
-.step-w{grid-column:12/13;justify-self:end;white-space:nowrap}
-/* une étape pas encore atteinte reste lisible : elle passe en gris (contraste suffisant), sans baisse d'opacité */
-.step-t,.step-d,.step-w{transition:color .6s var(--ease)}
-.js .steps.run .step:not(.on) .step-t,.js .steps.run .step:not(.on) .step-d{color:var(--fg-3)}
-.js .steps.run .step.on .step-w{color:var(--fg-2)}
-.steps-star{display:none}
-.js .steps.run .steps-star{display:block;position:absolute;left:44px;top:0;width:30px;height:11px;margin-top:-5px;background:var(--fg);opacity:0;transform:translate3d(0,var(--y,0px),0) rotate(var(--r,0deg));transition:transform .8s var(--ease),opacity .4s var(--ease);pointer-events:none}
-.js .steps.run.live .steps-star{opacity:1}
-.motion-off .step-t,.motion-off .step-d,.motion-off .step-w,.motion-off .steps-star{transition:none}
+/* Prestations : un index. Les titres à gauche, un seul volet de détail à droite.
+   Les volets se superposent dans la même case : la page ne change pas de hauteur quand on passe de l'un à l'autre.
+   Sans JavaScript, tous les volets s'affichent l'un sous l'autre avec leur titre. */
+.sv-ix>.label{grid-column:1/4}
+.ix{grid-column:4/13;position:relative;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));column-gap:24px;min-width:0;--sx:-54px}
+.ix-tabs{grid-column:1/6;display:grid;align-content:start;min-width:0}
+.ix-b{display:block;padding-block:3px;font-size:clamp(32px,3.8vw,60px);line-height:1.12;letter-spacing:-.03em;color:var(--fg-3);transition:color .16s var(--ease)}
+.ix-b:hover{color:var(--fg-2)}
+.ix-b.on,html:not(.js) .ix-b{color:var(--fg)}
+.ix-b:focus-visible{outline-offset:2px}
+.ix-ps{grid-column:6/10;display:grid;align-content:start;min-width:0;padding-top:.85vw}
+.ix-p{grid-area:1/1;display:grid;justify-items:start;align-content:start;min-width:0}
+.ix-pt{margin-bottom:12px;font-size:12px;font-weight:400;color:var(--fg-3)}
+.ix-d{max-width:24em;font-size:clamp(17px,1.4vw,20px);line-height:1.45}
+.ix-k{margin-top:28px;font-size:12px;color:var(--fg-3)}
+.ix-l{display:grid;gap:4px;margin-top:10px;font-size:15px;line-height:1.5;color:var(--fg-2)}
+.ix-l li{position:relative;padding-left:24px}
+.ix-l li::before{content:"";position:absolute;left:0;top:.56em;width:14px;height:5px;background:var(--fg-3);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat}
+.ix-p .link{margin-top:16px}
+html:not(.js) .ix-ps{gap:48px}
+html:not(.js) .ix-p{grid-area:auto}
+.js .ix-pt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}
+/* changement de volet : l'ancien s'efface vite, le nouveau arrive ligne par ligne */
+.js .ix-p{visibility:hidden;transition:visibility 0s .2s}
+.js .ix-p.on{visibility:visible;transition:none}
+.js .ix-p>*{opacity:0;transform:translateY(8px);transition:opacity .16s var(--ease),transform .2s var(--ease)}
+.js .ix.in .ix-p.on>*{opacity:1;transform:none;transition:opacity .5s var(--ease) .06s,transform .7s var(--ease) .06s}
+.js .ix.in .ix-p.on>:nth-child(3){transition-delay:.11s}
+.js .ix.in .ix-p.on>:nth-child(4){transition-delay:.16s}
+.js .ix.in .ix-p.on>:nth-child(5){transition-delay:.21s}
+/* l'étoile NOVA se pose devant la prestation affichée et tourne d'un cran à chaque ligne */
+.ix-star{display:none}
+.js .ix-star{display:block;position:absolute;left:var(--sx);top:0;width:30px;height:11px;margin-top:-5.5px;background:var(--fg);opacity:0;transform:translate3d(0,var(--y,0px),0) rotate(var(--r,0deg));transition:opacity .4s var(--ease) .3s;pointer-events:none}
+.js .ix.ready .ix-star{transition:transform .5s var(--ease),opacity .4s var(--ease) .3s}
+.js .ix.in .ix-star{opacity:1}
+.motion-off .ix-b,.motion-off .ix-p,.motion-off .ix-p>*,.motion-off .ix-star{transition:none!important}
 
-/* Appel au contact en bas de page (sans l'étoile de poussière de l'accueil) */
-.sv-cta{padding-bottom:128px}
+/* Déroulé : une ligne de montage, six étapes. À l'arrivée, l'étoile la parcourt comme une tête de lecture et allume les étapes ;
+   au survol d'une étape, elle s'y pose (ce qui précède reste allumé). Sans JavaScript, tout est allumé. */
+/* le titre du déroulé tient sur une ligne : « Du brief » puis « à la livraison » en gris */
+.sv-dr .h2>span{display:inline-block;vertical-align:top}
+.sv-dr .tl{grid-column:1/-1;margin-top:40px;min-width:0}
+.tl{position:relative}
+.tl::before{content:"";position:absolute;left:0;right:0;top:40px;height:1px;background:var(--line-2)}
+.tl-l{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:24px}
+.tl-s{position:relative;display:grid;align-content:start;min-width:0}
+.tl-s::before{content:"";position:absolute;left:0;top:36px;width:1px;height:9px;background:var(--fg-3);transition:background-color .3s var(--ease)}
+.tl-n{font-size:12px;line-height:18px;color:var(--fg-3);white-space:nowrap}
+.tl-t{margin-top:52px;font-size:clamp(20px,1.8vw,26px);line-height:1.15;font-weight:400;letter-spacing:-.02em}
+.tl-d{margin-top:8px;max-width:18em;font-size:14px;line-height:1.5;color:var(--fg-2)}
+.tl-t,.tl-d{transition:color .3s var(--ease)}
+.tl-bar,.tl-star{display:none}
+.js .tl.run .tl-s:not(.on) .tl-t,.js .tl.run .tl-s:not(.on) .tl-d{color:var(--fg-3)}
+.js .tl.run .tl-s.on::before{background:var(--fg)}
+.js .tl.run .tl-bar{display:block;position:absolute;left:0;top:40px;width:0;height:1px;background:var(--fg);transform-origin:0 0;transform:scaleX(0)}
+.js .tl.run .tl-star{display:block;position:absolute;left:0;top:35px;width:30px;height:11px;background:var(--fg);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.js .tl.run.live .tl-star{opacity:1}
+.js .tl.run.ease .tl-bar,.js .tl.run.ease .tl-star{transition:transform .5s var(--ease),opacity .3s var(--ease)}
+.motion-off .tl-s::before,.motion-off .tl-t,.motion-off .tl-d,.motion-off .tl-bar,.motion-off .tl-star{transition:none!important}
 
-/* Accueil : l'approche de l'IA et la liste des prestations, chaque ligne mène à sa prestation sur la page Services */
-.sv-list{border-top:1px solid var(--line-2)}
-.sv-list li{position:relative;border-bottom:1px solid var(--line);transition:opacity .25s var(--ease)}
-.sv-list li::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);pointer-events:none}
-.sv-list a{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:baseline;padding-block:22px}
-.sv-n{grid-column:1/4;font-size:12px;color:var(--fg-3)}
-.sv-t{grid-column:4/9;font-size:clamp(26px,3vw,42px);line-height:1.05;letter-spacing:-.025em;transition:transform .5s var(--ease)}
-.sv-d{grid-column:9/13;font-size:14px;line-height:1.5;color:var(--fg-2)}
-.sv-list:hover li{opacity:.4}
-.sv-list li:hover{opacity:1}
-.sv-list li:hover::after,.sv-list li:focus-within::after{transform:scaleX(1)}
-.sv-list li:hover .sv-t{transform:translateX(12px)}
-.sec-more{grid-column:4/13;justify-self:start;margin-top:16px}
+/* Appel au contact : le titre à gauche, le bouton à droite */
+.sv-cta{grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:32px;padding-block:96px}
+
+/* Accueil : les cinq prestations sur une ou deux lignes, chacune précédée de l'étoile ; chacune mène à son volet sur la page Services */
+.sv-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 36px;margin-top:8px;font-size:clamp(24px,2.6vw,38px);line-height:1.25;letter-spacing:-.025em}
+.sv-row li{display:inline-flex;align-items:center}
+.sv-row li::before{content:"";flex:none;width:20px;height:7px;margin-right:14px;background:var(--fg-3);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat;transition:background-color .16s var(--ease)}
+.sv-row li:hover::before,.sv-row li:focus-within::before{background:var(--fg)}
+.sv-row a{position:relative;transition:color .16s var(--ease)}
+.sv-row a::after{content:"";position:absolute;left:0;right:0;bottom:-.06em;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.sv-row:hover a{color:var(--fg-3)}
+.sv-row a:hover,.sv-row a:focus-visible{color:var(--fg)}
+.sv-row a:hover::after,.sv-row a:focus-visible::after{transform:scaleX(1)}
+.sec-body>.sv-row+.link{margin-top:-4px}
+.motion-off .sv-row a,.motion-off .sv-row a::after,.motion-off .sv-row li::before{transition:none}
 
 @media (max-width:1100px){
-  .pr{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .step-t{grid-column:4/9}
-  .step-d{grid-column:9/13}
-  .step-w{display:none}
+  .sv-acc{grid-column:1/-1}
+  .sv-lead{grid-column:1/9;margin-top:24px;align-self:auto;padding-bottom:0}
+  .sv-ix>.label,.ix,.sv-dr>.label,.sv-dr .sec-body{grid-column:1/-1}
+  .ix{grid-template-columns:repeat(12,minmax(0,1fr));--sx:0px}
+  .ix-tabs{grid-column:1/8;padding-left:48px}
+  .ix-ps{grid-column:8/13}
+}
+@media (max-width:900px){
+  .tl::before{left:4px;right:auto;top:9px;bottom:0;width:1px;height:auto}
+  .tl-l{grid-template-columns:minmax(0,1fr);row-gap:20px}
+  .tl-s{display:block;padding-left:28px}
+  .tl-s::before{top:9px;width:9px;height:1px}
+  .tl-n{display:block;margin-bottom:2px}
+  .tl-t{display:inline;margin:0 12px 0 0;font-size:22px}
+  .tl-d{display:inline;margin:0}
+  .js .tl.run .tl-bar{left:4px;top:0;width:1px;height:0;transform:scaleY(0)}
+  .js .tl.run .tl-star{display:none}
 }
 @media (max-width:760px){
-  .mf{grid-template-columns:minmax(0,1fr);padding-block:104px 72px}
+  .sv-hero{padding-block:104px 56px}
   .h2.xl{font-size:clamp(44px,15vw,76px)}
   /* anglais : « The eye decides. » est plus long, il reste sur une ligne */
   html[lang|="en"] .h2.xl{font-size:clamp(38px,12.6vw,66px)}
-  .mf-t{margin-top:20px}
-  .mf .mf-sub{grid-column:auto;margin-top:8px}
-  .pr{grid-template-columns:minmax(0,1fr);gap:32px;margin-top:56px}
-  .pr-t{max-width:none;margin-top:12px}
-  .pr-d{max-width:none}
-  .sec{grid-template-columns:minmax(0,1fr);padding-block:64px 88px}
-  .sec>.label,.sec-body,.sec-more{grid-column:auto}
-  .sec>.acc,.sec>.steps,.sec>.sv-list{margin-top:24px}
-  .acc-b{grid-template-columns:28px minmax(0,1fr) 20px;column-gap:12px;padding-block:22px}
-  .acc-n,.acc-t,.acc-x{grid-column:auto}
-  .acc-t{font-size:clamp(24px,7vw,34px)}
-  .acc-b:hover .acc-t{transform:none}
-  .acc-in{grid-template-columns:minmax(0,1fr)}
-  .acc-c{grid-column:auto;padding:0 0 28px 40px}
-  .step{grid-template-columns:28px minmax(0,1fr);column-gap:12px;row-gap:8px;padding-block:22px}
-  .step-n{grid-column:1;grid-row:1}
-  .step-t{grid-column:2;font-size:clamp(24px,7vw,34px)}
-  .step-d{grid-column:2;max-width:none}
-  .js .steps.run .steps-star{display:none}
-  .sv-cta{padding-bottom:96px}
-  .sv-list a{grid-template-columns:28px minmax(0,1fr);column-gap:12px;row-gap:6px;padding-block:18px}
-  .sv-n{grid-column:1}
-  .sv-t{grid-column:2;font-size:clamp(24px,7vw,34px)}
-  .sv-d{grid-column:2}
-  .sv-list li:hover .sv-t{transform:none}
+  .sv-acc{margin-top:20px}
+  .sv-lead{grid-column:1/-1;margin-top:20px}
+  .sv-facts{grid-template-columns:minmax(0,1fr);margin-top:40px;padding-top:0;border-top:0}
+  .sv-facts>div,.sv-facts>div:nth-child(2){grid-column:auto;display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-block:12px;border-top:1px solid var(--line)}
+  .sv-facts>div:first-child{border-top-color:var(--line-2)}
+  .sv-facts dd{text-align:right}
+  .sec{grid-template-columns:minmax(0,1fr);padding-block:64px}
+  .sec>.label,.sec-body{grid-column:auto}
+  .ix{grid-template-columns:minmax(0,1fr)}
+  .ix-tabs{grid-column:auto;padding-left:36px}
+  .ix-b{font-size:clamp(26px,8vw,36px);padding-block:4px}
+  .ix-ps{grid-column:auto;margin-top:32px;padding:20px 0 0;border-top:1px solid var(--line)}
+  .js .ix-star{width:24px;height:9px;margin-top:-4.5px}
+  .sv-dr .tl{margin-top:24px}
+  .sv-cta{grid-template-columns:minmax(0,1fr);row-gap:32px;justify-items:start;padding-block:64px 72px}
+  .sv-row{font-size:clamp(22px,6.6vw,30px)}
+  .sv-row{column-gap:24px}
+  .sv-row li::before{width:16px;height:6px;margin-right:10px}
 }
 /* Bande à quatre entrées sur les plus petits écrans (320 px) : le logo garde sa taille, le menu se resserre */
 .band-logo img{min-width:51px}
