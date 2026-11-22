@@ -1217,61 +1217,29 @@
   $$('.rv,.svc,.rise,.up,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
   $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
 
-  /* ---------- Services : index des prestations, déroulé en une ligne ---------- */
-  // Index : une prestation affichée à la fois, choisie au survol (après un court arrêt, pour qu'un passage en diagonale
-  // vers le volet ne change rien), au clic, au toucher ou au clavier (flèches, Début, Fin).
-  // Sans JavaScript, les titres sont des liens vers leur volet et tous les volets sont affichés.
-  const ix = $('#ix');
-  if (ix) {
-    const tabs = $$('.ix-b', ix), panels = tabs.map(t => document.getElementById(t.getAttribute('href').slice(1))), list = ix.querySelector('.ix-tabs'), ixStar = ix.querySelector('.ix-star');
-    let ixCur = -1, ixHov = 0, ixRot = 0;
-    const lab = ix.closest('section').querySelector('h2');
-    list.setAttribute('role', 'tablist'); list.setAttribute('aria-orientation', 'vertical');
-    if (lab && lab.id) list.setAttribute('aria-labelledby', lab.id);
-    $$('li', list).forEach(li => li.setAttribute('role', 'presentation'));
-    tabs.forEach((t, i) => { t.setAttribute('role', 'tab'); t.setAttribute('aria-controls', panels[i].id); panels[i].setAttribute('role', 'tabpanel'); panels[i].setAttribute('aria-labelledby', t.id); });
-    // l'étoile se pose au milieu de la ligne du titre affiché (position de mise en page, sans les décalages des apparitions)
-    const placeIxStar = () => {
-      if (ixCur < 0 || !ixStar) return;
-      const t = tabs[ixCur]; let y = t.offsetHeight/2, el = t;
-      while (el && el !== ix) { y += el.offsetTop; el = el.offsetParent; }
-      setS(ixStar, '--y', y.toFixed(1) + 'px'); setS(ixStar, '--r', ixRot + 'deg');
+  /* ---------- Bande du haut : elle passe en clair quand elle survole une partie claire (Services) ---------- */
+  const lights = $$('.is-light'), bandEl = $('#band');
+  if (lights.length && bandEl) {
+    const onL = new Set(), nearL = new Set();
+    let lio = null, nio = null, lvh = 0;
+    const paintL = () => { bandEl.classList.toggle('on-light', onL.size > 0); bandEl.classList.toggle('pre-light', !onL.size && nearL.size > 0); };
+    // une ligne d'un pixel au milieu de la bande : la partie qu'elle croise décide de la couleur ;
+    // juste sous la bande, une partie claire qui arrive raccourcit le dégradé sombre (pas de voile gris sur le blanc)
+    const setupL = () => {
+      const vh = window.innerHeight; if (vh === lvh && lio) return; lvh = vh;
+      if (lio) { lio.disconnect(); nio.disconnect(); } onL.clear(); nearL.clear();
+      const mid = Math.round(BAND/2);
+      lio = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? onL.add(e.target) : onL.delete(e.target)); paintL(); },
+        {rootMargin: `-${mid}px 0px -${Math.max(0, vh - mid - 1)}px 0px`});
+      nio = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? nearL.add(e.target) : nearL.delete(e.target)); paintL(); },
+        {rootMargin: `0px 0px -${Math.max(0, vh - BAND - 136)}px 0px`});
+      lights.forEach(el => { lio.observe(el); nio.observe(el); });
     };
-    const showIx = (i, focus) => {
-      if (focus) tabs[i].focus();
-      if (i === ixCur) return;
-      // un demi-tour par changement, dans le sens du déplacement
-      if (ixCur >= 0) ixRot += i > ixCur ? 180 : -180;
-      ixCur = i;
-      tabs.forEach((t, k) => { const on = k === i; t.classList.toggle('on', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; panels[k].classList.toggle('on', on); });
-      placeIxStar();
-    };
-    const KEYS = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
-    tabs.forEach((t, i) => {
-      t.addEventListener('click', e => { e.preventDefault(); clearTimeout(ixHov); showIx(i); try { history.replaceState(null, '', '#' + panels[i].id); } catch(_){} });
-      t.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; clearTimeout(ixHov); ixHov = setTimeout(() => showIx(i), 90); });
-      t.addEventListener('pointerleave', () => clearTimeout(ixHov));
-      t.addEventListener('keydown', e => {
-        const n = tabs.length, d = KEYS[e.key], k = d ? (i + d + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
-        if (k < 0) return;
-        e.preventDefault(); showIx(k, true);
-      });
-    });
-    // une adresse mène à sa prestation (services/#clips-vfx, depuis l'accueil) : son volet s'affiche
-    const ixHash = () => { const id = dec(location.hash.slice(1)), k = panels.findIndex(p => p.id === id); if (k >= 0) showIx(k); return k; };
-    // à l'arrivée sur une prestation, la page se cale sur le haut de la section (libellé et liste visibles)
-    if (ixHash() < 0) showIx(0);
-    else { const sec = ix.closest('section'), go = () => window.scrollTo(0, Math.max(0, sec.getBoundingClientRect().top + window.scrollY - bandH())); go(); setTimeout(go, 700); }
-    window.addEventListener('hashchange', ixHash);
-    revIO.observe(ix);
-    // les titres apparaissent décalés de quelques pixels : l'étoile est replacée une fois qu'ils sont en place
-    setTimeout(placeIxStar, 1200);
-    new ResizeObserver(placeIxStar).observe(list);
-    if (document.fonts) document.fonts.ready.then(placeIxStar);
-    // l'étoile ne glisse qu'une fois posée (pas de trajet depuis le haut à l'arrivée)
-    requestAnimationFrame(() => requestAnimationFrame(() => ix.classList.add('ready')));
+    setupL();
+    let lT = 0; window.addEventListener('resize', () => { clearTimeout(lT); lT = setTimeout(setupL, 150); });
   }
 
+  /* ---------- Services : déroulé en une ligne ---------- */
   // Déroulé : une ligne de montage. À l'arrivée à l'écran, l'étoile la parcourt comme une tête de lecture et allume
   // les six étapes une à une ; au survol d'une étape, elle s'y pose et la suite repasse en gris. Verticale sur téléphone.
   const tl = $('#tl');
@@ -1288,7 +1256,8 @@
     const measureTl = () => {
       vert = vq.matches;
       const s0 = st[0], s1 = st[n - 1];
-      ta = vert ? s0.offsetTop + 9 : s0.offsetLeft; tb = vert ? s1.offsetTop + 9 : s1.offsetLeft;
+      // la ligne va du rond de la première étape à celui de la dernière (centre du rond : 5,5 px du bord, 10 px du haut)
+      ta = vert ? s0.offsetTop + 10 : s0.offsetLeft + 5.5; tb = vert ? s1.offsetTop + 10 : s1.offsetLeft + 5.5;
       setS(tlBar, vert ? 'top' : 'left', ta + 'px'); setS(tlBar, vert ? 'height' : 'width', (tb - ta) + 'px');
       setS(tlBar, vert ? 'left' : 'top', ''); setS(tlBar, vert ? 'width' : 'height', '');
       clrS(tlBar, 'transform'); drawTl();
