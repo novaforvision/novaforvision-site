@@ -1,4 +1,4 @@
-/* NOVA FOR VISION · script commun aux quatre pages (NOVA, Projets, Studio, Contact).
+/* NOVA FOR VISION · script commun aux cinq pages (NOVA, Projets, Services, Studio, Contact).
    Chaque bloc ne s'active que si sa section est présente sur la page. Pas de dépendance, pas d'étape de build. */
 (() => {
   'use strict';
@@ -1214,8 +1214,54 @@
   $$('.h2.rv>span').forEach(s => { const li = document.createElement('span'); li.className = 'li'; while (s.firstChild) li.appendChild(s.firstChild); s.appendChild(li); });
   // les éléments masqués (clip-path) sont observés via leur parent, sinon ils ne croisent jamais l'écran
   const revIO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { (en.target._rv || en.target).classList.add('in'); revIO.unobserve(en.target); } }), {threshold:.2, rootMargin:'0px 0px -5% 0px'});
-  $$('.rv,.svc,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
+  $$('.rv,.svc,.rise,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
   $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
+
+  /* ---------- Services : prestations en accordéon, déroulé qui s'allume étape par étape ---------- */
+  const acc = $('#acc');
+  if (acc) {
+    const accItems = $$('.acc-i', acc);
+    const setAcc = (it, on) => { it.classList.toggle('open', on); it.querySelector('.acc-b').setAttribute('aria-expanded', String(on)); };
+    // une seule prestation ouverte à la fois ; recliquer sur celle qui est ouverte la referme
+    accItems.forEach(it => it.querySelector('.acc-b').addEventListener('click', () => {
+      const on = !it.classList.contains('open');
+      accItems.forEach(o => { if (o !== it) setAcc(o, false); });
+      setAcc(it, on);
+    }));
+    // une adresse mène à sa prestation (services/#clips-vfx) : elle s'ouvre, les autres se referment
+    const accHash = () => { const id = dec(location.hash.slice(1)), it = id && accItems.find(o => o.id === id); if (it) accItems.forEach(o => setAcc(o, o === it)); return it; };
+    const accFirst = accHash();
+    // à l'arrivée, la page se cale sur la prestation une fois les panneaux en place (ils changent de hauteur en s'ouvrant)
+    if (accFirst) { const go = () => window.scrollTo(0, Math.max(0, accFirst.getBoundingClientRect().top + window.scrollY - bandH())); go(); setTimeout(go, 700); }
+    window.addEventListener('hashchange', accHash);
+  }
+  const steps = $('#steps');
+  if (steps) {
+    const stEls = $$('.step', steps), stStar = steps.querySelector('.steps-star'), reached = stEls.map(() => false);
+    let stCur = -1;
+    steps.classList.add('run');
+    // l'étoile se pose à la hauteur du titre de l'étape en cours et tourne d'un cran à chaque étape
+    const placeStar = () => {
+      if (!stStar || stCur < 0) return;
+      const t = stEls[stCur].querySelector('.step-t'), r = t.getBoundingClientRect(), sr = steps.getBoundingClientRect();
+      stStar.style.setProperty('--y', (r.top - sr.top + Math.min(r.height, parseFloat(getComputedStyle(t).lineHeight) || r.height)/2).toFixed(1) + 'px');
+      stStar.style.setProperty('--r', (stCur*30) + 'deg');
+    };
+    const markSteps = () => {
+      let k = -1; reached.forEach((v,i) => { if (v) k = i; });
+      stEls.forEach((s,i) => s.classList.toggle('on', i <= k));
+      steps.classList.toggle('live', k >= 0);
+      if (k !== stCur) { stCur = k; placeStar(); }
+    };
+    // une étape est atteinte quand son haut passe au-dessus des deux tiers de l'écran ; elle s'éteint si on remonte au-dessus d'elle
+    const stIO = new IntersectionObserver(es => {
+      es.forEach(en => { const i = stEls.indexOf(en.target); if (en.isIntersecting) reached[i] = true; else if (en.rootBounds) reached[i] = en.boundingClientRect.top < en.rootBounds.bottom; });
+      markSteps();
+    }, {rootMargin:'0px 0px -34% 0px', threshold:0});
+    stEls.forEach(s => stIO.observe(s));
+    window.addEventListener('resize', placeStar);
+    if (document.fonts) document.fonts.ready.then(placeStar);
+  }
 
   /* ---------- Parallaxe des stills (projets) et bandeau des disciplines (accueil) ---------- */
   const rail = $('#rail'), railStars = $$('#rail i'), railBox = rail ? rail.parentElement : null;
