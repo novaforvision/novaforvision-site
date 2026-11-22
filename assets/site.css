@@ -708,160 +708,178 @@ html.lb-on{overflow:hidden}
 
 
 
-/* ==================== Page Services : l'accroche, l'index des prestations, le déroulé en une ligne ==================== */
-/* Une section : le libellé dans la colonne de gauche, le contenu à droite (page Services et accueil) */
-.sec{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:96px;border-top:1px solid var(--line)}
-.sec>.label{grid-column:1/4;align-self:start}
-.sec-body{grid-column:4/13;display:grid;gap:24px;justify-items:start;min-width:0}
-.sec-body>.h2{justify-self:stretch}
-.sec-lead{max-width:34em;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:var(--fg-2)}
-/* apparitions : un bloc (.up) ou ses enfants l'un après l'autre (.rise) montent de 12 px en apparaissant */
+/* ==================== Page Services et bloc Services de l'accueil : parties noires et blanches en alternance ==================== */
+/* Une partie claire inverse les couleurs du site : fond blanc cassé (le blanc du site), texte noir. Tout ce qui lit
+   les variables (titres, liens, boutons, filets, focus) s'inverse avec elle. */
+.is-light{--bg:#eeefed;--bg-2:#e3e4e1;--fg:#0b0c0e;--fg-2:#46484d;--fg-3:#5f6166;--line:rgba(11,12,14,.12);--line-2:rgba(11,12,14,.3);--ink:#eeefed;background:var(--bg);color:var(--fg)}
+.is-light ::selection{background:var(--fg);color:var(--bg)}
+.is-light .btn:hover{background:#000}
+
+/* Repère en tête de chaque partie : l'étoile, le numéro, le nom ; à droite, une précision en mono */
+.sv-head{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line-2)}
+.mk{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;line-height:20px;color:var(--fg)}
+.mk::before{content:"";flex:none;width:22px;height:8px;background:var(--fg);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat}
+.mk-n{font-size:12px;font-weight:400;color:var(--fg-3)}
+.mk-n::after{content:"/";margin-left:10px}
+.mk-r{font-size:12px;color:var(--fg-2)}
+/* Paragraphe d'entrée : la partie légère se lit en second, la phrase en gras porte le message */
+.lead{max-width:30em;font-size:clamp(18px,1.55vw,22px);line-height:1.42;letter-spacing:-.01em;color:var(--fg-2)}
+.lead strong{font-weight:500;color:var(--fg)}
+/* apparitions : un bloc (.up) ou ses enfants l'un après l'autre (.rise) montent de 12 px */
 .js .up,.js .rise>*{opacity:0;transform:translateY(12px);transition:opacity .7s var(--ease),transform .9s var(--ease)}
 .js .up.in,.js .rise.in>*{opacity:1;transform:none}
-.js .rise.in>:nth-child(2){transition-delay:.05s}
-.js .rise.in>:nth-child(3){transition-delay:.1s}
-.js .rise.in>:nth-child(4){transition-delay:.15s}
-.js .rise.in>:nth-child(5){transition-delay:.2s}
-.js .rise.in>:nth-child(n+6){transition-delay:.25s}
+.js .up.in{transition-delay:.15s}
+.js .rise.in>:nth-child(2){transition-delay:.06s}
+.js .rise.in>:nth-child(3){transition-delay:.12s}
+.js .rise.in>:nth-child(4){transition-delay:.18s}
+.js .rise.in>:nth-child(5){transition-delay:.24s}
 .motion-off .up,.motion-off .rise>*{transition:none}
 
-/* Ouverture : l'accroche à gauche, sa phrase à droite sur la même ligne, puis les engagements en fiche */
-.sv-hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:120px 64px}
-.sv-hero>.label{grid-column:1/-1}
+/* Ouverture (noire) */
+.sv-hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:104px 80px}
 .h2.xl{font-size:clamp(44px,8vw,136px);line-height:.98;letter-spacing:-.045em}
 .h2.xl>span{padding-bottom:.17em;margin-bottom:-.17em}
-html[lang|="en"] .h2.xl{font-size:clamp(44px,6.6vw,116px)}
-.sv-acc{grid-column:1/9;margin-top:28px}
-.sv-lead{grid-column:9/13;align-self:end;max-width:22em;padding-bottom:.55em;font-size:clamp(17px,1.45vw,21px);line-height:1.45;color:var(--fg-2)}
-.js .sv-lead.in{transition-delay:.3s}
-.sv-facts{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px;margin-top:64px;padding-top:20px;border-top:1px solid var(--line-2)}
-.sv-facts>div{display:grid;gap:6px;align-content:start}
-.sv-facts>div:nth-child(2){grid-column:2}
-.sv-facts dt{font-size:12px;color:var(--fg-3)}
-.sv-facts dd{font-size:15px}
-.js .sv-facts.in>:nth-child(1){transition-delay:.4s}
-.js .sv-facts.in>:nth-child(2){transition-delay:.46s}
-.js .sv-facts.in>:nth-child(3){transition-delay:.52s}
+html[lang|="en"] .sv-acc{font-size:clamp(44px,7vw,120px)}
+.sv-acc{grid-column:1/-1;margin-top:48px}
+.sv-base{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:end;margin-top:56px}
+.sv-base>.lead{grid-column:1/7}
+.kf{grid-column:7/13;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}
+.kf li{display:grid;gap:6px;align-content:end;padding-top:16px;border-top:1px solid var(--fg)}
+.kf-v{font-size:clamp(28px,3vw,44px);line-height:1;font-weight:400;letter-spacing:-.03em;color:var(--fg)}
+.kf-c{font-size:14px;line-height:1.4;color:var(--fg-2)}
 
-/* Prestations : un index. Les titres à gauche, un seul volet de détail à droite.
-   Les volets se superposent dans la même case : la page ne change pas de hauteur quand on passe de l'un à l'autre.
-   Sans JavaScript, tous les volets s'affichent l'un sous l'autre avec leur titre. */
-.sv-ix>.label{grid-column:1/4}
-.ix{grid-column:4/13;position:relative;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));column-gap:24px;min-width:0;--sx:-54px}
-.ix-tabs{grid-column:1/6;display:grid;align-content:start;min-width:0}
-.ix-b{display:block;padding-block:3px;font-size:clamp(32px,3.8vw,60px);line-height:1.12;letter-spacing:-.03em;color:var(--fg-3);transition:color .16s var(--ease)}
-.ix-b:hover{color:var(--fg-2)}
-.ix-b.on,html:not(.js) .ix-b{color:var(--fg)}
-.ix-b:focus-visible{outline-offset:2px}
-.ix-ps{grid-column:6/10;display:grid;align-content:start;min-width:0;padding-top:.85vw}
-.ix-p{grid-area:1/1;display:grid;justify-items:start;align-content:start;min-width:0}
-.ix-pt{margin-bottom:12px;font-size:12px;font-weight:400;color:var(--fg-3)}
-.ix-d{max-width:24em;font-size:clamp(17px,1.4vw,20px);line-height:1.45}
-.ix-k{margin-top:28px;font-size:12px;color:var(--fg-3)}
-.ix-l{display:grid;gap:4px;margin-top:10px;font-size:15px;line-height:1.5;color:var(--fg-2)}
-.ix-l li{position:relative;padding-left:24px}
-.ix-l li::before{content:"";position:absolute;left:0;top:.56em;width:14px;height:5px;background:var(--fg-3);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat}
-.ix-p .link{margin-top:16px}
-html:not(.js) .ix-ps{gap:48px}
-html:not(.js) .ix-p{grid-area:auto}
-.js .ix-pt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}
-/* changement de volet : l'ancien s'efface vite, le nouveau arrive ligne par ligne */
-.js .ix-p{visibility:hidden;transition:visibility 0s .2s}
-.js .ix-p.on{visibility:visible;transition:none}
-.js .ix-p>*{opacity:0;transform:translateY(8px);transition:opacity .16s var(--ease),transform .2s var(--ease)}
-.js .ix.in .ix-p.on>*{opacity:1;transform:none;transition:opacity .5s var(--ease) .06s,transform .7s var(--ease) .06s}
-.js .ix.in .ix-p.on>:nth-child(3){transition-delay:.11s}
-.js .ix.in .ix-p.on>:nth-child(4){transition-delay:.16s}
-.js .ix.in .ix-p.on>:nth-child(5){transition-delay:.21s}
-/* l'étoile NOVA se pose devant la prestation affichée et tourne d'un cran à chaque ligne */
-.ix-star{display:none}
-.js .ix-star{display:block;position:absolute;left:var(--sx);top:0;width:30px;height:11px;margin-top:-5.5px;background:var(--fg);opacity:0;transform:translate3d(0,var(--y,0px),0) rotate(var(--r,0deg));transition:opacity .4s var(--ease) .3s;pointer-events:none}
-.js .ix.ready .ix-star{transition:transform .5s var(--ease),opacity .4s var(--ease) .3s}
-.js .ix.in .ix-star{opacity:1}
-.motion-off .ix-b,.motion-off .ix-p,.motion-off .ix-p>*,.motion-off .ix-star{transition:none!important}
+/* Une partie : repère, titre et paragraphe d'entrée côte à côte, puis le contenu */
+.sv-sec{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:64px 88px}
+.sv-intro{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:end;margin-top:48px}
+.sv-intro>.h2{grid-column:1/7}
+.sv-intro>.lead{grid-column:8/13;padding-bottom:.3em}
 
-/* Déroulé : une ligne de montage, six étapes. À l'arrivée, l'étoile la parcourt comme une tête de lecture et allume les étapes ;
-   au survol d'une étape, elle s'y pose (ce qui précède reste allumé). Sans JavaScript, tout est allumé. */
-/* le titre du déroulé tient sur une ligne : « Du brief » puis « à la livraison » en gris */
-.sv-dr .h2>span{display:inline-block;vertical-align:top}
-.sv-dr .tl{grid-column:1/-1;margin-top:40px;min-width:0}
+/* Prestations : cinq lignes, tout est visible ; la ligne survolée passe en noir, la flèche avance.
+   Toute la ligne est cliquable (le lien du titre la recouvre). */
+.pr{grid-column:1/-1;margin-top:48px;border-top:1px solid var(--fg)}
+/* le fond noir déborde de 16 px de chaque côté (ombres sans flou) : le texte reste aligné sur le reste de la page */
+.pr-i{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;padding-block:28px;border-bottom:1px solid var(--line-2);transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
+.pr-n{grid-column:1/2;justify-self:start;display:inline-grid;place-items:center;min-width:36px;height:24px;padding-inline:6px;border:1px solid currentColor;border-radius:4px;font-size:12px}
+.pr-t{grid-column:2/6;font-size:clamp(26px,2.6vw,40px);line-height:1.05;font-weight:400;letter-spacing:-.03em}
+.pr-a::after{content:"";position:absolute;inset:0}
+.pr-a:focus-visible{outline:none}
+.pr-i:has(.pr-a:focus-visible){outline:2px solid var(--fg);outline-offset:-2px}
+.pr-b{grid-column:6/10;display:grid;gap:12px;min-width:0}
+.pr-d{max-width:34em;font-size:16px;line-height:1.5;color:var(--fg-2);transition:color .25s var(--ease)}
+.pr-c{display:flex;flex-wrap:wrap;gap:6px}
+.pr-c li{padding:3px 9px;border:1px solid var(--line-2);border-radius:99px;font-size:12px;line-height:16px;color:var(--fg-2);transition:color .25s var(--ease),border-color .25s var(--ease)}
+.pr-go{grid-column:10/13;justify-self:end;display:inline-flex;align-items:center;gap:10px;font-size:12px;white-space:nowrap}
+.pr-go i{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid currentColor;border-radius:50%;font-style:normal;font-size:15px;transition:transform .3s var(--ease),background-color .25s var(--ease),color .25s var(--ease)}
+@media (hover:hover){
+  .pr-i:hover{background:var(--fg);color:var(--bg);box-shadow:-16px 0 0 var(--fg),16px 0 0 var(--fg);border-bottom-color:var(--fg)}
+  .pr-i:hover .pr-d{color:var(--bg)}
+  .pr-i:hover .pr-c li{color:var(--bg);border-color:currentColor}
+  .pr-i:hover .pr-go i{transform:translateX(6px);background:var(--bg);color:var(--fg)}
+}
+/* arrivée sur une prestation depuis l'accueil (services/#clips-vfx) : la ligne s'allume un instant */
+.pr-i{scroll-margin-top:120px}
+.pr-i:target{animation:pr-hit 2.4s var(--ease)}
+@keyframes pr-hit{0%,35%{background:var(--fg);color:var(--bg);box-shadow:-16px 0 0 var(--fg),16px 0 0 var(--fg)}100%{background:transparent;color:var(--fg);box-shadow:-16px 0 0 transparent,16px 0 0 transparent}}
+.motion-off .pr-i,.motion-off .pr-d,.motion-off .pr-c li,.motion-off .pr-go i{transition:none}
+
+/* Qui fait quoi : un rond vide pour vous, plein pour NOVA, à moitié plein pour ce qu'on fait ensemble */
+.who{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--fg-2)}
+.who li,.tl-w{display:inline-flex;align-items:center;gap:8px}
+.dot{flex:none;width:11px;height:11px;border:1.5px solid var(--fg);border-radius:50%;background:var(--bg)}
+.d-nova{background:var(--fg)}
+.d-both{background:linear-gradient(90deg,var(--fg) 50%,var(--bg) 50%)}
+
+/* Déroulé (noir) : six étapes sur une ligne. À l'arrivée, l'étoile la parcourt et allume les étapes une à une ;
+   au survol, elle se pose sur l'étape. Sans JavaScript, tout est allumé. */
+.sv-dr .tl{grid-column:1/-1;margin-top:56px;min-width:0}
 .tl{position:relative}
-.tl::before{content:"";position:absolute;left:0;right:0;top:40px;height:1px;background:var(--line-2)}
-.tl-l{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:24px}
-.tl-s{position:relative;display:grid;align-content:start;min-width:0}
-.tl-s::before{content:"";position:absolute;left:0;top:36px;width:1px;height:9px;background:var(--fg-3);transition:background-color .3s var(--ease)}
-.tl-n{font-size:12px;line-height:18px;color:var(--fg-3);white-space:nowrap}
-.tl-t{margin-top:52px;font-size:clamp(20px,1.8vw,26px);line-height:1.15;font-weight:400;letter-spacing:-.02em}
-.tl-d{margin-top:8px;max-width:18em;font-size:14px;line-height:1.5;color:var(--fg-2)}
-.tl-t,.tl-d{transition:color .3s var(--ease)}
-.tl-bar,.tl-star{display:none}
+.tl::before{content:"";position:absolute;left:5px;right:0;top:9px;height:1px;background:var(--line-2)}
+.tl-l{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:24px}
+.tl-s{display:grid;align-content:start;min-width:0}
+.tl-w{position:relative;z-index:1;justify-self:start;height:20px;padding-right:10px;background:var(--bg);font-size:12px;color:var(--fg-2);white-space:nowrap}
+.tl-n{margin-top:28px;font-size:clamp(40px,4.2vw,64px);line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--fg-3);transition:color .4s var(--ease)}
+.tl-t{margin-top:16px;font-size:clamp(20px,1.7vw,24px);line-height:1.15;font-weight:400;letter-spacing:-.02em;transition:color .4s var(--ease)}
+.tl-d{margin-top:6px;max-width:16em;font-size:14px;line-height:1.5;color:var(--fg-2);transition:color .4s var(--ease)}
+.js .tl.run .tl-s.on .tl-n{color:var(--fg)}
 .js .tl.run .tl-s:not(.on) .tl-t,.js .tl.run .tl-s:not(.on) .tl-d{color:var(--fg-3)}
-.js .tl.run .tl-s.on::before{background:var(--fg)}
-.js .tl.run .tl-bar{display:block;position:absolute;left:0;top:40px;width:0;height:1px;background:var(--fg);transform-origin:0 0;transform:scaleX(0)}
-.js .tl.run .tl-star{display:block;position:absolute;left:0;top:35px;width:30px;height:11px;background:var(--fg);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+html:not(.js) .tl-n{color:var(--fg)}
+.tl-bar,.tl-star{display:none}
+.js .tl.run .tl-bar{display:block;position:absolute;top:9px;height:1px;background:var(--fg);transform-origin:0 0;transform:scaleX(0)}
+.js .tl.run .tl-star{display:block;position:absolute;left:0;top:4px;z-index:2;width:30px;height:11px;background:var(--fg);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
 .js .tl.run.live .tl-star{opacity:1}
 .js .tl.run.ease .tl-bar,.js .tl.run.ease .tl-star{transition:transform .5s var(--ease),opacity .3s var(--ease)}
-.motion-off .tl-s::before,.motion-off .tl-t,.motion-off .tl-d,.motion-off .tl-bar,.motion-off .tl-star{transition:none!important}
+.motion-off .tl-n,.motion-off .tl-t,.motion-off .tl-d,.motion-off .tl-bar,.motion-off .tl-star{transition:none!important}
 
-/* Appel au contact : le titre à gauche, le bouton à droite */
-.sv-cta{grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:32px;padding-block:96px}
+/* Contact (blanc) : la question en très grand, la réponse et le bouton à droite */
+.ct{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:end;margin-top:48px}
+.ct>.h2{grid-column:1/8;font-size:clamp(44px,6.4vw,104px)}
+.ct-r{grid-column:8/13;display:grid;gap:28px;justify-items:start;padding-bottom:.4em}
+.ct-a{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+.btn-lg{height:52px;padding:0 24px;gap:12px;font-size:15px}
+.btn-lg i{font-style:normal;transition:transform .3s var(--ease)}
+.btn-lg:hover i{transform:translateX(4px)}
 
-/* Accueil : les cinq prestations sur une ou deux lignes, chacune précédée de l'étoile ; chacune mène à son volet sur la page Services */
-.sv-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 36px;margin-top:8px;font-size:clamp(24px,2.6vw,38px);line-height:1.25;letter-spacing:-.025em}
-.sv-row li{display:inline-flex;align-items:center}
-.sv-row li::before{content:"";flex:none;width:20px;height:7px;margin-right:14px;background:var(--fg-3);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat;transition:background-color .16s var(--ease)}
-.sv-row li:hover::before,.sv-row li:focus-within::before{background:var(--fg)}
-.sv-row a{position:relative;transition:color .16s var(--ease)}
-.sv-row a::after{content:"";position:absolute;left:0;right:0;bottom:-.06em;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
-.sv-row:hover a{color:var(--fg-3)}
-.sv-row a:hover,.sv-row a:focus-visible{color:var(--fg)}
-.sv-row a:hover::after,.sv-row a:focus-visible::after{transform:scaleX(1)}
-.sec-body>.sv-row+.link{margin-top:-4px}
-.motion-off .sv-row a,.motion-off .sv-row a::after,.motion-off .sv-row li::before{transition:none}
+/* Accueil : le bloc Services en clair, au milieu des parties noires */
+.sv-home{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:72px 88px}
+.pr-sm .pr-i{padding-block:20px}
+.pr-sm .pr-t{grid-column:2/7;font-size:clamp(24px,2.3vw,34px)}
+.pr-sm .pr-b{grid-column:7/12}
+.pr-sm .pr-go{grid-column:12/13}
+.pr-sm .pr-go i{width:32px;height:32px}
+.sv-more{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:40px}
 
 @media (max-width:1100px){
-  .sv-acc{grid-column:1/-1}
-  .sv-lead{grid-column:1/9;margin-top:24px;align-self:auto;padding-bottom:0}
-  .sv-ix>.label,.ix,.sv-dr>.label,.sv-dr .sec-body{grid-column:1/-1}
-  .ix{grid-template-columns:repeat(12,minmax(0,1fr));--sx:0px}
-  .ix-tabs{grid-column:1/8;padding-left:48px}
-  .ix-ps{grid-column:8/13}
+  .sv-base>.lead{grid-column:1/-1}
+  .kf{grid-column:1/-1;margin-top:40px}
+  .sv-intro>.h2,.sv-intro>.lead{grid-column:1/-1}
+  .sv-intro>.lead{margin-top:20px;padding-bottom:0}
+  .pr-t{grid-column:2/6}
+  .pr-b{grid-column:6/12}
+  .pr-go{grid-column:12/13}
+  .pr-go{font-size:0;gap:0}
+  .pr-sm .pr-t{grid-column:2/7}
+  .ct>.h2,.ct-r{grid-column:1/-1}
+  .ct-r{margin-top:28px;padding-bottom:0}
 }
 @media (max-width:900px){
-  .tl::before{left:4px;right:auto;top:9px;bottom:0;width:1px;height:auto}
-  .tl-l{grid-template-columns:minmax(0,1fr);row-gap:20px}
-  .tl-s{display:block;padding-left:28px}
-  .tl-s::before{top:9px;width:9px;height:1px}
-  .tl-n{display:block;margin-bottom:2px}
-  .tl-t{display:inline;margin:0 12px 0 0;font-size:22px}
-  .tl-d{display:inline;margin:0}
-  .js .tl.run .tl-bar{left:4px;top:0;width:1px;height:0;transform:scaleY(0)}
+  .tl::before{left:5px;right:auto;top:10px;bottom:0;width:1px;height:auto}
+  .tl-l{grid-template-columns:minmax(0,1fr);row-gap:28px}
+  .tl-s{grid-template-columns:auto minmax(0,1fr);column-gap:16px;align-items:baseline}
+  .tl-w{grid-column:1/-1}
+  .tl-n{grid-column:1;grid-row:2;margin:8px 0 0 28px;font-size:32px}
+  .tl-t{grid-column:2;grid-row:2;margin-top:8px}
+  .tl-d{grid-column:2;grid-row:3;margin-top:2px;max-width:none}
+  .js .tl.run .tl-bar{left:5px;top:0;width:1px;height:0;transform:scaleY(0)}
   .js .tl.run .tl-star{display:none}
 }
 @media (max-width:760px){
-  .sv-hero{padding-block:104px 56px}
-  .h2.xl{font-size:clamp(44px,15vw,76px)}
-  /* anglais : « The eye decides. » est plus long, il reste sur une ligne */
-  html[lang|="en"] .h2.xl{font-size:clamp(38px,12.6vw,66px)}
-  .sv-acc{margin-top:20px}
-  .sv-lead{grid-column:1/-1;margin-top:20px}
-  .sv-facts{grid-template-columns:minmax(0,1fr);margin-top:40px;padding-top:0;border-top:0}
-  .sv-facts>div,.sv-facts>div:nth-child(2){grid-column:auto;display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-block:12px;border-top:1px solid var(--line)}
-  .sv-facts>div:first-child{border-top-color:var(--line-2)}
-  .sv-facts dd{text-align:right}
-  .sec{grid-template-columns:minmax(0,1fr);padding-block:64px}
-  .sec>.label,.sec-body{grid-column:auto}
-  .ix{grid-template-columns:minmax(0,1fr)}
-  .ix-tabs{grid-column:auto;padding-left:36px}
-  .ix-b{font-size:clamp(26px,8vw,36px);padding-block:4px}
-  .ix-ps{grid-column:auto;margin-top:32px;padding:20px 0 0;border-top:1px solid var(--line)}
-  .js .ix-star{width:24px;height:9px;margin-top:-4.5px}
-  .sv-dr .tl{margin-top:24px}
-  .sv-cta{grid-template-columns:minmax(0,1fr);row-gap:32px;justify-items:start;padding-block:64px 72px}
-  .sv-row{font-size:clamp(22px,6.6vw,30px)}
-  .sv-row{column-gap:24px}
-  .sv-row li::before{width:16px;height:6px;margin-right:10px}
+  .sv-hero{padding-block:88px 56px}
+  .h2.xl,html[lang|="en"] .sv-acc{font-size:clamp(44px,14vw,76px)}
+  html[lang|="en"] .sv-acc{font-size:clamp(38px,12.4vw,66px)}
+  .sv-acc{margin-top:32px}
+  .sv-base{margin-top:32px}
+  .kf{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:16px;margin-top:32px}
+  .sv-sec,.sv-home{padding-block:48px 64px}
+  .sv-intro,.ct{margin-top:32px}
+  .pr{margin-top:32px}
+  .pr-i{grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;row-gap:12px;align-items:start;padding-block:20px}
+  .pr-n{grid-column:1;grid-row:1;margin-top:4px}
+  .pr-t,.pr-sm .pr-t{grid-column:2;grid-row:1;font-size:clamp(24px,7vw,30px)}
+  .pr-b,.pr-sm .pr-b{grid-column:2/4;grid-row:2}
+  .pr-go,.pr-sm .pr-go{grid-column:3;grid-row:1}
+  .pr-go i,.pr-sm .pr-go i{width:32px;height:32px}
+  .pr-sm .pr-d{display:none}
+  .pr-sm .pr-b{display:none}
+  .sv-more{margin-top:28px}
 }
+
+/* Bande du haut au-dessus d'une partie claire : elle passe en clair, texte et logo en noir */
+.band-logo img{transition:filter .3s var(--ease)}
+.band-nav,.band-right{transition:color .3s var(--ease)}
+.band.on-light{--fg:#0b0c0e;--fg-2:#46484d;--fg-3:#5f6166}
+.band.on-light::before,.band.on-light::after{bottom:-40px;background:linear-gradient(to bottom,rgba(238,239,237,.96) 0%,rgba(238,239,237,.9) 55%,rgba(238,239,237,0) 100%)}
+.band.on-light .band-logo img{filter:invert(1)}
+.band.pre-light::before,.band.pre-light::after{bottom:0;background:rgba(11,12,14,.96)}
 /* Bande à quatre entrées sur les plus petits écrans (320 px) : le logo garde sa taille, le menu se resserre */
 .band-logo img{min-width:51px}
 @media (max-width:350px){.band-in{gap:10px;font-size:12px}.band-nav{gap:8px}}

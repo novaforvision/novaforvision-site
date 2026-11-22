@@ -4,7 +4,7 @@ Site vitrine de NOVA For Vision, studio de postproduction, VFX et création IA b
 
 - `index.html` : l'accueil (NOVA)
 - `projets/`, `services/`, `studio/`, `contact/` : les quatre autres pages
-- `services/` : l'accroche (« L'IA propose. L'œil décide. ») et les engagements, l'index des prestations (titres à gauche, un volet de détail à droite) et le déroulé d'un projet en une ligne ; chaque prestation a son adresse (`services/#clips-vfx`), reprise par la ligne de prestations de l'accueil
+- `services/` : parties noires et blanches en alternance (classe `is-light`) : l'accroche (« L'IA propose. L'œil décide. ») et les engagements, les cinq prestations en lignes cliquables, le déroulé d'un projet en une ligne, le contact ; chaque prestation a son adresse (`services/#clips-vfx`), reprise par le bloc Services de l'accueil (lui aussi en clair). La bande du haut passe en clair au-dessus des parties claires.
 - `assets/site.css`, `assets/site.js` : styles et script communs aux cinq pages
 - `assets/` : logo, polices, plans du studio, stills Tea Storm
 - `media/` : showreel, films, aperçus, affiches, campagne Oakley × Meta, spec ad LOEWE (`media/loewe/`), avant / après
