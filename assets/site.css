@@ -97,9 +97,9 @@ html:not(.cursor-on) .cur-star,html:not(.cursor-on) .cur-l{display:none}
 
 /* Slider d'accueil */
 /* une hauteur d’écran par projet du haut, moins un : 5 projets → 4 pas */
-.hero-wrap{--hstep:70vh;position:relative;height:calc(100vh + var(--hstep)*4);height:calc(100svh + var(--hstep)*4)}
+.hero-wrap{position:relative;height:100vh;height:100svh;min-height:560px}
 .hero{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--black);user-select:none;-webkit-user-select:none}
-.stage{position:absolute;inset:0}
+.stage{position:absolute;inset:0;isolation:isolate}
 .slide{position:absolute;inset:0;overflow:hidden}
 .slide+.slide{clip-path:inset(0 0 0 100%)}
 .slide video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
@@ -399,15 +399,9 @@ button.sen-sel{text-align:left;white-space:nowrap;line-height:inherit;vertical-a
 .ghost{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--line-2);font-size:13px;color:var(--fg);transition:background-color .16s var(--ease),border-color .16s var(--ease)}
 .ghost:hover{background:var(--raised);border-color:var(--fg-3)}
 .fly{position:fixed;inset:0;width:100%;height:100%;z-index:70;pointer-events:none}
-/* Poussière discrète au survol des grands titres */
 section[tabindex="-1"]:focus,div[tabindex="-1"]:focus{outline:none}
-.hov-dust{position:fixed;inset:0;width:100%;height:100%;z-index:45;pointer-events:none}
 /* Poussière du rideau */
 .hdust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-
-/* L'étoile de poussière */
-.dust{position:relative;margin-top:16px;width:100%;aspect-ratio:2527.4/914.6;max-height:62vh;touch-action:pan-y}
-.dust canvas{position:absolute;inset:0;width:100%;height:100%}
 
 /* Pied de page */
 .foot{display:flex;align-items:center;justify-content:space-between;gap:8px 40px;min-height:64px;margin-top:64px;border-top:1px solid var(--line);font-size:13px;color:var(--fg-3);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -605,31 +599,6 @@ html[lang="en"] .tab-t{font-size:clamp(32px,7.8vw,132px)}
   .vw-t{flex:none;width:96px;scroll-snap-align:start}
 }
 
-/* Studio : les métiers en poussière ; le nom se défait et se recompose en défilant, la souris disperse la poussière */
-.mt{position:relative;border-top:1px solid var(--line)}
-.mt-pin{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:24px;padding-block:64px}
-.mt-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
-.mt-cnt{font-size:12px;color:var(--fg-3)}
-.mt-cv{display:block;width:100%;height:100%;min-height:200px;touch-action:pan-y}
-.mt-foot{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:16px 48px}
-.mt-now{display:grid;max-width:34rem;min-height:3em}
-.mt-now p{grid-area:1/1;font-size:18px;line-height:1.5;color:var(--fg-2);opacity:0;transform:translateY(10px);transition:opacity .35s var(--ease),transform .45s var(--ease)}
-.mt-now p.on{opacity:1;transform:none}
-.mt-list{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:0 20px;margin:0;padding:0;list-style:none}
-.mt-n{min-height:44px;display:inline-flex;align-items:center;font-size:13px;color:var(--fg-3);transition:color .25s var(--ease)}
-.mt-n:hover,.mt-i.on .mt-n{color:var(--fg)}
-.mt-d{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.js .mt.run{height:calc(100vh + 5*55vh);height:calc(100svh + 5*55vh)}
-.js .mt.run .mt-pin{position:sticky;top:var(--band);height:calc(100vh - var(--band));height:calc(100svh - var(--band));padding-block:32px}
-html:not(.js) .mt-cv,html:not(.js) .mt-now{display:none}
-html:not(.js) .mt-list{display:grid;justify-content:start;gap:12px}
-html:not(.js) .mt-n{min-height:0;font-size:clamp(28px,3.4vw,48px);color:var(--fg)}
-html:not(.js) .mt-d{position:static;width:auto;height:auto;clip:auto;white-space:normal;display:block;font-size:14px;color:var(--fg-2)}
-@media (max-width:760px){
-  .mt-foot{grid-template-columns:minmax(0,1fr);gap:8px}
-  .mt-list{justify-content:flex-start;gap:0 16px}
-  .mt-now p{font-size:15px}
-}
 /* Studio : le texte d'ouverture et l'équipe font leur mise au point en arrivant (du flou au net, mot par mot ; les noms lettre par lettre).
    Le flou est une ombre du texte qui se resserre (pas de filtre), pour rester léger sur les téléphones. */
 .lit,.m-name{--fc:var(--fg)}
@@ -708,14 +677,10 @@ html.lb-on{overflow:hidden}
 
 
 
-/* ==================== Page Services et bloc Services de l'accueil : parties noires et blanches en alternance ==================== */
-/* Une partie claire inverse les couleurs du site : fond blanc cassé (le blanc du site), texte noir. Tout ce qui lit
-   les variables (titres, liens, boutons, filets, focus) s'inverse avec elle. */
-.is-light{--bg:#eeefed;--bg-2:#e3e4e1;--fg:#0b0c0e;--fg-2:#46484d;--fg-3:#5f6166;--line:rgba(11,12,14,.12);--line-2:rgba(11,12,14,.3);--ink:#eeefed;background:var(--bg);color:var(--fg)}
-.is-light ::selection{background:var(--fg);color:var(--bg)}
-.is-light .btn:hover{background:#000}
+/* ==================== Pages en images : affiches (Services, Studio, accueil), déroulé, contact sur image ==================== */
+/* Direction : une salle de projection. Le fond reste noir et l'habillage discret ; la couleur vient des images des projets. */
 
-/* Repère en tête de chaque partie : l'étoile, le numéro, le nom ; à droite, une précision en mono */
+/* Repère en tête de partie : l'étoile, un numéro, le nom ; à droite, une précision en mono */
 .sv-head{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line-2)}
 .mk{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;line-height:20px;color:var(--fg)}
 .mk::before{content:"";flex:none;width:22px;height:8px;background:var(--fg);-webkit-mask:url("nova-star.svg") center/contain no-repeat;mask:url("nova-star.svg") center/contain no-repeat}
@@ -734,53 +699,65 @@ html.lb-on{overflow:hidden}
 .js .rise.in>:nth-child(4){transition-delay:.18s}
 .js .rise.in>:nth-child(5){transition-delay:.24s}
 .motion-off .up,.motion-off .rise>*{transition:none}
-
-/* Ouverture (noire) */
-.sv-hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:104px 80px}
-.h2.xl{font-size:clamp(44px,8vw,136px);line-height:.98;letter-spacing:-.045em}
+.h2.xl{font-size:clamp(44px,6.4vw,104px);line-height:.98;letter-spacing:-.045em}
 .h2.xl>span{padding-bottom:.17em;margin-bottom:-.17em}
-html[lang|="en"] .sv-acc{font-size:clamp(44px,7vw,120px)}
-.sv-acc{grid-column:1/-1;margin-top:48px}
-.sv-base{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:end;margin-top:56px}
-.sv-base>.lead{grid-column:1/7}
-.kf{grid-column:7/13;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}
-.kf li{display:grid;gap:6px;align-content:end;padding-top:16px;border-top:1px solid var(--fg)}
-.kf-v{font-size:clamp(28px,3vw,44px);line-height:1;font-weight:400;letter-spacing:-.03em;color:var(--fg)}
-.kf-c{font-size:14px;line-height:1.4;color:var(--fg-2)}
+
+/* Affiches : des panneaux côte à côte, chacun porté par une image d'un projet. Celui qu'on survole (ou qui a le focus)
+   s'ouvre et montre son texte ; son film joue. L'image garde la largeur d'un panneau ouvert : elle n'est jamais
+   redimensionnée pendant l'ouverture, seul son cadre bouge. Sur téléphone, les affiches défilent à l'horizontale. */
+.af{--n:5;--g:3.4;--gap:8px;--px:18px;display:flex;gap:var(--gap);height:clamp(380px,54vh,580px);min-width:0;container-type:inline-size}
+.af.af-6{--n:6;--g:3.6}
+.af-c{--afw:100%;--afc:100%;position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:space-between;padding:16px var(--px) 18px;overflow:hidden;border-radius:6px;background:var(--raised);transition:flex-grow .55s var(--ease)}
+.af-c.on{flex-grow:var(--g)}
+.af-m{position:absolute;inset:0}
+@supports (width:1cqw){
+  /* largeur d'un panneau ouvert (--afw) et fermé (--afc) : l'espace libre, marges intérieures déduites, se partage selon --g */
+  .af-c{--free:calc(100cqw - (var(--n) - 1)*var(--gap) - var(--n)*2*var(--px));--afw:calc(2*var(--px) + var(--free)*var(--g)/(var(--n) - 1 + var(--g)));--afc:calc(2*var(--px) + var(--free)/(var(--n) - 1 + var(--g)))}
+  .af-m{left:50%;right:auto;width:calc(var(--afw) + 2px);transform:translateX(-50%)}
+}
+.af-m img,.af-m video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,50% 50%)}
+.af-m video{opacity:0;transition:opacity .5s var(--ease)}
+.af-m video.rdy{opacity:1}
+/* panneau fermé : un voile l'assombrit ; en bas, un dégradé porte le texte */
+.af-c::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(6,7,8,.36);transition:opacity .5s var(--ease)}
+.af-c.on::before{opacity:0}
+.af-c::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(6,7,8,.9) 0%,rgba(6,7,8,.3) 40%,rgba(6,7,8,0) 60%),linear-gradient(180deg,rgba(6,7,8,.5) 0%,rgba(6,7,8,0) 24%)}
+/* (pas de position sur ces deux blocs : le lien du titre doit pouvoir recouvrir tout le panneau) */
+.af-top{z-index:2;display:flex;justify-content:space-between;gap:12px;font-size:12px;white-space:nowrap}
+.af-r{color:rgba(238,239,237,.82);opacity:0;transition:opacity .3s var(--ease)}
+.af-c.on .af-r{opacity:1;transition-delay:.2s}
+.af-f{z-index:2;flex:none;width:calc(var(--afw) - 2*var(--px));display:grid;grid-template-rows:auto 0fr;transition:grid-template-rows .55s var(--ease)}
+.af-c.on .af-f{grid-template-rows:auto 1fr}
+.af-t{max-width:calc(var(--afc) - 2*var(--px));font-size:clamp(16px,1.4vw,20px);line-height:1.12;font-weight:400;letter-spacing:-.02em;transition:font-size .55s var(--ease)}
+.af-c.on .af-t{max-width:none;font-size:clamp(28px,3vw,44px);line-height:1.05;letter-spacing:-.03em}
+.af-a{color:inherit;text-align:left}
+.af-a::after{content:"";position:absolute;inset:0;z-index:3}
+.af-a:focus-visible{outline:none}
+.af-c:has(.af-a:focus-visible){outline:2px solid var(--fg);outline-offset:2px}
+.af-x{min-height:0;overflow:hidden;opacity:0;transition:opacity .2s var(--ease)}
+.af-c.on .af-x{opacity:1;transition:opacity .45s var(--ease) .2s}
+.af-xi{display:grid;gap:12px;justify-items:start;padding-top:12px;max-width:min(27em,calc(var(--afw) - 2*var(--px) - 68px))}
+.af-d{font-size:16px;line-height:1.45}
+.af-tags{display:flex;flex-wrap:wrap;gap:6px}
+.af-tags li{padding:3px 10px;border:1px solid rgba(238,239,237,.45);border-radius:99px;font-size:12px;line-height:16px}
+.af-go{position:absolute;z-index:2;right:18px;bottom:18px;display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--fg);color:var(--ink);font-size:17px;opacity:0;transform:translateX(-8px);transition:opacity .2s var(--ease),transform .4s var(--ease)}
+.af-c.on .af-go{opacity:1;transform:none;transition-delay:.25s}
+@media (hover:hover){.af-c:not(.on):hover::before{opacity:.55}}
+.motion-off .af-c,.motion-off .af-c::before,.motion-off .af-f,.motion-off .af-t,.motion-off .af-x,.motion-off .af-go,.motion-off .af-r,.motion-off .af-m video{transition:none!important}
+
+/* Services, ouverture : l'accroche, sa phrase à droite, puis les cinq prestations en affiches */
+.sv-hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:96px 72px}
+.sv-acc{grid-column:1/9;margin-top:36px}
+html[lang|="en"] .sv-acc{font-size:clamp(44px,5.8vw,96px)}
+.sv-hero>.lead{grid-column:9/13;align-self:end;padding-bottom:.5em}
+.sv-hero>.af{grid-column:1/-1;margin-top:40px}
 
 /* Une partie : repère, titre et paragraphe d'entrée côte à côte, puis le contenu */
 .sv-sec{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:64px 88px}
 .sv-intro{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:end;margin-top:48px}
 .sv-intro>.h2{grid-column:1/7}
 .sv-intro>.lead{grid-column:8/13;padding-bottom:.3em}
-
-/* Prestations : cinq lignes, tout est visible ; la ligne survolée passe en noir, la flèche avance.
-   Toute la ligne est cliquable (le lien du titre la recouvre). */
-.pr{grid-column:1/-1;margin-top:48px;border-top:1px solid var(--fg)}
-/* le fond noir déborde de 16 px de chaque côté (ombres sans flou) : le texte reste aligné sur le reste de la page */
-.pr-i{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;padding-block:28px;border-bottom:1px solid var(--line-2);transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
-.pr-n{grid-column:1/2;justify-self:start;display:inline-grid;place-items:center;min-width:36px;height:24px;padding-inline:6px;border:1px solid currentColor;border-radius:4px;font-size:12px}
-.pr-t{grid-column:2/6;font-size:clamp(26px,2.6vw,40px);line-height:1.05;font-weight:400;letter-spacing:-.03em}
-.pr-a::after{content:"";position:absolute;inset:0}
-.pr-a:focus-visible{outline:none}
-.pr-i:has(.pr-a:focus-visible){outline:2px solid var(--fg);outline-offset:-2px}
-.pr-b{grid-column:6/10;display:grid;gap:12px;min-width:0}
-.pr-d{max-width:34em;font-size:16px;line-height:1.5;color:var(--fg-2);transition:color .25s var(--ease)}
-.pr-c{display:flex;flex-wrap:wrap;gap:6px}
-.pr-c li{padding:3px 9px;border:1px solid var(--line-2);border-radius:99px;font-size:12px;line-height:16px;color:var(--fg-2);transition:color .25s var(--ease),border-color .25s var(--ease)}
-.pr-go{grid-column:10/13;justify-self:end;display:inline-flex;align-items:center;gap:10px;font-size:12px;white-space:nowrap}
-.pr-go i{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid currentColor;border-radius:50%;font-style:normal;font-size:15px;transition:transform .3s var(--ease),background-color .25s var(--ease),color .25s var(--ease)}
-@media (hover:hover){
-  .pr-i:hover{background:var(--fg);color:var(--bg);box-shadow:-16px 0 0 var(--fg),16px 0 0 var(--fg);border-bottom-color:var(--fg)}
-  .pr-i:hover .pr-d{color:var(--bg)}
-  .pr-i:hover .pr-c li{color:var(--bg);border-color:currentColor}
-  .pr-i:hover .pr-go i{transform:translateX(6px);background:var(--bg);color:var(--fg)}
-}
-/* arrivée sur une prestation depuis l'accueil (services/#clips-vfx) : la ligne s'allume un instant */
-.pr-i{scroll-margin-top:120px}
-.pr-i:target{animation:pr-hit 2.4s var(--ease)}
-@keyframes pr-hit{0%,35%{background:var(--fg);color:var(--bg);box-shadow:-16px 0 0 var(--fg),16px 0 0 var(--fg)}100%{background:transparent;color:var(--fg);box-shadow:-16px 0 0 transparent,16px 0 0 transparent}}
-.motion-off .pr-i,.motion-off .pr-d,.motion-off .pr-c li,.motion-off .pr-go i{transition:none}
+.sv-sec>.af{grid-column:1/-1;margin-top:40px}
 
 /* Qui fait quoi : un rond vide pour vous, plein pour NOVA, à moitié plein pour ce qu'on fait ensemble */
 .who{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--fg-2)}
@@ -789,7 +766,7 @@ html[lang|="en"] .sv-acc{font-size:clamp(44px,7vw,120px)}
 .d-nova{background:var(--fg)}
 .d-both{background:linear-gradient(90deg,var(--fg) 50%,var(--bg) 50%)}
 
-/* Déroulé (noir) : six étapes sur une ligne. À l'arrivée, l'étoile la parcourt et allume les étapes une à une ;
+/* Déroulé : six étapes sur une ligne. À l'arrivée, l'étoile la parcourt et allume les étapes une à une ;
    au survol, elle se pose sur l'étape. Sans JavaScript, tout est allumé. */
 .sv-dr .tl{grid-column:1/-1;margin-top:56px;min-width:0}
 .tl{position:relative}
@@ -810,36 +787,67 @@ html:not(.js) .tl-n{color:var(--fg)}
 .js .tl.run.ease .tl-bar,.js .tl.run.ease .tl-star{transition:transform .5s var(--ease),opacity .3s var(--ease)}
 .motion-off .tl-n,.motion-off .tl-t,.motion-off .tl-d,.motion-off .tl-bar,.motion-off .tl-star{transition:none!important}
 
-/* Contact (blanc) : la question en très grand, la réponse et le bouton à droite */
-.ct{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:end;margin-top:48px}
-.ct>.h2{grid-column:1/8;font-size:clamp(44px,6.4vw,104px)}
-.ct-r{grid-column:8/13;display:grid;gap:28px;justify-items:start;padding-bottom:.4em}
+/* Fin de page : l'appel au contact posé sur une image. Le texte tient sur la partie sombre et calme de l'image,
+   dont les bords se fondent dans le noir de la page. */
+.fin{position:relative;display:flex;min-height:min(84vh,680px);overflow:hidden;border-top:1px solid var(--line)}
+.fin-m{position:absolute;inset:0}
+.fin-m img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,70% 50%)}
+.fin-m::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,12,14,.92) 0%,rgba(11,12,14,.72) 34%,rgba(11,12,14,.1) 64%,rgba(11,12,14,0) 100%),linear-gradient(0deg,rgba(11,12,14,1) 0%,rgba(11,12,14,0) 30%),linear-gradient(180deg,rgba(11,12,14,.85) 0%,rgba(11,12,14,0) 26%)}
+.fin-in{position:relative;z-index:1;flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:28px;padding-block:40px 72px}
+.fin-in>.sv-head{align-self:stretch;margin-bottom:auto;border-bottom-color:rgba(238,239,237,.22)}
+.fin .h2{max-width:min(11em,46vw)}
+.fin .lead{max-width:24em;color:rgba(238,239,237,.78)}
 .ct-a{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
 .btn-lg{height:52px;padding:0 24px;gap:12px;font-size:15px}
 .btn-lg i{font-style:normal;transition:transform .3s var(--ease)}
 .btn-lg:hover i{transform:translateX(4px)}
 
-/* Accueil : le bloc Services en clair, au milieu des parties noires */
-.sv-home{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:72px 88px}
-.pr-sm .pr-i{padding-block:20px}
-.pr-sm .pr-t{grid-column:2/7;font-size:clamp(24px,2.3vw,34px)}
-.pr-sm .pr-b{grid-column:7/12}
-.pr-sm .pr-go{grid-column:12/13}
-.pr-sm .pr-go i{width:32px;height:32px}
-.sv-more{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:40px}
+/* Accueil : le bloc Services reprend les affiches, en plus court */
+.sv-home{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:64px 96px;border-top:1px solid var(--line)}
+.sv-home>.af{grid-column:1/-1;margin-top:40px;height:clamp(340px,46vh,480px)}
+.sv-more{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:32px}
+
+/* Studio : le texte d'ouverture laisse voir les métiers dès le premier écran */
+.p-studio .studio{padding-block:104px 64px}
+.p-studio .sv-sec{padding-top:0}
+
+/* Contact : la phrase à compléter à gauche, un portrait qui vous regarde à droite */
+.p-contact .contact{grid-template-columns:repeat(12,minmax(0,1fr));gap:0 24px;align-items:stretch;padding-block:104px 96px}
+.ct-main{grid-column:1/8;display:grid;gap:40px;align-content:start;min-width:0}
+.ct-pic{grid-column:8/13;position:relative;min-height:560px;margin:0;overflow:hidden;border-radius:6px;background:var(--raised)}
+.ct-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.ct-pic figcaption{position:absolute;left:18px;bottom:16px;z-index:1;font-size:12px;color:rgba(238,239,237,.82)}
+.ct-pic::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,7,8,.55) 0%,rgba(6,7,8,0) 26%)}
+.p-contact .ct-grid{grid-template-columns:minmax(0,1fr);gap:40px}
+.p-contact .sentence,.p-contact .ct-side{grid-column:auto}
+.p-contact .sen{font-size:clamp(24px,2.6vw,40px)}
+.p-contact .ct-direct{grid-template-rows:auto auto;grid-auto-flow:column;justify-content:space-between;gap:4px 24px}
+.p-contact .ct-direct dd{margin-bottom:0}
 
 @media (max-width:1100px){
-  .sv-base>.lead{grid-column:1/-1}
-  .kf{grid-column:1/-1;margin-top:40px}
+  .sv-acc{grid-column:1/-1}
+  .sv-hero>.lead{grid-column:1/9;margin-top:20px;align-self:auto;padding-bottom:0}
   .sv-intro>.h2,.sv-intro>.lead{grid-column:1/-1}
   .sv-intro>.lead{margin-top:20px;padding-bottom:0}
-  .pr-t{grid-column:2/6}
-  .pr-b{grid-column:6/12}
-  .pr-go{grid-column:12/13}
-  .pr-go{font-size:0;gap:0}
-  .pr-sm .pr-t{grid-column:2/7}
-  .ct>.h2,.ct-r{grid-column:1/-1}
-  .ct-r{margin-top:28px;padding-bottom:0}
+  .ct-main{grid-column:1/-1}
+  .ct-pic{grid-column:1/-1;min-height:0;height:clamp(280px,46vw,460px);margin-top:56px}
+  .ct-pic img{object-position:50% 22%}
+}
+@media (min-width:1025px) and (max-width:1200px){.af{--g:3}}
+@media (max-width:1024px){
+  /* affiches : une rangée qui défile au doigt, chaque affiche ouverte */
+  .af,.af.af-6,.sv-home>.af{height:auto;gap:8px;container-type:normal;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;margin-inline:calc(-1*var(--pad));padding-inline:var(--pad);scroll-padding-inline:var(--pad);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .af::-webkit-scrollbar{display:none}
+  .af-c,.af-c.on{flex:0 0 min(78vw,340px);height:clamp(380px,60svh,500px);scroll-snap-align:start;transition:none}
+  .af-m{left:0;right:0;width:auto;transform:none}
+  .af-c::before{opacity:0}
+  .af-r{opacity:1}
+  .af-f,.af-c.on .af-f{width:auto;grid-template-rows:auto 1fr;transition:none}
+  .af-t,.af-c.on .af-t{max-width:none;font-size:28px;line-height:1.05;letter-spacing:-.03em;transition:none}
+  .af-x{opacity:1}
+  .af-xi{max-width:none;padding-right:0}
+  .af-d{font-size:15px}
+  .af-go{display:none}
 }
 @media (max-width:900px){
   .tl::before{left:5px;right:auto;top:10px;bottom:0;width:1px;height:auto}
@@ -853,33 +861,27 @@ html:not(.js) .tl-n{color:var(--fg)}
   .js .tl.run .tl-star{display:none}
 }
 @media (max-width:760px){
-  .sv-hero{padding-block:88px 56px}
-  .h2.xl,html[lang|="en"] .sv-acc{font-size:clamp(44px,14vw,76px)}
-  html[lang|="en"] .sv-acc{font-size:clamp(38px,12.4vw,66px)}
-  .sv-acc{margin-top:32px}
-  .sv-base{margin-top:32px}
-  .kf{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:16px;margin-top:32px}
+  .sv-hero{padding-block:88px 48px}
+  .h2.xl{font-size:clamp(44px,13vw,72px)}
+  html[lang|="en"] .sv-acc{font-size:clamp(38px,12vw,64px)}
+  .sv-acc{margin-top:28px}
+  .sv-hero>.lead{grid-column:1/-1}
+  .sv-hero>.af,.sv-sec>.af,.sv-home>.af{margin-top:28px}
   .sv-sec,.sv-home{padding-block:48px 64px}
-  .sv-intro,.ct{margin-top:32px}
-  .pr{margin-top:32px}
-  .pr-i{grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;row-gap:12px;align-items:start;padding-block:20px}
-  .pr-n{grid-column:1;grid-row:1;margin-top:4px}
-  .pr-t,.pr-sm .pr-t{grid-column:2;grid-row:1;font-size:clamp(24px,7vw,30px)}
-  .pr-b,.pr-sm .pr-b{grid-column:2/4;grid-row:2}
-  .pr-go,.pr-sm .pr-go{grid-column:3;grid-row:1}
-  .pr-go i,.pr-sm .pr-go i{width:32px;height:32px}
-  .pr-sm .pr-d{display:none}
-  .pr-sm .pr-b{display:none}
-  .sv-more{margin-top:28px}
+  .sv-intro{margin-top:32px}
+  .fin{min-height:0}
+  .fin .h2{max-width:none}
+  .fin-m img{object-position:40% 50%}
+  .fin-m::after{background:linear-gradient(0deg,rgba(11,12,14,1) 0%,rgba(11,12,14,.86) 46%,rgba(11,12,14,.25) 78%,rgba(11,12,14,.6) 100%)}
+  .fin-in{padding-block:32px 56px;gap:20px}
+  .fin-in>.sv-head{margin-bottom:200px}
+  .p-studio .studio{padding-block:88px 40px}
+  .p-contact .contact{padding-block:88px 64px}
+  .p-contact .ct-direct{grid-template-rows:none;grid-auto-flow:row;justify-content:stretch}
+  .p-contact .ct-direct dd{margin-bottom:12px}
+  .ct-pic{height:clamp(260px,78vw,380px);margin-top:40px}
 }
 
-/* Bande du haut au-dessus d'une partie claire : elle passe en clair, texte et logo en noir */
-.band-logo img{transition:filter .3s var(--ease)}
-.band-nav,.band-right{transition:color .3s var(--ease)}
-.band.on-light{--fg:#0b0c0e;--fg-2:#46484d;--fg-3:#5f6166}
-.band.on-light::before,.band.on-light::after{bottom:-40px;background:linear-gradient(to bottom,rgba(238,239,237,.96) 0%,rgba(238,239,237,.9) 55%,rgba(238,239,237,0) 100%)}
-.band.on-light .band-logo img{filter:invert(1)}
-.band.pre-light::before,.band.pre-light::after{bottom:0;background:rgba(11,12,14,.96)}
 /* Bande à quatre entrées sur les plus petits écrans (320 px) : le logo garde sa taille, le menu se resserre */
 .band-logo img{min-width:51px}
 @media (max-width:350px){.band-in{gap:10px;font-size:12px}.band-nav{gap:8px}}
