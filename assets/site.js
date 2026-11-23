@@ -72,8 +72,7 @@
   let CF = [], tr = null, trVisible = false, trTick = null;
   let ba = null, baVisible = false, baTick = null;
   let items = [], active = -1, worksVisible = false, layoutWorks = null, applyWorks = null, playPreview = null, openWork = null, scrollToItem = null;
-  let hidePeek = () => {}, drawPeek = null, drawLit = null, layoutCredits = null, drawCredits = null, drawDust = null;
-  let parts = [], dc = null, dustBuilt = false, dustAwake = 0, ensureDust = null;
+  let hidePeek = () => {}, drawPeek = null, drawLit = null, layoutCredits = null, drawCredits = null;
   let routeTo = null, tabsInit = null;
   let measureWorks = null, measurePeek = null, measureCredits = null, measureMt = null, sbTick = null;
   let lbOpen = false, lbPop = null;
@@ -977,68 +976,9 @@
         : `Je m’appelle ${name || '…'}, je prépare ${type} pour ${when}.${idea ? ' L’idée : ' + idea + '.' : ''}`;
       return { subject: `${lng('Projet : ', 'Project: ')}${type}${name ? ' · ' + name : ''}`, body: `${lng('Bonjour NOVA,', 'Hello NOVA,')}\n\n${sentenceTxt}\n\n${name}`.trim() };
     };
-    // l'envoi : la phrase se défait en poussière qui rejoint l'étoile du bas
-    const dissolve = done => {
-      if (!motion || !dustBuilt || !parts.length || !dc) { done(); return; }
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cv = document.createElement('canvas'); cv.className = 'fly'; cv.width = Math.round(innerWidth*dpr); cv.height = Math.round(innerHeight*dpr);
-      document.body.appendChild(cv); const cx = cv.getContext('2d');
-      const rects = [];
-      sen.childNodes.forEach(n => { if (n.nodeType === 3) { const rg = document.createRange(); rg.selectNodeContents(n); [...rg.getClientRects()].forEach(r => rects.push(r)); } else rects.push(n.getBoundingClientRect()); });
-      const area = rects.reduce((a,r) => a + r.width*r.height, 0) || 1;
-      const dr = dc.getBoundingClientRect(), k = dr.width / dc.width;
-      const fl = [];
-      const COUNT = 900;
-      rects.forEach(r => { const n = Math.round(COUNT * r.width*r.height/area); for (let i = 0; i < n; i++) { const t = parts[(Math.random()*parts.length)|0]; fl.push({ x0:(r.left + Math.random()*r.width)*dpr, y0:(r.top + r.height*.25 + Math.random()*r.height*.6)*dpr, x1:(dr.left + t.hx*k)*dpr, y1:(dr.top + t.hy*k)*dpr, d:Math.random()*350, du:900 + Math.random()*500, bx:(Math.random()-.5)*260*dpr, by:-(80 + Math.random()*160)*dpr, s:(.8 + Math.random()*1.2)*dpr }); } });
-      sentence.classList.add('gone');
-      const t0 = performance.now(); let fired = false;
-      (function step(now){
-        const t = now - t0; cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle = fgCol; let alive = 0;
-        for (const f of fl) {
-          const e = clamp((t - f.d)/f.du, 0, 1); if (e < 1) alive++;
-          const q = 1 - Math.pow(1-e, 3), mx = (f.x0 + f.x1)/2 + f.bx, my = (f.y0 + f.y1)/2 + f.by;
-          const x = (1-q)*(1-q)*f.x0 + 2*(1-q)*q*mx + q*q*f.x1, y = (1-q)*(1-q)*f.y0 + 2*(1-q)*q*my + q*q*f.y1;
-          cx.globalAlpha = e < 1 ? .9 : 0; cx.fillRect(x, y, f.s, f.s);
-        }
-        if (!fired && t > 1150) { fired = true; parts.forEach(pp => { pp.vx += (Math.random()-.5)*6; pp.vy += (Math.random()-.5)*6; }); dustAwake = 240; done(); }
-        if (alive || t < 1200) requestAnimationFrame(step); else { cv.remove(); setTimeout(() => sentence.classList.remove('gone'), 600); }
-      })(t0);
-    };
-    // à l'arrivée sur la page, la phrase sort de l'étoile en poussière et vient se poser à sa place (l'inverse de l'envoi)
-    const assemble = () => {
-      const show = () => { sentence.classList.add('ready'); sentence.classList.remove('gone'); };
-      if (!motion || !ensureDust) { show(); return; }
-      sentence.classList.add('gone'); sentence.classList.add('ready');
-      let started = false;
-      const fail = setTimeout(() => { if (!started) { started = true; show(); } }, 1600);
-      ensureDust(() => {
-        if (started) return; started = true; clearTimeout(fail);
-        if (!parts.length || !dc) { show(); return; }
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const cv = document.createElement('canvas'); cv.className = 'fly'; cv.width = Math.round(innerWidth*dpr); cv.height = Math.round(innerHeight*dpr);
-        document.body.appendChild(cv); const cx = cv.getContext('2d');
-        const rects = [];
-        sen.childNodes.forEach(n => { if (n.nodeType === 3) { const rg = document.createRange(); rg.selectNodeContents(n); [...rg.getClientRects()].forEach(r => rects.push(r)); } else rects.push(n.getBoundingClientRect()); });
-        const area = rects.reduce((a,r) => a + r.width*r.height, 0) || 1;
-        const dr = dc.getBoundingClientRect(), k = dr.width / dc.width;
-        const fl = [], COUNT = 900;
-        rects.forEach(r => { const n = Math.round(COUNT * r.width*r.height/area); for (let i = 0; i < n; i++) { const t = parts[(Math.random()*parts.length)|0]; fl.push({ x0:(dr.left + t.hx*k)*dpr, y0:(dr.top + t.hy*k)*dpr, x1:(r.left + Math.random()*r.width)*dpr, y1:(r.top + r.height*.25 + Math.random()*r.height*.6)*dpr, d:Math.random()*350, du:900 + Math.random()*500, bx:(Math.random()-.5)*260*dpr, by:-(80 + Math.random()*160)*dpr, s:(.8 + Math.random()*1.2)*dpr }); } });
-        // l'étoile frémit en lâchant sa poussière
-        parts.forEach(pp => { pp.vx += (Math.random()-.5)*6; pp.vy += (Math.random()-.5)*6; }); dustAwake = 240;
-        const t0 = performance.now(); let shown = false;
-        (function step(now){
-          const t = now - t0; cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle = fgCol; let alive = 0;
-          for (const f of fl) {
-            const e = clamp((t - f.d)/f.du, 0, 1); if (e < 1) alive++;
-            const q = 1 - Math.pow(1-e, 3), mx = (f.x0 + f.x1)/2 + f.bx, my = (f.y0 + f.y1)/2 + f.by;
-            const x = (1-q)*(1-q)*f.x0 + 2*(1-q)*q*mx + q*q*f.x1, y = (1-q)*(1-q)*f.y0 + 2*(1-q)*q*my + q*q*f.y1;
-            cx.globalAlpha = e < 1 ? .9*(1 - Math.pow(e, 4)) : 0; cx.fillRect(x, y, f.s, f.s);
-          }
-          if (!shown && t > 1000) { shown = true; show(); }
-          if (alive || t < 1100) requestAnimationFrame(step); else cv.remove();
-        })(t0);
-      });
-    };
+    // la phrase est en place dès l'arrivée ; à l'envoi, le message part directement
+    const dissolve = done => done();
+    const assemble = () => { sentence.classList.add('ready'); sentence.classList.remove('gone'); };
     requestAnimationFrame(assemble);
     sentence.addEventListener('submit', e => {
       e.preventDefault();
@@ -1090,147 +1030,6 @@
     sbDraw(true);
   }
 
-  /* ---------- Grands titres : une poussière discrète se détache des lettres sous le curseur ---------- */
-  const hovC = document.createElement('canvas'); hovC.className = 'hov-dust'; hovC.setAttribute('aria-hidden','true'); document.body.appendChild(hovC);
-  const hovX = hovC.getContext('2d'), hovP = []; let hovDirty = false;
-  // masqué tant qu'aucune poussière ne vole (sur téléphone, il ne sert jamais) : une couche plein écran de moins à composer
-  setS(hovC, 'visibility', 'hidden');
-  const hovEls = $$('.dhov');
-  // relevé des pixels des lettres, caractère par caractère (gère les lignes, les lettres animées et la couleur de chaque ligne)
-  function sampleGlyphs(el){
-    const er = el.getBoundingClientRect(), pts = [];
-    const oc = document.createElement('canvas'); oc.width = Math.ceil(er.width); oc.height = Math.ceil(er.height);
-    if (!oc.width || !oc.height) return pts;
-    const ox = ctxRead(oc), rg = document.createRange(), cols = [];
-    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    let n;
-    while ((n = tw.nextNode())) {
-      const pe = n.parentElement, cs = getComputedStyle(pe), fs = parseFloat(cs.fontSize);
-      let ci = cols.indexOf(cs.color); if (ci < 0) { cols.push(cs.color); ci = cols.length - 1; }
-      ox.font = `${cs.fontWeight} ${fs}px ${cs.fontFamily}`; ox.textBaseline = 'alphabetic'; ox.fillStyle = `rgb(${ci*40 + 20},0,0)`;
-      const tx = n.textContent;
-      for (let i = 0; i < tx.length; i++) {
-        if (!tx[i].trim()) continue;
-        rg.setStart(n, i); rg.setEnd(n, i + 1);
-        const r = rg.getBoundingClientRect(); if (!r.width) continue;
-        const mt = ox.measureText(tx[i]), asc = mt.fontBoundingBoxAscent || fs*.8, desc = mt.fontBoundingBoxDescent || fs*.2;
-        ox.fillText(tx[i], r.left - er.left, r.top - er.top + (r.height - (asc + desc))/2 + asc);
-      }
-    }
-    let d; try { d = ox.getImageData(0,0,oc.width,oc.height).data; } catch(_) { return pts; }
-    const st = parseFloat(getComputedStyle(el).fontSize) > 90 ? 3 : 2;
-    for (let y = 0; y < oc.height; y += st) for (let x = 0; x < oc.width; x += st) { const k = (y*oc.width + x)*4; if (d[k+3] > 140) pts.push(x, y, Math.round((d[k]/(d[k+3]/255) - 20)/40)); }
-    el._cols = cols;
-    return pts;
-  }
-  hovEls.forEach(el => {
-    let lx = null, ly = null;
-    el.addEventListener('pointerleave', () => { lx = ly = null; });
-    el.addEventListener('pointermove', e => {
-      if (e.pointerType !== 'mouse' || !motion || reduce || introOn) return;
-      const r = el.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
-      const moved = lx === null ? 0 : Math.hypot(mx - lx, my - ly); lx = mx; ly = my;
-      if (moved < 1.5) return;
-      if (!el._g || el._gw !== Math.round(r.width)) { if (el.classList.contains('rv') || el.classList.contains('chars')) { if (!el.classList.contains('in')) return; } el._g = sampleGlyphs(el); el._gw = Math.round(r.width); }
-      const g = el._g, R = 34, near = [];
-      for (let i = 0; i < g.length; i += 3) { const dx = g[i] - mx, dy = g[i+1] - my; if (dx*dx + dy*dy < R*R) near.push(i); }
-      if (!near.length) return;
-      const n = Math.min(4, 1 + Math.floor(moved*.08));
-      for (let k = 0; k < n && hovP.length < 120; k++) {
-        const i = near[(Math.random()*near.length) | 0], gx = g[i], gy = g[i+1];
-        const dx = gx - mx, dy = gy - my, dl = Math.hypot(dx, dy) || 1, sp = .15 + Math.random()*.45;
-        hovP.push({ x: r.left + gx + scrollX, y: r.top + gy + scrollY, vx: dx/dl*sp + (Math.random()-.5)*.2, vy: dy/dl*sp*.6 - (.12 + Math.random()*.3), life: 1, dec: .011 + Math.random()*.014, s: 1 + Math.random()*.9, c: el._cols[g[i+2]] || fgCol });
-      }
-    }, {passive:true});
-  });
-  window.addEventListener('resize', () => hovEls.forEach(el => { el._g = null; }));
-  function drawHoverDust(){
-    if (!hovP.length) { if (hovDirty) { hovX.clearRect(0,0,hovC.width,hovC.height); hovDirty = false; setS(hovC, 'visibility', 'hidden'); } return; }
-    setS(hovC, 'visibility', 'visible');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = Math.round(F.vw*dpr), H = Math.round(F.vh*dpr);
-    if (hovC.width !== W || hovC.height !== H) { hovC.width = W; hovC.height = H; }
-    hovX.setTransform(1,0,0,1,0,0); hovX.clearRect(0,0,W,H); hovX.setTransform(dpr,0,0,dpr,-F.sx*dpr,-F.sy*dpr);
-    for (let i = hovP.length - 1; i >= 0; i--) {
-      const p = hovP[i]; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.vy *= .985; p.life -= p.dec;
-      if (p.life <= 0) { hovP.splice(i,1); continue; }
-      hovX.globalAlpha = Math.min(1, p.life*1.4)*.7; hovX.fillStyle = p.c; hovX.fillRect(p.x, p.y, p.s, p.s);
-    }
-    hovX.globalAlpha = 1; hovX.setTransform(1,0,0,1,0,0); hovDirty = true;
-  }
-
-  /* ---------- L'étoile de poussière (accueil, contact) ---------- */
-  const dust = $('#dust');
-  if (dust) {
-    dc = $('#dust-c'); const dctx = dc.getContext('2d');
-    let dustVis = false, dustIn = false, dustK = 1, dustW = 0, dustH = 0;
-    const dm = { x:-9999, y:-9999, on:false };
-    const dustWait = []; let dustBuilding = false;
-    const buildDust = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = dust.clientWidth, h = dust.clientHeight; dustW = w; dustH = h;
-      if (!w || !h) return;
-      dustBuilding = true;
-      dc.width = Math.round(w*dpr); dc.height = Math.round(h*dpr);
-      const img = new Image();
-      img.onload = () => {
-        const oc = document.createElement('canvas'); oc.width = dc.width; oc.height = dc.height;
-        const ox = ctxRead(oc);
-        const sw = Math.min(dc.width, dc.height*2.7633), sh = sw/2.7633;
-        ox.drawImage(img, (dc.width - sw)/2, (dc.height - sh)/2, sw, sh);
-        let data; try { data = ox.getImageData(0, 0, oc.width, oc.height).data; } catch(e) { return; }
-        const step = Math.max(2, Math.round(3*dpr*(w < 600 ? .85 : 1)));
-        parts = [];
-        for (let y = 0; y < oc.height; y += step) for (let x = 0; x < oc.width; x += step) {
-          const jx = x + (Math.random()-.5)*step*.6, jy = y + (Math.random()-.5)*step*.6;
-          const a = data[((Math.round(jy)|0)*oc.width + (Math.round(jx)|0))*4 + 3];
-          if (a > 110) parts.push({ hx:jx, hy:jy, x: dustIn ? jx : Math.random()*oc.width, y: dustIn ? jy : jy + (Math.random()-.5)*oc.height*.9, vx:0, vy:0, s:(.7 + Math.random()*.8)*dpr, a:Math.round((.45 + Math.random()*.55)*100)/100 });
-        }
-        // grains rangés par opacité : le dessin ne change d'opacité qu'une cinquantaine de fois par image au lieu d'une fois par grain
-        // (même couleur pour tous les grains : l'ordre de dessin ne change pas le résultat)
-        parts.sort((p, q) => p.a - q.a);
-        dustK = dc.width / Math.max(1, w);
-        dustBuilt = true; dustAwake = 240; dustBuilding = false;
-        dustWait.splice(0).forEach(f => f());
-      };
-      img.onerror = () => { dustBuilding = false; };
-      img.src = '/assets/nova-star.svg';
-    };
-    dust.addEventListener('pointermove', e => { const r = dc.getBoundingClientRect(); const k = dc.width / r.width; dm.x = (e.clientX - r.left)*k; dm.y = (e.clientY - r.top)*k; dm.on = true; dustAwake = 240; });
-    dust.addEventListener('pointerleave', () => { dm.on = false; dm.x = dm.y = -9999; dustAwake = 240; });
-    new IntersectionObserver(es => es.forEach(en => { dustVis = en.isIntersecting; if (dustVis) { if (!dustBuilt) buildDust(); else if (!dustIn) dustAwake = 240; } }), {threshold:.15}).observe(dust);
-    drawDust = () => {
-      if (!dustVis || !dustBuilt) return;
-      if (!dustIn) { dustIn = true; dustAwake = 260; }
-      if (dustAwake <= 0 && !dm.on) return;
-      dustAwake--;
-      const R = 90 * dustK, R2 = R*R;
-      const still = !motion;
-      dctx.clearRect(0, 0, dc.width, dc.height);
-      dctx.fillStyle = fgCol;
-      let moving = 0, la = -1;
-      for (let i = 0; i < parts.length; i++) {
-        const p = parts[i];
-        if (still) { p.x = p.hx; p.y = p.hy; }
-        else {
-          const dx = p.x - dm.x, dy = p.y - dm.y, d2 = dx*dx + dy*dy;
-          if (dm.on && d2 < R2) { const d = Math.sqrt(d2) || 1, f = (1 - d/R) * 2.4; p.vx += dx/d*f; p.vy += dy/d*f; }
-          p.vx += (p.hx - p.x) * .045; p.vy += (p.hy - p.y) * .045;
-          p.vx *= .84; p.vy *= .84;
-          p.x += p.vx; p.y += p.vy;
-          if (Math.abs(p.vx) + Math.abs(p.vy) > .05) moving++;
-        }
-        if (p.a !== la) { la = p.a; dctx.globalAlpha = la; }
-        dctx.fillRect(p.x, p.y, p.s, p.s);
-      }
-      dctx.globalAlpha = 1;
-      if (moving) dustAwake = Math.max(dustAwake, 20);
-    };
-    // reconstruite seulement si sa taille change (sur téléphone, la barre d'adresse qui se replie déclenchait une reconstruction en plein défilement)
-    window.addEventListener('resize', () => { if (dustBuilt && (dust.clientWidth !== dustW || dust.clientHeight !== dustH)) { dustBuilt = false; dustIn = true; if (dustVis) buildDust(); } });
-    // construit l'étoile même hors de l'écran quand un autre bloc en a besoin (la phrase de Contact en sort à l'arrivée)
-    ensureDust = cb => { if (dustBuilt) { cb(); return; } dustWait.push(cb); if (!dustBuilding) buildDust(); };
-  }
-
   /* ---------- Révélations ---------- */
   $$('.h2.rv>span').forEach(s => { const li = document.createElement('span'); li.className = 'li'; while (s.firstChild) li.appendChild(s.firstChild); s.appendChild(li); });
   // les éléments masqués (clip-path) sont observés via leur parent, sinon ils ne croisent jamais l'écran
@@ -1238,27 +1037,47 @@
   $$('.rv,.svc,.rise,.up,.chars:not(.cap-t)').forEach(el => revIO.observe(el));
   $$('.clip-in').forEach(el => { const w = el.parentElement; w._rv = el; revIO.observe(w); });
 
-  /* ---------- Bande du haut : elle passe en clair quand elle survole une partie claire (Services) ---------- */
-  const lights = $$('.is-light'), bandEl = $('#band');
-  if (lights.length && bandEl) {
-    const onL = new Set(), nearL = new Set();
-    let lio = null, nio = null, lvh = 0;
-    const paintL = () => { bandEl.classList.toggle('on-light', onL.size > 0); bandEl.classList.toggle('pre-light', !onL.size && nearL.size > 0); };
-    // une ligne d'un pixel au milieu de la bande : la partie qu'elle croise décide de la couleur ;
-    // juste sous la bande, une partie claire qui arrive raccourcit le dégradé sombre (pas de voile gris sur le blanc)
-    const setupL = () => {
-      const vh = window.innerHeight; if (vh === lvh && lio) return; lvh = vh;
-      if (lio) { lio.disconnect(); nio.disconnect(); } onL.clear(); nearL.clear();
-      const mid = Math.round(BAND/2);
-      lio = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? onL.add(e.target) : onL.delete(e.target)); paintL(); },
-        {rootMargin: `-${mid}px 0px -${Math.max(0, vh - mid - 1)}px 0px`});
-      nio = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? nearL.add(e.target) : nearL.delete(e.target)); paintL(); },
-        {rootMargin: `0px 0px -${Math.max(0, vh - BAND - 136)}px 0px`});
-      lights.forEach(el => { lio.observe(el); nio.observe(el); });
-    };
-    setupL();
-    let lT = 0; window.addEventListener('resize', () => { clearTimeout(lT); lT = setTimeout(setupL, 150); });
-  }
+  /* ---------- Affiches (Services, Studio, accueil) : le panneau survolé s'ouvre, son film joue ---------- */
+  // Ouverture au survol (après un court arrêt), au focus ou au toucher. Un seul film joue à la fois : celui du panneau
+  // ouvert, quand la rangée est à l'écran, sur ordinateur avec une bonne connexion. Le fichier n'est demandé qu'à ce moment.
+  // Sur téléphone, les affiches défilent à l'horizontale et restent en images fixes.
+  $$('.af').forEach(af => {
+    const cards = [...af.children].filter(c => c.classList.contains('af-c'));
+    if (!cards.length) return;
+    const wide = matchMedia('(min-width:1025px)');
+    let cur = Math.max(0, cards.findIndex(c => c.classList.contains('on'))), vis = false, hovT = 0, lastTouch = false;
+    const vids = cards.map(c => c.querySelector('video'));
+    const sync = () => vids.forEach((v, i) => {
+      if (!v) return;
+      const want = vis && motion && fastNet && wide.matches && i === cur;
+      if (want) { if (!v.getAttribute('src') && v.dataset.src) v.src = v.dataset.src; if (v.paused) playV(v); }
+      else { if (!v.paused) v.pause(); v.classList.remove('rdy'); }   // panneau refermé : on revoit l'image fixe
+    });
+    const open = i => { if (i === cur) return; cur = i; cards.forEach((c, k) => c.classList.toggle('on', k === i)); sync(); };
+    cards.forEach((c, i) => {
+      c.classList.toggle('on', i === cur);
+      c.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse' || !wide.matches) return; clearTimeout(hovT); hovT = setTimeout(() => open(i), 70); });
+      c.addEventListener('pointerleave', () => clearTimeout(hovT));
+      c.addEventListener('pointerdown', e => { lastTouch = e.pointerType !== 'mouse'; }, {passive:true});
+      c.addEventListener('focusin', () => { if (wide.matches && !lastTouch) open(i); });
+      const a = c.querySelector('.af-a');
+      // au doigt sur grand écran : le premier toucher ouvre le panneau, le second suit le lien
+      if (a) a.addEventListener('click', e => { if (a.tagName === 'BUTTON') { open(i); return; } if (wide.matches && lastTouch && i !== cur) { e.preventDefault(); open(i); } });
+      const v = vids[i];
+      if (v) {
+        v.addEventListener('playing', () => v.classList.add('rdy'));
+        // data-start : la boucle reprend après le logo du film, pas au tout début du fichier
+        const st = parseFloat(v.dataset.start || '0'), rate = parseFloat(v.dataset.rate || '1');
+        if (rate !== 1) { v.defaultPlaybackRate = rate; v.addEventListener('loadedmetadata', () => { v.playbackRate = rate; }); }
+        if (st > 0) { v.loop = false; v.addEventListener('loadedmetadata', () => { try { v.currentTime = st; } catch(e){} }); v.addEventListener('ended', () => { try { v.currentTime = st; } catch(e){} playV(v); }); }
+      }
+    });
+    new IntersectionObserver(es => { vis = es[0].isIntersecting; sync(); }, {threshold:.2}).observe(af);
+    if (wide.addEventListener) wide.addEventListener('change', sync);
+    // une adresse mène à sa prestation (services/#clips-vfx, depuis l'accueil) : son panneau s'ouvre
+    const fromHash = () => { const id = dec(location.hash.slice(1)), k = id ? cards.findIndex(c => c.id === id) : -1; if (k < 0) return; open(k); if (!wide.matches) af.scrollLeft = cards[k].offsetLeft - af.offsetLeft; };
+    fromHash(); window.addEventListener('hashchange', fromHash);
+  });
 
   /* ---------- Services : déroulé en une ligne ---------- */
   // Déroulé : une ligne de montage. À l'arrivée à l'écran, l'étoile la parcourt comme une tête de lecture et allume
@@ -1670,98 +1489,6 @@
     });
   });
 
-  /* ---------- Studio : les métiers en poussière ; le nom se défait et se recompose en défilant ---------- */
-  const mt = $('#metiers');
-  let drawMt = null, layoutMt = null;
-  if (mt) {
-    const cv = mt.querySelector('.mt-cv'), cx = cv.getContext('2d');
-    const mtItems = $$('.mt-i', mt), names = mtItems.map(li => li.querySelector('.mt-n').textContent.trim());
-    const nowPs = $$('.mt-now p', mt), cnt = mt.querySelector('.mt-cnt'), nM = names.length;
-    let NP = 0, PX = [], PY = [], PAX = null, PAY = null, PR = null, PS = null, PAL = null, W = 0, H = 0, dpr = 1, lastKey = '', curM = -1, seed = 7;
-    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const ms = { x: -1e9, y: -1e9, on: false };
-    const span = () => Math.max(1, mt.offsetHeight - (window.innerHeight - bandH()));
-    // relevé des points de chaque nom (police du site), un nom long passe sur deux lignes
-    layoutMt = force => {
-      if (!cv.clientWidth || !cv.clientHeight) return;
-      // même taille qu'avant : rien à reconstruire (le relevé des 14 000 points prenait plus de 100 ms sur téléphone)
-      const nd = Math.min(window.devicePixelRatio || 1, 2), nW = Math.round(cv.clientWidth * nd), nH = Math.round(cv.clientHeight * nd);
-      // appel « polices prêtes » : inutile si les polices étaient déjà là au premier relevé
-      if (NP && nW === W && nH === H && nd === dpr && (force !== true || mtFonts)) return;
-      mtFonts = !document.fonts || document.fonts.status === 'loaded';
-      dpr = nd; W = nW; H = nH; cv.width = W; cv.height = H;
-      const oc = document.createElement('canvas'); oc.width = W; oc.height = H; const ox = ctxRead(oc);
-      const step = Math.max(2, Math.round(2 * dpr)), family = getComputedStyle(cv).fontFamily || 'sans-serif';
-      seed = 7;
-      const words = names.map(name => {
-        // le nom prend toute la largeur ; un nom en deux mots passe sur deux lignes si ça le rend nettement plus grand
-        ox.font = `400 100px ${family}`;
-        const wOf = l => ox.measureText(l).width / 100;
-        let lines = [name], fs = Math.min(H * .5, W * .94 / wOf(name));
-        if (name.includes(' ')) { const sp = name.indexOf(' '), ls = [name.slice(0, sp), name.slice(sp + 1)], fs2 = Math.min(H * .36, W * .94 / Math.max(...ls.map(wOf))); if (fs2 > fs * 1.25) { lines = ls; fs = fs2; } }
-        ox.font = `400 ${fs}px ${family}`; ox.textBaseline = 'middle'; ox.textAlign = 'left';
-        ox.clearRect(0, 0, W, H); ox.fillStyle = '#fff';
-        const lh = fs * 1.02, y0 = H / 2 - (lines.length - 1) * lh / 2;
-        lines.forEach((l, k) => ox.fillText(l, 0, y0 + k * lh));
-        let d; try { d = ox.getImageData(0, 0, W, H).data; } catch(e) { return []; }
-        const pts = [];
-        for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step) if (d[(y * W + x) * 4 + 3] > 128) pts.push(x + (rnd() - .5) * step, y + (rnd() - .5) * step);
-        for (let k = pts.length / 2 - 1; k > 0; k--) { const j = (rnd() * (k + 1)) | 0; [pts[2*k], pts[2*j]] = [pts[2*j], pts[2*k]]; [pts[2*k+1], pts[2*j+1]] = [pts[2*j+1], pts[2*k+1]]; }
-        return pts;
-      });
-      if (words.some(w => !w.length)) return;
-      const m = Math.min(14000, Math.max(...words.map(w => w.length / 2)));
-      // les mêmes points qu'avant, rangés dans des tableaux de nombres contigus (lecture bien plus rapide à chaque image)
-      // et triés par opacité (une trentaine de valeurs) : l'opacité du dessin change 30 fois par image au lieu de 14 000
-      const ax = [], ay = [], pr = [], ps = [], al = [];
-      for (let k = 0; k < m; k++) { const ang = rnd() * Math.PI * 2; ax.push(Math.cos(ang)); ay.push(Math.sin(ang)); pr.push(.4 + rnd()); ps.push((1.1 + rnd() * .8) * dpr); al.push(Math.round((.7 + rnd() * .3) * 100) / 100); }
-      const ord = ax.map((_, k) => k).sort((a, b) => al[a] - al[b]);
-      PX = words.map(() => new Float64Array(m)); PY = words.map(() => new Float64Array(m));
-      PAX = new Float64Array(m); PAY = new Float64Array(m); PR = new Float64Array(m); PS = new Float64Array(m); PAL = new Float64Array(m);
-      ord.forEach((k, o) => {
-        words.forEach((w, wi) => { const q = (k % (w.length / 2)) * 2; PX[wi][o] = w[q]; PY[wi][o] = w[q + 1]; });
-        PAX[o] = ax[k]; PAY[o] = ay[k]; PR[o] = pr[k]; PS[o] = ps[k]; PAL[o] = al[k];
-      });
-      NP = m;
-      mtH = mt.offsetHeight;
-      lastKey = '';
-    };
-    let mtH = mt.offsetHeight, mtRect = null, mtFonts = false;
-    new ResizeObserver(() => { mtH = mt.offsetHeight; lastKey = ''; }).observe(mt);
-    measureMt = () => { mtRect = (NP && isNear(mt)) ? mt.getBoundingClientRect() : null; };
-    cv.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const r = cv.getBoundingClientRect(); ms.x = (e.clientX - r.left) * dpr; ms.y = (e.clientY - r.top) * dpr; ms.on = true; });
-    cv.addEventListener('pointerleave', () => { ms.on = false; ms.x = ms.y = -1e9; });
-    const smooth = t => t * t * (3 - 2 * t);
-    drawMt = () => {
-      const r = mtRect; mtRect = null;
-      if (!r || !NP) return;
-      if (r.bottom < 0 || r.top > F.vh) return;
-      const f = clamp((bandH() - r.top) / Math.max(1, mtH - (F.vh - bandH())), 0, 1) * (nM - 1);
-      const key = f.toFixed(4) + (ms.on && motion ? `|${ms.x | 0},${ms.y | 0}` : '');
-      if (key === lastKey) return; lastKey = key;
-      const i = Math.min(nM - 2, Math.floor(f)), t = f - i, e = smooth(clamp((t - .28) / .44, 0, 1)), b = Math.sin(Math.PI * e);
-      cx.clearRect(0, 0, W, H); cx.fillStyle = fgCol;
-      const R = 70 * dpr, spread = 70 * dpr, push = ms.on && motion, fade = 1 - b * .35;
-      const XA = PX[i], XC = PX[i + 1], YA = PY[i], YC = PY[i + 1], sb = spread * b;
-      let la = -1;
-      for (let k = 0; k < NP; k++) {
-        let x = XA[k] + (XC[k] - XA[k]) * e + PAX[k] * sb * PR[k], y = YA[k] + (YC[k] - YA[k]) * e + PAY[k] * sb * PR[k] * .6;
-        if (push) { const dx = x - ms.x, dy = y - ms.y, d2 = dx * dx + dy * dy; if (d2 < R * R) { const d = Math.sqrt(d2) || 1, kk = (1 - d / R) * 28 * dpr; x += dx / d * kk; y += dy / d * kk; } }
-        if (PAL[k] !== la) { la = PAL[k]; cx.globalAlpha = la * fade; }
-        cx.fillRect(x, y, PS[k], PS[k]);
-      }
-      cx.globalAlpha = 1;
-      const k = Math.round(f);
-      if (k !== curM) { curM = k; nowPs.forEach((pp, j) => pp.classList.toggle('on', j === k)); mtItems.forEach((li, j) => li.classList.toggle('on', j === k)); if (cnt) cnt.textContent = `${pad(k + 1)} / ${pad(nM)}`; }
-    };
-    // un nom de la liste amène son métier à l'écran
-    mtItems.forEach((li, j) => li.querySelector('.mt-n').addEventListener('click', () => {
-      window.scrollTo({ top: mt.getBoundingClientRect().top + window.scrollY - bandH() + j / (nM - 1) * span(), behavior: motion ? 'smooth' : 'auto' });
-    }));
-    mt.classList.add('run');
-    nearIO.observe(mt);
-  }
-
   /* ---------- Liens internes : défilement doux, durée selon la distance ---------- */
   let glide = null;
   const easeGlide = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
@@ -1886,12 +1613,9 @@
     if (trVisible && trTick) trTick();
     if (drawLit) drawLit();
     if (drawCredits) drawCredits(false);
-    if (drawMt) drawMt();
     for (let i = 0; i < viewers.length; i++) viewers[i](now);
     if (drawPeek) drawPeek(now);
     drawScrollFx(); drawSvc();
-    if (drawDust) drawDust();
-    drawHoverDust();
     // timecode de la bande
     let src = null, fps = FPS;
     if (player.ctx) { src = player.video; fps = P[player.id].fps || FPS; }
@@ -1919,7 +1643,7 @@
     requestAnimationFrame(frame);
   }
 
-  function relayout(force){ snapF(); readBand(); readDoc(); if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); if (layoutMt) layoutMt(force === true); }
+  function relayout(force){ snapF(); readBand(); readDoc(); if (layoutHero) layoutHero(); if (layoutWorks) layoutWorks(); if (layoutCredits) layoutCredits(); }
   relayout();
   applyMotion();
   if (tabsInit) tabsInit();
