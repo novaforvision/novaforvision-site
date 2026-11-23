@@ -327,7 +327,7 @@
     });
   }
 
-  /* ---------- Accueil : les projets phares qui glissent avec le défilement ---------- */
+  /* ---------- Accueil : les projets phares, qui se succèdent seuls ---------- */
   const heroWrap = $('#top'), hero = $('#hero');
   if (hero && heroWrap) {
     const seam = $('#seam');
@@ -335,7 +335,11 @@
     SV = slides.map(s => s.querySelector('video')); SID = slides.map(s => s.dataset.id);
     const caps = $$('#caps .cap'), ticks = $$('#ticks .tick');
     N = slides.length; heroVisible = true;
-    let pos = 0, hTarget = 0, settleT = 0;
+    // Les projets se succèdent seuls, comme une bande démo : un passage à la fois, toujours joué en entier.
+    // (Avant, le passage suivait le défilement : en défilant vite, plusieurs rideaux s'enchaînaient sur des films pas encore chargés,
+    // et la page se recalait seule à l'arrêt.) from : le projet affiché ; to : celui qui arrive (-1 hors passage).
+    const TR = 1050, DWELL = 6500;
+    let from = 0, to = -1, tr0 = 0, dwell = 0, lastT = 0, heroHover = false, pending = -1;
     // Oakley : le titre attend que le logo de la vidéo ait disparu, puis la boucle repart après le logo (il ne revient plus)
     oakV = SV[SID.indexOf('oakley')] || null;
     let logoDone = !oakV, holdT0 = performance.now();
@@ -377,39 +381,43 @@
     const readHero = () => { HW = hero.clientWidth; HH = hero.clientHeight; };
     new ResizeObserver(readHero).observe(hero);
     layoutHero = () => {
-      heroStep = window.innerHeight * .7;
+      heroStep = 0;   // plus de piste de défilement : le haut de page fait un écran
       heroTop = heroWrap.getBoundingClientRect().top + window.scrollY;
       readHero();
     };
-    const scrollForSlide = i => heroTop + i*heroStep;
-    // un tiret mène au projet ; le recalage ci-dessous attend la fin de ce défilement
-    let heroAuto = 0;
-    ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); heroAuto = performance.now() + 1600; window.scrollTo({top: scrollForSlide(k), behavior: motion ? 'smooth' : 'auto'}); }));
-    // après un arrêt du défilement, l'image se pose doucement sur le projet suivant dans le sens du geste ;
-    // jamais pendant qu'un doigt est posé, et sur écran tactile seulement une fois l'élan terminé
-    let touching = false, lastY = window.scrollY, lastDir = 0;
-    const settleWait = fine.matches ? 260 : 450;
-    function armSettle(){
-      clearTimeout(settleT);
-      if (touching) return;
-      settleT = setTimeout(() => {
-        if (!motion || player.ctx || touching || performance.now() < heroAuto) return;
-        const p = (window.scrollY - heroTop) / heroStep;
-        if (p <= 0.02 || p >= N - 1 - 0.02) return;
-        const f = p - Math.floor(p);
-        const r = lastDir > 0 ? (f > .15 ? Math.ceil(p) : Math.floor(p)) : lastDir < 0 ? (f < .85 ? Math.floor(p) : Math.ceil(p)) : Math.round(p);
-        if (Math.abs(p - r) > .02) window.scrollTo({top: scrollForSlide(r), behavior:'smooth'});
-      }, settleWait);
-    }
-    window.addEventListener('touchstart', () => { touching = true; clearTimeout(settleT); }, {passive:true});
-    window.addEventListener('touchend', () => { touching = false; armSettle(); }, {passive:true});
-    window.addEventListener('touchcancel', () => { touching = false; armSettle(); }, {passive:true});
-    window.addEventListener('scroll', () => { const y = window.scrollY; if (y !== lastY) { lastDir = Math.sign(y - lastY); lastY = y; } armSettle(); }, {passive:true});
-    heroClickable = () => !player.ctx && !introOn && Math.abs(pos - Math.round(pos)) < .04;
+    const go = i => {
+      i = ((i % N) + N) % N;
+      if (introOn) return;
+      // un passage est en cours : la demande est gardée et jouée juste après
+      if (to >= 0) { pending = i === to ? -1 : i; return; }
+      if (i === from) return;
+      if (player.ctx === 'hero') closePlayer(true);
+      to = i; tr0 = performance.now(); dwell = 0;
+      warmV(SV[i]);
+    };
+    // un tiret mène à son projet ; flèches gauche et droite au clavier ; glissé horizontal au doigt
+    ticks.forEach((t,k) => t.addEventListener('click', e => { e.stopPropagation(); go(k); }));
+    window.addEventListener('keydown', e => {
+      if ((e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (!heroVisible || player.ctx || window.scrollY > HH*.5) return;
+      const a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+      go((to >= 0 ? to : from) + (e.key === 'ArrowRight' ? 1 : -1));
+    });
+    let swX = 0, swY = 0, swT = 0;
+    hero.addEventListener('touchstart', e => { const p = e.touches[0]; swX = p.clientX; swY = p.clientY; swT = performance.now(); }, {passive:true});
+    hero.addEventListener('touchend', e => {
+      const p = e.changedTouches[0], dx = p.clientX - swX, dy = p.clientY - swY;
+      if (player.ctx || performance.now() - swT > 800 || Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+      go((to >= 0 ? to : from) + (dx < 0 ? 1 : -1));
+    }, {passive:true});
+    // le compte à rebours attend tant que la souris est sur les boutons du projet ou sur la barre du bas
+    hero.addEventListener('pointerover', e => { heroHover = e.pointerType === 'mouse' && !!e.target.closest('.cap-a,.hbar'); });
+    hero.addEventListener('pointerleave', () => { heroHover = false; });
+    heroClickable = () => !player.ctx && !introOn && to < 0;
     hero.addEventListener('click', e => { if (!heroClickable() || e.target.closest('a,.hbar,.pc,.cap-a')) return; openHero(); });
     $$('#caps [data-play]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openHero(); }));
     hero.setAttribute('data-cursor', lng('Lire', 'Play'));
-    if (!fine.matches) $('#hhint').textContent = lng('Faites défiler pour changer de projet', 'Scroll to change project');
+    $('#hhint').textContent = fine.matches ? lng('Flèches ← → pour changer de projet', 'Use ← → to change project') : lng('Glissez pour changer de projet', 'Swipe to change project');
     function openHero(){
       if (player.ctx === 'hero') return;
       hero.classList.add('playing');
@@ -460,35 +468,42 @@
     const tickI = ticks.map(t => t.querySelector('i'));
     const seamScale = (1/Math.cos(SLANT_DEG*Math.PI/180)).toFixed(3);
     let seamD = '';
-    heroFrame = () => {
-      hTarget = clamp((F.sy - heroTop) / heroStep, 0, N-1);
-      if (player.ctx === 'hero' && Math.abs(hTarget - cur0) > .25) closePlayer(true);
-      pos = (!motion) ? hTarget : lerp(pos, hTarget, .1);
-      if (Math.abs(pos - hTarget) < .0005) pos = hTarget;
-      // rideau : la slide suivante se découvre de droite à gauche, son film arrive en léger travelling ; la précédente recule dans l'ombre
-      let seamX = 0, seamO = 0;
+    heroFrame = now => {
+      const dt = lastT ? Math.min(100, now - lastT) : 0; lastT = now;
       const SL = HH*SLANT;
-      // retard du rideau sur le défilement (positif en descendant) : le milieu plie dans l'autre sens, au plus 4 % de la largeur
-      const lim = HW*.04, want = motion ? clamp((hTarget - pos)*HW*.1, -lim, lim) : 0;
-      bend = motion ? lerp(bend, want, .18) : 0; if (Math.abs(bend) < .05) bend = 0;
-      const b2 = (2*bend).toFixed(1);
+      let t = 0, e = 0, seamX = 0, seamO = 0;
+      if (to >= 0) {
+        t = motion ? clamp((now - tr0)/TR, 0, 1) : 1; e = easeIO(t);
+        // le titre change à mi-passage
+        if (t >= .5 && cur0 !== to) setCurrent(to);
+      }
+      // rideau : le projet suivant se découvre de droite à gauche derrière une ligne oblique (l'angle de l'étoile NOVA),
+      // son film arrive en léger travelling ; le précédent recule dans l'ombre. Le milieu de la ligne traîne un peu, puis se redresse.
+      bend = motion && to >= 0 ? Math.sin(Math.PI*t)*HW*.03 : 0;
+      const b2 = (2*bend).toFixed(1), xc = (HW + SL/2) - e*(HW + SL);
       slides.forEach((sl,i) => {
         const v = SV[i];
-        const t = i === 0 ? 1 : clamp(pos - (i-1), 0, 1), e = easeIO(t);
-        const k = i < N-1 ? clamp(pos - i, 0, 1) : 0, ek = easeIO(k);
-        const xc = (HW + SL/2) - e*(HW + SL);
-        if (i > 0) setV(sl, 'c'+e.toFixed(4)+'_'+HW+'_'+HH+'_'+b2, e >= .9999 ? 'clip-path:inset(0 0 0 0)' : e <= 0 ? `clip-path:polygon(${(xc + SL/2).toFixed(1)}px 0,100% 0,100% 100%,${(xc - SL/2).toFixed(1)}px 100%)` : `clip-path:path('M ${(xc + SL/2).toFixed(1)} 0 L ${HW} 0 L ${HW} ${HH} L ${(xc - SL/2).toFixed(1)} ${HH} Q ${(xc + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(xc + SL/2).toFixed(1)} 0 Z')`);
-        // la vidéo glisse un peu mais couvre toujours tout l'écran : l'échelle compense le décalage (sinon des coins noirs apparaissent le long de la jointure oblique)
-        const tx = (1-e)*10 - ek*8, sc = 1.004 + Math.abs(tx)/50 + (1-e)*.04;
-        setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), tx === 0 && e >= 1 && ek <= 0 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
-        setV(shades[i], 's'+ek.toFixed(3), `opacity:${(ek*.55).toFixed(3)}`);
-        if (i > 0 && t > 0 && t < 1) { seamX = xc; seamO = Math.sin(Math.PI*t); }
+        if (i === to) {
+          setV(sl, 'i'+e.toFixed(4)+'_'+HW+'_'+HH+'_'+b2, 'z-index:2;' + (e >= .9999 ? 'clip-path:inset(0 0 0 0)' : e <= 0 ? `clip-path:polygon(${(xc + SL/2).toFixed(1)}px 0,100% 0,100% 100%,${(xc - SL/2).toFixed(1)}px 100%)` : `clip-path:path('M ${(xc + SL/2).toFixed(1)} 0 L ${HW} 0 L ${HW} ${HH} L ${(xc - SL/2).toFixed(1)} ${HH} Q ${(xc + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(xc + SL/2).toFixed(1)} 0 Z')`));
+          // la vidéo glisse un peu mais couvre toujours tout l'écran : l'échelle compense le décalage
+          const tx = (1-e)*10, sc = 1 + tx/50 + (1-e)*.044;
+          setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), e >= 1 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
+          setV(shades[i], 's0', 'opacity:0');
+        } else if (i === from) {
+          setV(sl, 'f', 'z-index:1;clip-path:inset(0 0 0 0)');
+          const tx = -e*8, sc = 1 + Math.abs(tx)/50;
+          setV(v, 'v'+tx.toFixed(2)+sc.toFixed(3), e <= 0 ? '' : `transform:translate3d(${tx.toFixed(2)}%,0,0) scale(${sc.toFixed(3)})`);
+          setV(shades[i], 's'+e.toFixed(3), `opacity:${(e*.55).toFixed(3)}`);
+        } else setV(sl, 'h', 'visibility:hidden');
       });
+      if (to >= 0 && t > 0 && t < 1) { seamX = xc; seamO = Math.sin(Math.PI*t); }
       setS(seam, 'transform', `translate3d(${(seamX + bend).toFixed(1)}px,0,0) rotate(${SLANT_DEG}deg) scaleY(${seamScale})`);
       setS(seam, 'opacity', seamO.toFixed(3));
       setS(seamC, 'opacity', seamO.toFixed(3));
       if (seamO > 0) { const d = `M ${(seamX + SL/2).toFixed(1)} 0 Q ${(seamX + 2*bend).toFixed(1)} ${(HH/2).toFixed(1)} ${(seamX - SL/2).toFixed(1)} ${HH}`; if (d !== seamD) { seamD = d; seamP.setAttribute('d', d); } }
       heroDust(seamX, SL, seamO, bend);
+      // fin du passage : le projet arrivé devient le projet affiché
+      if (to >= 0 && t >= 1) { if (cur0 !== to) setCurrent(to); from = to; to = -1; dwell = 0; if (pending >= 0) { const q = pending; pending = -1; go(q); } }
       // boucle Oakley sans le logo
       if (oakV && oakLoopOwn() && oakV.duration && !oakV.paused && oakV.currentTime > oakV.duration - .09) oakV.currentTime = LOGO_END;
       if (cur0 === 0 && !introOn && caps[0].getAttribute('aria-hidden') === 'false' && !caps[0].classList.contains('on') && !logoHold()) caps[0].classList.add('on');
@@ -497,13 +512,21 @@
         if (L.v.duration && !L.v.paused && L.v.currentTime > L.v.duration - .09) L.v.currentTime = L.end;
         if (i === cur0 && caps[i].getAttribute('aria-hidden') === 'false' && !caps[i].classList.contains('on') && !lgHold(i)) caps[i].classList.add('on');
       });
-      const ci = clamp(Math.round(pos), 0, N-1);
-      if (ci !== cur0 && !introOn) setCurrent(ci);
-      tickI.forEach((ti,i) => { const f = i === 0 ? 1 : clamp(pos - (i-1), 0, 1); setS(ti, 'transform', `scaleX(${f.toFixed(3)})`); });
+      // compte à rebours du projet affiché : il démarre quand son titre est là, et attend pendant un film en lecture,
+      // un survol des boutons ou l'intro. Sans mouvement ou sur une connexion lente, rien n'avance seul.
+      const auto = motion && fastNet;
+      if (auto && to < 0 && !player.ctx && !heroHover && !introOn && caps[from].classList.contains('on')) dwell += dt;
+      const nx = (from + 1) % N;
+      if (auto && dwell > 1200) warmV(SV[nx]);
+      // le film suivant doit pouvoir s'afficher : sinon on l'attend, 4 s au plus
+      if (auto && to < 0 && dwell >= DWELL && (SV[nx].readyState >= 2 || dwell >= DWELL + 4000)) go(nx);
+      // tirets : les projets passés sont pleins, celui affiché se remplit le temps qu'il reste à l'écran
+      const fill = to >= 0 ? (cur0 === from ? 1 : 0) : auto ? clamp(dwell/DWELL, 0, 1) : 1;
+      tickI.forEach((ti,i) => setS(ti, 'transform', `scaleX(${(i < cur0 ? 1 : i === cur0 ? fill : 0).toFixed(3)})`));
       // seuls les films visibles jouent
       SV.forEach((v,i) => {
         if (player.ctx === 'hero' && i === cur0) return;
-        const vis = i === Math.floor(pos) || i === Math.ceil(pos);
+        const vis = i === from || i === to;
         const want = heroVisible && motion && vis, L = LG[i];
         // film à logo sorti de l'écran : il reprendra au logo la prochaine fois
         if (L && !vis && heroVisible && lgOwn(L) && (L.v.currentTime > 0 || L.done)) { if (!v.paused) v.pause(); try { v.currentTime = 0; } catch(e){} L.done = false; }
@@ -512,8 +535,6 @@
     };
     new IntersectionObserver(es => es.forEach(en => { heroVisible = en.isIntersecting; if (!heroVisible) { if (player.ctx === 'hero') closePlayer(true); SV.forEach(v => { if (!v.paused) v.pause(); }); } }), {threshold:0}).observe(heroWrap);
     window.addEventListener('load', () => { [SV[1], SV[2]].forEach(v => { if (v && v.dataset.poster) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); } }); });
-    window.addEventListener('load', () => { if (!fastNet || window.innerWidth < 761) return; setTimeout(() => warmV(SV[1]), 4000); setTimeout(() => warmV(SV[2]), 6000); });
-    window.addEventListener('scroll', () => { if (window.scrollY > heroTop + 8) warmV(SV[1]); if (window.scrollY > heroTop + heroStep*.6) warmV(SV[2]); }, {passive:true});
   }
 
   /* ---------- Campagnes (projets) : films en grand (Oakley × Meta, Beymen) ---------- */
