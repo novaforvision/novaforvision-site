@@ -1,16 +1,47 @@
 # novaforvision.com
 
-Site vitrine de NOVA For Vision, studio de postproduction, VFX et création IA basé à Liège.
+Site vitrine de NOVA FOR VISION, studio de création IA, d'effets visuels et de postproduction basé à Liège.
 
-- `index.html` : l'accueil (NOVA)
-- `projets/`, `services/`, `studio/`, `contact/` : les quatre autres pages
-- `services/`, `studio/`, `contact/`, bas de l'accueil : pages en images. Les prestations (Services, accueil) et les métiers (Studio) sont des « affiches » (`.af`, `.af-c`) : une rangée de panneaux image, celui qu'on survole ou qu'on touche s'ouvre et montre son texte ; sur la page Services, le panneau ouvert joue un extrait du film. Rangée à faire glisser sous 1025 px. Le déroulé (`#tl`) tient en une ligne, les fins de page (`.fin`) sont posées sur une image, Contact a son image à droite (`.ct-pic`). Ancres des prestations inchangées (`#campagnes-ia`, `#clips-vfx`, `#postproduction`, `#direction-artistique`, `#tournage`, `#deroule`). Une seule animation de poussière reste : l'intro de l'accueil.
-- `assets/site.css`, `assets/site.js` : styles et script communs aux cinq pages
-- `assets/` : logo, polices, plans du studio, stills Tea Storm
-- `media/` : showreel, films, aperçus, affiches, campagne Oakley × Meta, spec ad LOEWE (`media/loewe/`), avant / après
-- `en/` : version anglaise des cinq pages (`en/`, `en/projects/`, `en/services/`, `en/studio/`, `en/contact/`), reliée au français par les balises hreflang et le lien FR / EN de la bande du haut. Toute modification d'une page française est à reporter dans sa version anglaise.
-- `assets/site.js` sert les deux langues : les textes affichés par le script passent par `lng('français', 'english')`, selon `<html lang>`.
-- `mail/` : images de l'email de prospection (logo, GIF Oakley × Meta, photos Tea Storm), appelées depuis `https://novaforvision.com/mail/`. Ne pas renommer ni supprimer : les emails déjà envoyés les utilisent.
-- `v1/` : sauvegarde de l'ancienne page unique (hors Google)
+## Direction : « découpé dans le film »
 
-Publié avec GitHub Pages, sans étape de build.
+- Salle noire, texte blanc. La couleur vient des films : la page s'étalonne sur le film à l'écran (teinte de chaque projet dans `src/content.mjs`).
+- Chaque page s'ouvre sur son titre découpé dans un film. Sur l'accueil, c'est le logo NOVA : au défilement, on plonge dans une lettre jusqu'au film en plein écran.
+- Geist pour tout, Geist Mono pour les données de film (timecode, durées, crédits).
+- Intro à l'étoile (première visite de l'accueil) ; l'étoile sert aussi de passage d'une page à l'autre.
+- Règles : aucune mention « spec ad », aucun outil nommé, pas de prix, l'e-mail comme seule action, pas de bouton rond, pas de pastilles.
+
+## Fichiers
+
+- `src/content.mjs` : tous les textes (FR et EN), projets, films, stills, crédits, services, déroulé, équipe
+- `src/pages.mjs` : gabarits des pages (FR, EN, mentions légales, 404, plan du site)
+- `src/css/nova.css` : styles
+- `src/js/main.js` : script (Lenis pour le défilement doux, GSAP avec ScrollTrigger et SplitText)
+- `src/build.mjs` : génère les pages HTML, `assets/nova.css`, `assets/nova.js` et `sitemap.xml`
+
+Les pages HTML à la racine (`index.html`, `projets/`, `services/`, `studio/`, `contact/`, `mentions-legales/`, `404.html`) et `en/` sont **générées** : modifier `src/`, puis reconstruire.
+
+```bash
+npm install
+npm run build      # régénère pages, styles, script et plan du site
+npm run serve      # aperçu sur http://localhost:4173
+```
+
+## Effets par page
+
+| Page | Effets |
+|---|---|
+| Accueil | Intro à l'étoile · NOVA découpé dans les films (coupe toutes les 4 s) au-dessus du mur d'images qui dérive · plongée dans la lettre au défilement · manifeste qui s'allume mot à mot · projets à la une en bobine horizontale, page étalonnée · index avec aperçu au curseur · bandeau des artistes qui suit le défilement · services · « Écrire au studio » découpé dans un film |
+| Projets | Titre découpé · chapitres par campagne (titre découpé dans son film, lecteur avec le son, stills qui glissent de côté, visionneuse) · clips en grille décalée (aperçu au survol) · avant / après CRAMÉ à la souris · générique qui défile |
+| Services | Titre découpé · cinq prestations qui s'empilent · déroulé en timeline de montage (tête de lecture au défilement, étapes cliquables) |
+| Studio | Titre découpé · texte qui monte ligne par ligne · métiers avec traînée d'images au curseur · équipe |
+| Contact | Phrase à compléter qui compose l'e-mail ; l'image se précise à mesure qu'on écrit |
+
+Mouvement réduit (réglage du système) : pas de défilement doux, pas de plongée, pas de dérive ; les contenus restent tous visibles.
+
+## Ne pas toucher
+
+- `mail/` : images de l'e-mail de prospection, appelées depuis `https://novaforvision.com/mail/`. Ne pas renommer ni supprimer.
+- `v1/` : sauvegarde de l'ancienne page unique (hors Google).
+- `media/` : films et images du site.
+
+Publié avec GitHub Pages : les fichiers générés sont commités, aucune étape de build côté serveur.
