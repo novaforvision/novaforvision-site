@@ -1,0 +1,15 @@
+{
+  "name": "novaforvision-site",
+  "private": true,
+  "type": "module",
+  "description": "novaforvision.com : pages générées depuis src/ (node src/build.mjs)",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "serve": "python3 -m http.server 4173"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "gsap": "^3.13.0",
+    "lenis": "1.3.28"
+  }
+}
