@@ -15,91 +15,84 @@
     <lastmod>2026-11-24</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
-      <video:title>Oakley × Meta, campagne</video:title>
-      <video:description>Oakley × Meta. Création IA, VFX, montage, sound design et motion design. Film 16:9 et 9:16, motion design du logo, stills 4K. NOVA FOR VISION.</video:description>
+      <video:title>Oakley × Meta, Campagne, film IA</video:title>
+      <video:description>Oakley × Meta. Campagne, film IA. Création IA, VFX, montage, sound design et motion design. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
       <video:duration>29</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
-      <video:title>Beymen Home &amp; Decor, campagne</video:title>
-      <video:description>Beymen Home &amp; Decor. Beymen.com. Création IA, blocking 3D, montage et motion design du logo. Film long et 3 films courts en 16:9, 1:1 et 9:16, 12 stills. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
-      <video:duration>28</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
-      <video:title>LOEWE, campagne</video:title>
-      <video:description>LOEWE. Création IA, stills et film. 5 stills 16:9, film 16:9. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
-      <video:duration>5</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
-      <video:title>ZORO, Bello &amp; Dallas</video:title>
-      <video:description>Clip ZORO (Bello &amp; Dallas), VFX. Réalisation Kespey.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
-      <video:duration>13</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/crame.jpg</video:thumbnail_loc>
-      <video:title>CRAMÉ, RR</video:title>
-      <video:description>Clip CRAMÉ (RR), Montage, VFX, IA, SFX. Réalisation Lyra Film.</video:description>
+      <video:title>CRAMÉ, Clip de RR</video:title>
+      <video:description>CRAMÉ. Clip de RR. Montage, VFX, IA, SFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/crame.mp4</video:content_loc>
       <video:duration>38</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
+      <video:title>LOEWE, Campagne, stills et film IA</video:title>
+      <video:description>LOEWE. Campagne, stills et film IA. 5 stills 16:9, film 16:9. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
+      <video:duration>5</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/ndrangetha.jpg</video:thumbnail_loc>
-      <video:title>NDRANGETHA, Thabiti</video:title>
-      <video:description>Clip NDRANGETHA (Thabiti), Montage, VFX, IA, SFX. Réalisation Lyra Film.</video:description>
+      <video:title>NDRANGETHA, Clip de Thabiti</video:title>
+      <video:description>NDRANGETHA. Clip de Thabiti. Montage, VFX, IA, SFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/ndrangetha.mp4</video:content_loc>
       <video:duration>35</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
+      <video:title>Beymen Home &amp; Decor, Campagne pour Beymen.com</video:title>
+      <video:description>Beymen Home &amp; Decor. Campagne pour Beymen.com. Création IA, blocking 3D, montage et motion design du logo. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
+      <video:duration>28</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
+      <video:title>ZORO, Clip de Bello &amp; Dallas</video:title>
+      <video:description>ZORO. Clip de Bello &amp; Dallas. VFX, réalisation Kespey. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
+      <video:duration>13</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/killcam.jpg</video:thumbnail_loc>
-      <video:title>KILLCAM, King Kifla</video:title>
-      <video:description>Clip KILLCAM (King Kifla), Montage, VFX. Réalisation Lyra Film.</video:description>
+      <video:title>KILLCAM, Clip de King Kifla</video:title>
+      <video:description>KILLCAM. Clip de King Kifla. Montage, VFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/killcam.mp4</video:content_loc>
       <video:duration>30</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
+      <video:title>JAMAÏQUAINE IS DEAD, Clip de LP Killer</video:title>
+      <video:description>JAMAÏQUAINE IS DEAD. Clip de LP Killer. VFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
+      <video:duration>34</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/back.jpg</video:thumbnail_loc>
-      <video:title>BACK, LP2.0</video:title>
-      <video:description>Clip BACK (LP2.0), Montage, VFX. Réalisation Lyra Film.</video:description>
+      <video:title>BACK, Clip de LP2.0</video:title>
+      <video:description>BACK. Clip de LP2.0. Montage, VFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/back.mp4</video:content_loc>
       <video:duration>23</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/demandeashh.jpg</video:thumbnail_loc>
-      <video:title>DEMANDEASHH, Sheu</video:title>
-      <video:description>Clip DEMANDEASHH (Sheu), Teaser IA. Réalisation NOVA.</video:description>
+      <video:title>DEMANDEASHH, Clip de Sheu</video:title>
+      <video:description>DEMANDEASHH. Clip de Sheu. Teaser IA, réalisation NOVA. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/demandeashh.mp4</video:content_loc>
       <video:duration>33</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
-      <video:title>JAMAÏQUAINE IS DEAD, LP Killer</video:title>
-      <video:description>Clip JAMAÏQUAINE IS DEAD (LP Killer), VFX. Réalisation Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
-      <video:duration>34</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-  </url>
-  <url>
-    <loc>https://novaforvision.com/services/</loc>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/services/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/services/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/services/"/>
-    <lastmod>2026-11-24</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/studio/</loc>
@@ -130,91 +123,84 @@
     <lastmod>2026-11-24</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
-      <video:title>Oakley × Meta, campaign</video:title>
-      <video:description>Oakley × Meta. AI creation, VFX, editing, sound design and motion design. 16:9 and 9:16 film, logo motion design, 4K stills. NOVA FOR VISION.</video:description>
+      <video:title>Oakley × Meta, Campaign, AI film</video:title>
+      <video:description>Oakley × Meta. Campaign, AI film. AI creation, VFX, editing, sound design and motion design. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
       <video:duration>29</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
-      <video:title>Beymen Home &amp; Decor, campaign</video:title>
-      <video:description>Beymen Home &amp; Decor. Beymen.com. AI creation, 3D blocking, editing and logo motion design. Long film and 3 short films in 16:9, 1:1 and 9:16, 12 stills. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
-      <video:duration>28</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
-      <video:title>LOEWE, campaign</video:title>
-      <video:description>LOEWE. AI creation, stills and film. 5 stills 16:9, 16:9 film. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
-      <video:duration>5</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
-      <video:title>ZORO, Bello &amp; Dallas</video:title>
-      <video:description>Music video ZORO (Bello &amp; Dallas), VFX. Directed by Kespey.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
-      <video:duration>13</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/crame.jpg</video:thumbnail_loc>
-      <video:title>CRAMÉ, RR</video:title>
-      <video:description>Music video CRAMÉ (RR), Editing, VFX, AI, SFX. Directed by Lyra Film.</video:description>
+      <video:title>CRAMÉ, Music video for RR</video:title>
+      <video:description>CRAMÉ. Music video for RR. Editing, VFX, AI, SFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/crame.mp4</video:content_loc>
       <video:duration>38</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
+      <video:title>LOEWE, Campaign, AI stills and film</video:title>
+      <video:description>LOEWE. Campaign, AI stills and film. 5 stills 16:9, 16:9 film. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
+      <video:duration>5</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/ndrangetha.jpg</video:thumbnail_loc>
-      <video:title>NDRANGETHA, Thabiti</video:title>
-      <video:description>Music video NDRANGETHA (Thabiti), Editing, VFX, AI, SFX. Directed by Lyra Film.</video:description>
+      <video:title>NDRANGETHA, Music video for Thabiti</video:title>
+      <video:description>NDRANGETHA. Music video for Thabiti. Editing, VFX, AI, SFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/ndrangetha.mp4</video:content_loc>
       <video:duration>35</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
+      <video:title>Beymen Home &amp; Decor, Campaign for Beymen.com</video:title>
+      <video:description>Beymen Home &amp; Decor. Campaign for Beymen.com. AI creation, 3D blocking, editing and logo motion design. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
+      <video:duration>28</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
+      <video:title>ZORO, Music video for Bello &amp; Dallas</video:title>
+      <video:description>ZORO. Music video for Bello &amp; Dallas. VFX, directed by Kespey. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
+      <video:duration>13</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/killcam.jpg</video:thumbnail_loc>
-      <video:title>KILLCAM, King Kifla</video:title>
-      <video:description>Music video KILLCAM (King Kifla), Editing, VFX. Directed by Lyra Film.</video:description>
+      <video:title>KILLCAM, Music video for King Kifla</video:title>
+      <video:description>KILLCAM. Music video for King Kifla. Editing, VFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/killcam.mp4</video:content_loc>
       <video:duration>30</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
+      <video:title>JAMAÏQUAINE IS DEAD, Music video for LP Killer</video:title>
+      <video:description>JAMAÏQUAINE IS DEAD. Music video for LP Killer. VFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
+      <video:duration>34</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/back.jpg</video:thumbnail_loc>
-      <video:title>BACK, LP2.0</video:title>
-      <video:description>Music video BACK (LP2.0), Editing, VFX. Directed by Lyra Film.</video:description>
+      <video:title>BACK, Music video for LP2.0</video:title>
+      <video:description>BACK. Music video for LP2.0. Editing, VFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/back.mp4</video:content_loc>
       <video:duration>23</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/demandeashh.jpg</video:thumbnail_loc>
-      <video:title>DEMANDEASHH, Sheu</video:title>
-      <video:description>Music video DEMANDEASHH (Sheu), AI teaser. Directed by NOVA.</video:description>
+      <video:title>DEMANDEASHH, Music video for Sheu</video:title>
+      <video:description>DEMANDEASHH. Music video for Sheu. AI teaser, directed by NOVA. NOVA FOR VISION.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/demandeashh.mp4</video:content_loc>
       <video:duration>33</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
-      <video:title>JAMAÏQUAINE IS DEAD, LP Killer</video:title>
-      <video:description>Music video JAMAÏQUAINE IS DEAD (LP Killer), VFX. Directed by Lyra Film.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
-      <video:duration>34</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-  </url>
-  <url>
-    <loc>https://novaforvision.com/en/services/</loc>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/services/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/services/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/services/"/>
-    <lastmod>2026-11-24</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/en/studio/</loc>

@@ -8,15 +8,14 @@ export const SITE = 'https://novaforvision.com';
 export const ROUTES = {
   home: { fr: '/', en: '/en/' },
   projets: { fr: '/projets/', en: '/en/projects/' },
-  services: { fr: '/services/', en: '/en/services/' },
   studio: { fr: '/studio/', en: '/en/studio/' },
   contact: { fr: '/contact/', en: '/en/contact/' },
   legal: { fr: '/mentions-legales/', en: '/mentions-legales/' },
 };
 
 export const NAV = [
+  ['home', { fr: 'Accueil', en: 'Home' }],
   ['projets', { fr: 'Projets', en: 'Projects' }],
-  ['services', { fr: 'Services', en: 'Services' }],
   ['studio', { fr: 'Studio', en: 'Studio' }],
   ['contact', { fr: 'Contact', en: 'Contact' }],
 ];
@@ -121,25 +120,7 @@ export const CLIPS = [
   { id: 'jamaiquaine', anchor: 'jamaiquaine', title: 'JAMAÏQUAINE IS DEAD', artist: 'LP Killer', role: { fr: 'VFX', en: 'VFX' }, dir: 'Lyra Film', dur: 33.686, tint: '#3f8270', w: 1440, h: 1080, ig: 'https://www.instagram.com/reel/DTZaV9mDPdE/' },
 ].map(c => ({ ...c, poster: `/media/poster/${c.id}.jpg`, prev: `/media/prev/${c.id}.mp4`, film: `/media/full/${c.id}.mp4`, thumb: `/assets/thumbs/clip-${c.id}.jpg` }));
 
-// Le haut de l'accueil : NOVA découpé dans les films, qui se succèdent comme une bande démo.
-export const REEL = [
-  { id: 'oakley', src: '/media/hero/oakley.mp4', poster: '/media/hero/oakley-p.jpg', start: 2, title: 'Oakley × Meta', by: { fr: 'Campagne', en: 'Campaign' }, href: 'projets#oakley-meta' },
-  { id: 'crame', src: '/media/hero/crame.mp4', poster: '/media/hero/crame-p.jpg', start: 0, title: 'CRAMÉ', by: 'RR', href: 'projets#crame' },
-  { id: 'loewe', src: '/media/loewe/film.mp4', poster: '/media/hero/loewe-p.jpg', start: 0, title: 'LOEWE', by: { fr: 'Campagne', en: 'Campaign' }, href: 'projets#loewe' },
-  { id: 'ndrangetha', src: '/media/hero/ndrangetha.mp4', poster: '/media/hero/ndrangetha-p.jpg', start: 0, title: 'NDRANGETHA', by: 'Thabiti', href: 'projets#ndrangetha' },
-  { id: 'bellodallas', src: '/media/hero/bellodallas.mp4', poster: '/media/hero/bellodallas.jpg', start: 0, title: 'ZORO', by: 'Bello & Dallas', href: 'projets#zoro' },
-  { id: 'jamaiquaine', src: '/media/hero/jamaiquaine.mp4', poster: '/media/hero/jamaiquaine.jpg', start: 0, title: 'JAMAÏQUAINE IS DEAD', by: 'LP Killer', href: 'projets#jamaiquaine' },
-];
 
-// Images du mur qui dérive sous les titres
-export const WALL = [
-  '/assets/thumbs/oakley-macro-prizm-led.jpg', '/assets/thumbs/beymen-05.jpg', '/assets/thumbs/clip-crame.jpg', '/assets/thumbs/loewe-01.jpg',
-  '/assets/thumbs/teastorm-04.jpg', '/assets/thumbs/clip-ndrangetha.jpg', '/assets/thumbs/beymen-09.jpg', '/assets/thumbs/oakley-400mm-subject.jpg',
-  '/assets/thumbs/clip-bellodallas.jpg', '/assets/thumbs/loewe-03.jpg', '/assets/thumbs/teastorm-00.jpg', '/assets/thumbs/clip-killcam.jpg',
-  '/assets/thumbs/beymen-02.jpg', '/assets/thumbs/oakley-rain-world-onevision.jpg', '/assets/thumbs/clip-jamaiquaine.jpg', '/assets/thumbs/loewe-04.jpg',
-  '/assets/thumbs/teastorm-08.jpg', '/assets/thumbs/beymen-11.jpg', '/assets/thumbs/clip-back.jpg', '/assets/thumbs/oakley-unettes-sable-logo.jpg',
-  '/assets/thumbs/teastorm-03.jpg', '/assets/thumbs/beymen-07.jpg', '/assets/thumbs/loewe-02.jpg', '/assets/thumbs/oakley-end-oakley-meta.jpg',
-];
 
 export const ARTISTS = ['Boub’Z', 'Bello & Dallas', 'Mauvais Djo', 'La Fouine', 'Cheu-B', 'Oboy', 'Ghostkillertrack', 'Sky', 'Miami Yacine', 'Thabiti', 'RR', 'King Kifla', 'Sheu', 'LP2.0', 'LP Killer'];
 export const ARTIST_CLIP = { 'Bello & Dallas': 'bellodallas', 'Thabiti': 'ndrangetha', 'RR': 'crame', 'King Kifla': 'killcam', 'Sheu': 'demandeashh', 'LP2.0': 'back', 'LP Killer': 'jamaiquaine' };
@@ -154,43 +135,6 @@ export const METIERS = [
   { name: { fr: 'Storyboard', en: 'Storyboard' }, text: { fr: 'Découpage plan par plan, validé avant production', en: 'Shot-by-shot breakdown, approved before production' }, img: '/assets/svc/storyboard.jpg' },
 ];
 
-export const SERVICES = [
-  {
-    id: 'campagnes-ia', name: { fr: 'Campagnes IA', en: 'AI campaigns' },
-    text: { fr: 'Films et visuels de marque générés par IA, finis comme une production classique.', en: 'Brand films and visuals generated with AI, finished like a traditional production.' },
-    items: [{ fr: 'Film de campagne', en: 'Campaign film' }, { fr: 'Stills', en: 'Stills' }, { fr: 'Motion design', en: 'Motion design' }],
-    media: { video: '/media/hero/oakley.mp4', poster: '/media/hero/oakley-p.jpg', start: 2 }, credit: 'Oakley × Meta',
-    link: { fr: 'Voir les campagnes', en: 'See the campaigns' }, href: 'projets#campagnes',
-  },
-  {
-    id: 'clips-vfx', name: { fr: 'Clips et VFX', en: 'Music videos and VFX' },
-    text: { fr: 'Pour les artistes et les réalisateurs : des effets pensés pour le morceau.', en: 'For artists and directors: effects built for the track.' },
-    items: [{ fr: 'VFX 3D et IA', en: '3D and AI VFX' }, { fr: 'Montage du clip', en: 'Music video edit' }, { fr: 'Teasers', en: 'Teasers' }],
-    media: { video: '/media/prev/ndrangetha.mp4', poster: '/media/hero/ndrangetha-p.jpg' }, credit: 'NDRANGETHA, Thabiti',
-    link: { fr: 'Voir les clips', en: 'See the music videos' }, href: 'projets#clips',
-  },
-  {
-    id: 'postproduction', name: { fr: 'Postproduction', en: 'Post-production' },
-    text: { fr: 'Le montage, les effets et le son, sur des images tournées, générées ou les deux.', en: 'Editing, effects and sound, on footage that is shot, generated or both.' },
-    items: [{ fr: 'Montage', en: 'Editing' }, { fr: 'Compositing', en: 'Compositing' }, { fr: 'Sound design', en: 'Sound design' }],
-    media: { video: '/media/prev/crame.mp4', poster: '/media/hero/crame-p.jpg' }, credit: 'CRAMÉ, RR',
-    link: { fr: 'Voir l’avant / après de CRAMÉ', en: 'See the CRAMÉ before / after' }, href: 'projets#avant-apres',
-  },
-  {
-    id: 'direction-artistique', name: { fr: 'Direction artistique', en: 'Art direction' },
-    text: { fr: 'Avant de produire, on se met d’accord sur ce qu’on va voir.', en: 'Before producing anything, we agree on what we are going to see.' },
-    items: [{ fr: 'Moodboard', en: 'Moodboard' }, { fr: 'Storyboard', en: 'Storyboard' }, { fr: 'Tests de look', en: 'Look tests' }],
-    media: { img: '/media/loewe/01-1920.jpg', sm: '/media/loewe/01-960.jpg' }, credit: 'LOEWE',
-    link: { fr: 'En parler avec le studio', en: 'Talk to the studio' }, href: 'mail',
-  },
-  {
-    id: 'tournage', name: { fr: 'Tournage', en: 'Shooting' },
-    text: { fr: 'Quand le film demande de vraies images, on tourne avec une équipe de production partenaire.', en: 'When the film needs live footage, we shoot with a partner production crew.' },
-    items: [{ fr: 'Équipe partenaire', en: 'Partner crew' }, { fr: 'Tourné et généré', en: 'Shot and generated' }, { fr: 'Postproduction NOVA', en: 'NOVA post-production' }],
-    media: { video: '/media/prev/killcam.mp4', poster: '/media/poster/killcam.jpg' }, credit: 'KILLCAM, King Kifla',
-    link: { fr: 'En parler avec le studio', en: 'Talk to the studio' }, href: 'mail',
-  },
-];
 
 // Déroulé : six étapes, trois pistes, comme une timeline de montage
 export const STEPS = [
@@ -222,3 +166,10 @@ export const TEAM = [
 
 // Avant / après CRAMÉ : [début, passage au plan final, fin] en secondes
 export const BA = { src: '/media/ba/crame-ba.mp4', poster: '/media/ba/crame-ba.jpg', dur: 11.12, ch: [[0, 2.2, 4.04], [4.04, 4.68, 5.96], [5.96, 7.2, 8.96], [8.96, 9.72, 11.12]], names: [{ fr: 'Étalonnage', en: 'Colour grading' }, { fr: 'Débris', en: 'Debris' }, { fr: 'Feu', en: 'Fire' }, { fr: 'Police', en: 'Police' }] };
+
+// Ordre des projets sur la bande de l'accueil et dans la roue de la page Projets.
+// tile : boucle 3:4 (600x800) pour la bande ; stage : boucle 16:9 (960x540) pour la roue.
+export const ORDER = ['oakley', 'crame', 'loewe', 'ndrangetha', 'beymen', 'bellodallas', 'teastorm', 'killcam', 'jamaiquaine', 'back', 'demandeashh'];
+export const LOOPS = Object.fromEntries(ORDER.map(id => [id, id === 'teastorm'
+  ? { tile: { p: '/media/tile/teastorm.jpg' }, stage: { p: '/media/stage/teastorm.jpg' } }
+  : { tile: { v: `/media/tile/${id}.mp4`, p: `/media/tile/${id}.jpg` }, stage: { v: `/media/stage/${id}.mp4`, p: `/media/stage/${id}.jpg` } }]));

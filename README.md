@@ -1,24 +1,31 @@
 # novaforvision.com
 
-Site vitrine de NOVA FOR VISION, studio de création IA, d'effets visuels et de postproduction basé à Liège.
+Site vitrine de NOVA FOR VISION, studio de création visuelle basé à Liège : campagnes IA, clips, effets visuels et postproduction.
 
-## Direction : « découpé dans le film »
+## Direction : « banc de montage »
 
-- Salle noire, texte blanc. La couleur vient des films : la page s'étalonne sur le film à l'écran (teinte de chaque projet dans `src/content.mjs`).
-- Chaque page s'ouvre sur son titre découpé dans un film. Sur l'accueil, c'est le logo NOVA : au défilement, on plonge dans une lettre jusqu'au film en plein écran.
-- Geist pour tout, Geist Mono pour les données de film (timecode, durées, crédits).
-- Intro à l'étoile (première visite de l'accueil) ; l'étoile sert aussi de passage d'une page à l'autre.
-- Règles : aucune mention « spec ad », aucun outil nommé, pas de prix, l'e-mail comme seule action, pas de bouton rond, pas de pastilles.
+Références : AUGE Experience (colonne vertébrale), Unanim studio, Pryzm, Artemii Lebedev, Grids (Obys), Butter, Santal, Jesper Landberg.
+
+- Fond clair (`#e4e4e0`), texte noir : la couleur vient seulement des films.
+- L'accueil tient sur un écran : une bande de projets bord à bord (hauteur = durée du film) que la molette, le doigt ou les flèches font défiler, NOVA en grand en bas, une phrase.
+- Au clic : aplat à la teinte du film, titre brouillé puis formé, compteur, puis le film s'ouvre sur place. La molette passe au projet suivant avec un souffle de neige (changement de chaîne). Pas de page de cas.
+- Projets : une roue (numéros, durées en timecode), filtre Tout / Campagnes / Clips.
+- Studio : une phrase, les savoir-faire, la méthode sur une règle de montage à trois pistes, les fondateurs, les artistes.
+- Contact : l'adresse e-mail en très grand, une image.
+- Signature : le timecode (horloge de Liège en haut à droite, durées, règle de lecture).
+- Geist pour tout, Geist Mono pour les données de film.
+- Règles : aucune mention « spec ad », aucun outil nommé, pas de prix, l'e-mail comme seule action, pas de bouton rond ni de pastille, pas de code rouge-vert-bleu.
 
 ## Fichiers
 
-- `src/content.mjs` : tous les textes (FR et EN), projets, films, stills, crédits, services, déroulé, équipe
+- `src/content.mjs` : textes (FR et EN), projets, films, stills, crédits, savoir-faire, méthode, équipe, ordre de la bande
 - `src/pages.mjs` : gabarits des pages (FR, EN, mentions légales, 404, plan du site)
 - `src/css/nova.css` : styles
-- `src/js/main.js` : script (Lenis pour le défilement doux, GSAP avec ScrollTrigger et SplitText)
+- `src/js/main.js` : script (GSAP seul : bande, roue, intro, film ouvert sur place)
 - `src/build.mjs` : génère les pages HTML, `assets/nova.css`, `assets/nova.js` et `sitemap.xml`
+- `media/tile/` : boucles 3:4 (600x800, 5 s) de la bande ; `media/stage/` : boucles 16:9 (960x540) de la roue. Script : `tools/media.sh` dans la session de travail (ffmpeg, recadrage centré, CRF 27).
 
-Les pages HTML à la racine (`index.html`, `projets/`, `services/`, `studio/`, `contact/`, `mentions-legales/`, `404.html`) et `en/` sont **générées** : modifier `src/`, puis reconstruire.
+Les pages HTML à la racine (`index.html`, `projets/`, `studio/`, `contact/`, `mentions-legales/`, `404.html`) et `en/` sont **générées** : modifier `src/`, puis reconstruire. `services/` et `en/services/` renvoient vers Studio.
 
 ```bash
 npm install
@@ -26,17 +33,9 @@ npm run build      # régénère pages, styles, script et plan du site
 npm run serve      # aperçu sur http://localhost:4173
 ```
 
-## Effets par page
+Poids : `nova.js` 91 Ko, `nova.css` 17 Ko (avant : 164 Ko et 29 Ko). Les vidéos de la bande ne se chargent qu'à l'écran, et pas du tout en mode économie de données.
 
-| Page | Effets |
-|---|---|
-| Accueil | Intro à l'étoile · NOVA découpé dans les films (coupe toutes les 4 s) au-dessus du mur d'images qui dérive · plongée dans la lettre au défilement · manifeste qui s'allume mot à mot · projets à la une en bobine horizontale, page étalonnée · index avec aperçu au curseur · bandeau des artistes qui suit le défilement · services · « Écrire au studio » découpé dans un film |
-| Projets | Titre découpé · chapitres par campagne (titre découpé dans son film, lecteur avec le son, stills qui glissent de côté, visionneuse) · clips en grille décalée (aperçu au survol) · avant / après CRAMÉ à la souris · générique qui défile |
-| Services | Titre découpé · cinq prestations qui s'empilent · déroulé en timeline de montage (tête de lecture au défilement, étapes cliquables) |
-| Studio | Titre découpé · texte qui monte ligne par ligne · métiers avec traînée d'images au curseur · équipe |
-| Contact | Phrase à compléter qui compose l'e-mail ; l'image se précise à mesure qu'on écrit |
-
-Mouvement réduit (réglage du système) : pas de défilement doux, pas de plongée, pas de dérive ; les contenus restent tous visibles.
+Mouvement réduit (réglage du système) : pas d'intro, pas de dérive ni de brouillage, ouvertures instantanées.
 
 ## Ne pas toucher
 

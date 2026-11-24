@@ -14,7 +14,7 @@ const hash = s => createHash('sha1').update(s).digest('hex').slice(0, 8);
 const js = await esbuild.build({
   entryPoints: [join(ROOT, 'src/js/main.js')], bundle: true, minify: true, format: 'iife',
   target: ['es2020', 'safari15'], write: false, legalComments: 'none',
-  banner: { js: '/* NOVA FOR VISION · GSAP (MIT, GreenSock) · Lenis (MIT, darkroom.engineering) */' },
+  banner: { js: '/* NOVA FOR VISION · GSAP (MIT, GreenSock) */' },
 });
 const jsCode = js.outputFiles[0].text;
 writeFileSync(join(ROOT, 'assets/nova.js'), jsCode);
