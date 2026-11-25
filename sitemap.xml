@@ -5,215 +5,369 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
-    <lastmod>2026-11-24</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/projets/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
-    <lastmod>2026-11-24</lastmod>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
-      <video:title>Oakley × Meta, Campagne, film IA</video:title>
-      <video:description>Oakley × Meta. Campagne, film IA. Création IA, VFX, montage, sound design et motion design. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
-      <video:duration>29</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/crame.jpg</video:thumbnail_loc>
-      <video:title>CRAMÉ, Clip de RR</video:title>
-      <video:description>CRAMÉ. Clip de RR. Montage, VFX, IA, SFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/crame.mp4</video:content_loc>
-      <video:duration>38</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
-      <video:title>LOEWE, Campagne, stills et film IA</video:title>
-      <video:description>LOEWE. Campagne, stills et film IA. 5 stills 16:9, film 16:9. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
-      <video:duration>5</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/ndrangetha.jpg</video:thumbnail_loc>
-      <video:title>NDRANGETHA, Clip de Thabiti</video:title>
-      <video:description>NDRANGETHA. Clip de Thabiti. Montage, VFX, IA, SFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/ndrangetha.mp4</video:content_loc>
-      <video:duration>35</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
-      <video:title>Beymen Home &amp; Decor, Campagne pour Beymen.com</video:title>
-      <video:description>Beymen Home &amp; Decor. Campagne pour Beymen.com. Création IA, blocking 3D, montage et motion design du logo. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
-      <video:duration>28</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
-      <video:title>ZORO, Clip de Bello &amp; Dallas</video:title>
-      <video:description>ZORO. Clip de Bello &amp; Dallas. VFX, réalisation Kespey. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
-      <video:duration>13</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/killcam.jpg</video:thumbnail_loc>
-      <video:title>KILLCAM, Clip de King Kifla</video:title>
-      <video:description>KILLCAM. Clip de King Kifla. Montage, VFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/killcam.mp4</video:content_loc>
-      <video:duration>30</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
-      <video:title>JAMAÏQUAINE IS DEAD, Clip de LP Killer</video:title>
-      <video:description>JAMAÏQUAINE IS DEAD. Clip de LP Killer. VFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
-      <video:duration>34</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/back.jpg</video:thumbnail_loc>
-      <video:title>BACK, Clip de LP2.0</video:title>
-      <video:description>BACK. Clip de LP2.0. Montage, VFX, réalisation Lyra Film. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/back.mp4</video:content_loc>
-      <video:duration>23</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
-    <video:video>
-      <video:thumbnail_loc>https://novaforvision.com/media/poster/demandeashh.jpg</video:thumbnail_loc>
-      <video:title>DEMANDEASHH, Clip de Sheu</video:title>
-      <video:description>DEMANDEASHH. Clip de Sheu. Teaser IA, réalisation NOVA. NOVA FOR VISION.</video:description>
-      <video:content_loc>https://novaforvision.com/media/full/demandeashh.mp4</video:content_loc>
-      <video:duration>33</video:duration>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/studio/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/studio/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/studio/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/studio/"/>
-    <lastmod>2026-11-24</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/contact/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/contact/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/contact/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/contact/"/>
-    <lastmod>2026-11-24</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
-    <loc>https://novaforvision.com/en/</loc>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
-    <lastmod>2026-11-24</lastmod>
-  </url>
-  <url>
-    <loc>https://novaforvision.com/en/projects/</loc>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
-    <lastmod>2026-11-24</lastmod>
+    <loc>https://novaforvision.com/projets/oakley-meta/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/oakley-meta/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/oakley-meta/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/oakley-meta/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
-      <video:title>Oakley × Meta, Campaign, AI film</video:title>
-      <video:description>Oakley × Meta. Campaign, AI film. AI creation, VFX, editing, sound design and motion design. NOVA FOR VISION.</video:description>
+      <video:title>Oakley × Meta, Campagne IA</video:title>
+      <video:description>Un film de campagne pour Oakley × Meta, du désert à la roche noire. Création IA, VFX, montage, sound design et motion design du logo.</video:description>
       <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
       <video:duration>29</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/crame/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/crame/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/crame/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/crame/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/crame.jpg</video:thumbnail_loc>
-      <video:title>CRAMÉ, Music video for RR</video:title>
-      <video:description>CRAMÉ. Music video for RR. Editing, VFX, AI, SFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
+      <video:title>CRAMÉ, Clip</video:title>
+      <video:description>Clip de RR, réalisé par Lyra Film. NOVA en signe le montage, les VFX, l’IA et le sound design.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/crame.mp4</video:content_loc>
       <video:duration>38</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/loewe/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/loewe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/loewe/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/loewe/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
-      <video:title>LOEWE, Campaign, AI stills and film</video:title>
-      <video:description>LOEWE. Campaign, AI stills and film. 5 stills 16:9, 16:9 film. NOVA FOR VISION.</video:description>
+      <video:title>LOEWE, Campagne IA</video:title>
+      <video:description>Un sac moutarde sur le bleu d’un studio photo. Cinq stills et un film pour LOEWE.</video:description>
       <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
       <video:duration>5</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/ndrangetha/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/ndrangetha/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/ndrangetha/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/ndrangetha/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/ndrangetha.jpg</video:thumbnail_loc>
-      <video:title>NDRANGETHA, Music video for Thabiti</video:title>
-      <video:description>NDRANGETHA. Music video for Thabiti. Editing, VFX, AI, SFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
+      <video:title>NDRANGETHA, Clip</video:title>
+      <video:description>Clip de Thabiti, réalisé par Lyra Film. NOVA en signe le montage, les VFX, l’IA et le sound design.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/ndrangetha.mp4</video:content_loc>
       <video:duration>35</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/beymen/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/beymen/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/beymen/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/beymen/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
-      <video:title>Beymen Home &amp; Decor, Campaign for Beymen.com</video:title>
-      <video:description>Beymen Home &amp; Decor. Campaign for Beymen.com. AI creation, 3D blocking, editing and logo motion design. NOVA FOR VISION.</video:description>
+      <video:title>Beymen Home &amp; Decor, Campagne IA</video:title>
+      <video:description>Trois intérieurs, trois styles : minimal, artsy, néoclassique. Pour Beymen.com, un film long, trois films courts et douze stills.</video:description>
       <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
       <video:duration>28</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/zoro/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/zoro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/zoro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/zoro/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
-      <video:title>ZORO, Music video for Bello &amp; Dallas</video:title>
-      <video:description>ZORO. Music video for Bello &amp; Dallas. VFX, directed by Kespey. NOVA FOR VISION.</video:description>
+      <video:title>ZORO, Clip</video:title>
+      <video:description>Clip de Bello &amp; Dallas, réalisé par Kespey. NOVA en signe les VFX.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
       <video:duration>13</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/tea-storm/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/tea-storm/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/tea-storm/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/tea-storm/"/>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/killcam/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/killcam/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/killcam/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/killcam/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/killcam.jpg</video:thumbnail_loc>
-      <video:title>KILLCAM, Music video for King Kifla</video:title>
-      <video:description>KILLCAM. Music video for King Kifla. Editing, VFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
+      <video:title>KILLCAM, Clip</video:title>
+      <video:description>Clip de King Kifla, réalisé par Lyra Film. NOVA en signe le montage et les VFX.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/killcam.mp4</video:content_loc>
       <video:duration>30</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/jamaiquaine/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/jamaiquaine/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/jamaiquaine/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/jamaiquaine/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
-      <video:title>JAMAÏQUAINE IS DEAD, Music video for LP Killer</video:title>
-      <video:description>JAMAÏQUAINE IS DEAD. Music video for LP Killer. VFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
+      <video:title>JAMAÏQUAINE IS DEAD, Clip</video:title>
+      <video:description>Clip de LP Killer, réalisé par Lyra Film. NOVA en signe les VFX.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
       <video:duration>34</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/back/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/back/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/back/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/back/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/back.jpg</video:thumbnail_loc>
-      <video:title>BACK, Music video for LP2.0</video:title>
-      <video:description>BACK. Music video for LP2.0. Editing, VFX, directed by Lyra Film. NOVA FOR VISION.</video:description>
+      <video:title>BACK, Clip</video:title>
+      <video:description>Clip de LP2.0, réalisé par Lyra Film. NOVA en signe le montage et les VFX.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/back.mp4</video:content_loc>
       <video:duration>23</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/projets/demandeashh/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/demandeashh/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/demandeashh/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/demandeashh/"/>
+    <lastmod>2026-11-25</lastmod>
     <video:video>
       <video:thumbnail_loc>https://novaforvision.com/media/poster/demandeashh.jpg</video:thumbnail_loc>
-      <video:title>DEMANDEASHH, Music video for Sheu</video:title>
-      <video:description>DEMANDEASHH. Music video for Sheu. AI teaser, directed by NOVA. NOVA FOR VISION.</video:description>
+      <video:title>DEMANDEASHH, Clip</video:title>
+      <video:description>Teaser IA pour l’album de Sheu, fait de bout en bout par NOVA.</video:description>
       <video:content_loc>https://novaforvision.com/media/full/demandeashh.mp4</video:content_loc>
       <video:duration>33</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
   </url>
   <url>
+    <loc>https://novaforvision.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/"/>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/"/>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
     <loc>https://novaforvision.com/en/studio/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/studio/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/studio/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/studio/"/>
-    <lastmod>2026-11-24</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://novaforvision.com/en/contact/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/contact/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/contact/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/contact/"/>
-    <lastmod>2026-11-24</lastmod>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/oakley-meta/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/oakley-meta/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/oakley-meta/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/oakley-meta/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/oakley/film.jpg</video:thumbnail_loc>
+      <video:title>Oakley × Meta, AI campaign</video:title>
+      <video:description>A campaign film for Oakley × Meta, from the desert to black rock. AI creation, VFX, editing, sound design and logo motion design.</video:description>
+      <video:content_loc>https://novaforvision.com/media/oakley/film.mp4</video:content_loc>
+      <video:duration>29</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/crame/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/crame/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/crame/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/crame/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/crame.jpg</video:thumbnail_loc>
+      <video:title>CRAMÉ, Music video</video:title>
+      <video:description>Music video for RR, directed by Lyra Film. NOVA did the edit, the VFX, the AI and the sound design.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/crame.mp4</video:content_loc>
+      <video:duration>38</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/loewe/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/loewe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/loewe/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/loewe/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/loewe/film.jpg</video:thumbnail_loc>
+      <video:title>LOEWE, AI campaign</video:title>
+      <video:description>A mustard bag against the blue of a photo studio. Five stills and a film for LOEWE.</video:description>
+      <video:content_loc>https://novaforvision.com/media/loewe/film.mp4</video:content_loc>
+      <video:duration>5</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/ndrangetha/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/ndrangetha/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/ndrangetha/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/ndrangetha/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/ndrangetha.jpg</video:thumbnail_loc>
+      <video:title>NDRANGETHA, Music video</video:title>
+      <video:description>Music video for Thabiti, directed by Lyra Film. NOVA did the edit, the VFX, the AI and the sound design.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/ndrangetha.mp4</video:content_loc>
+      <video:duration>35</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/beymen/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/beymen/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/beymen/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/beymen/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/beymen/film.jpg</video:thumbnail_loc>
+      <video:title>Beymen Home &amp; Decor, AI campaign</video:title>
+      <video:description>Three interiors, three styles: minimal, artsy, neoclassical. For Beymen.com, a long film, three short films and twelve stills.</video:description>
+      <video:content_loc>https://novaforvision.com/media/beymen/film.mp4</video:content_loc>
+      <video:duration>28</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/zoro/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/zoro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/zoro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/zoro/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/bellodallas.jpg</video:thumbnail_loc>
+      <video:title>ZORO, Music video</video:title>
+      <video:description>Music video for Bello &amp; Dallas, directed by Kespey. NOVA did the VFX.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/bellodallas.mp4</video:content_loc>
+      <video:duration>13</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/tea-storm/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/tea-storm/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/tea-storm/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/tea-storm/"/>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/killcam/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/killcam/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/killcam/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/killcam/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/killcam.jpg</video:thumbnail_loc>
+      <video:title>KILLCAM, Music video</video:title>
+      <video:description>Music video for King Kifla, directed by Lyra Film. NOVA did the edit and the VFX.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/killcam.mp4</video:content_loc>
+      <video:duration>30</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/jamaiquaine/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/jamaiquaine/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/jamaiquaine/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/jamaiquaine/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/jamaiquaine.jpg</video:thumbnail_loc>
+      <video:title>JAMAÏQUAINE IS DEAD, Music video</video:title>
+      <video:description>Music video for LP Killer, directed by Lyra Film. NOVA did the VFX.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/jamaiquaine.mp4</video:content_loc>
+      <video:duration>34</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/back/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/back/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/back/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/back/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/back.jpg</video:thumbnail_loc>
+      <video:title>BACK, Music video</video:title>
+      <video:description>Music video for LP2.0, directed by Lyra Film. NOVA did the edit and the VFX.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/back.mp4</video:content_loc>
+      <video:duration>23</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://novaforvision.com/en/projects/demandeashh/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://novaforvision.com/projets/demandeashh/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://novaforvision.com/en/projects/demandeashh/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://novaforvision.com/projets/demandeashh/"/>
+    <lastmod>2026-11-25</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://novaforvision.com/media/poster/demandeashh.jpg</video:thumbnail_loc>
+      <video:title>DEMANDEASHH, Music video</video:title>
+      <video:description>AI teaser for Sheu’s album, made end to end by NOVA.</video:description>
+      <video:content_loc>https://novaforvision.com/media/full/demandeashh.mp4</video:content_loc>
+      <video:duration>33</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
   </url>
 </urlset>

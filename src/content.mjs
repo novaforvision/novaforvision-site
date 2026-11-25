@@ -173,3 +173,22 @@ export const ORDER = ['oakley', 'crame', 'loewe', 'ndrangetha', 'beymen', 'bello
 export const LOOPS = Object.fromEntries(ORDER.map(id => [id, id === 'teastorm'
   ? { tile: { p: '/media/tile/teastorm.jpg' }, stage: { p: '/media/stage/teastorm.jpg' } }
   : { tile: { v: `/media/tile/${id}.mp4`, p: `/media/tile/${id}.jpg` }, stage: { v: `/media/stage/${id}.mp4`, p: `/media/stage/${id}.jpg` } }]));
+
+// Pages projet : une phrase par projet (ce qu'on voit et ce que NOVA a fait, jamais comment).
+export const DESC = {
+  oakley: { fr: 'Un film de campagne pour Oakley × Meta, du désert à la roche noire. Création IA, VFX, montage, sound design et motion design du logo.', en: 'A campaign film for Oakley × Meta, from the desert to black rock. AI creation, VFX, editing, sound design and logo motion design.' },
+  beymen: { fr: 'Trois intérieurs, trois styles : minimal, artsy, néoclassique. Pour Beymen.com, un film long, trois films courts et douze stills.', en: 'Three interiors, three styles: minimal, artsy, neoclassical. For Beymen.com, a long film, three short films and twelve stills.' },
+  loewe: { fr: 'Un sac moutarde sur le bleu d’un studio photo. Cinq stills et un film pour LOEWE.', en: 'A mustard bag against the blue of a photo studio. Five stills and a film for LOEWE.' },
+  teastorm: { fr: 'Un flacon, des feuilles de thé, de la laque et de la lumière. Dix stills pour Tea Storm.', en: 'A bottle, tea leaves, lacquer and light. Ten stills for Tea Storm.' },
+  crame: { fr: 'Clip de RR, réalisé par Lyra Film. NOVA en signe le montage, les VFX, l’IA et le sound design.', en: 'Music video for RR, directed by Lyra Film. NOVA did the edit, the VFX, the AI and the sound design.' },
+  ndrangetha: { fr: 'Clip de Thabiti, réalisé par Lyra Film. NOVA en signe le montage, les VFX, l’IA et le sound design.', en: 'Music video for Thabiti, directed by Lyra Film. NOVA did the edit, the VFX, the AI and the sound design.' },
+  bellodallas: { fr: 'Clip de Bello & Dallas, réalisé par Kespey. NOVA en signe les VFX.', en: 'Music video for Bello & Dallas, directed by Kespey. NOVA did the VFX.' },
+  killcam: { fr: 'Clip de King Kifla, réalisé par Lyra Film. NOVA en signe le montage et les VFX.', en: 'Music video for King Kifla, directed by Lyra Film. NOVA did the edit and the VFX.' },
+  back: { fr: 'Clip de LP2.0, réalisé par Lyra Film. NOVA en signe le montage et les VFX.', en: 'Music video for LP2.0, directed by Lyra Film. NOVA did the edit and the VFX.' },
+  jamaiquaine: { fr: 'Clip de LP Killer, réalisé par Lyra Film. NOVA en signe les VFX.', en: 'Music video for LP Killer, directed by Lyra Film. NOVA did the VFX.' },
+  demandeashh: { fr: 'Teaser IA pour l’album de Sheu, fait de bout en bout par NOVA.', en: 'AI teaser for Sheu’s album, made end to end by NOVA.' },
+};
+// Réalisateurs connus des clips des artistes (pour la page Studio)
+export const ARTIST_DIR = { 'Boub’Z': 'Lyra Film', 'Bello & Dallas': 'Kespey', 'Mauvais Djo': 'Kespey', 'La Fouine': 'Kespey', 'Sky': 'Lyra Film', 'Miami Yacine': 'Lyra Film', 'Thabiti': 'Lyra Film', 'RR': 'Lyra Film', 'King Kifla': 'Lyra Film', 'Sheu': 'NOVA', 'LP2.0': 'Lyra Film', 'LP Killer': 'Lyra Film' };
+// Images extraites des clips (galerie des pages projet)
+export const FRAMES = Object.fromEntries(['crame', 'ndrangetha', 'bellodallas', 'killcam', 'back', 'jamaiquaine', 'demandeashh'].map(id => [id, [1, 2, 3].map(n => ({ l: `/media/frames/${id}-0${n}.jpg`, s: `/media/frames/${id}-0${n}-s.jpg` }))]));
